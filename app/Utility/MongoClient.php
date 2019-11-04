@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: qap
+ * User: PhpStorm
  * Date: 2019/11/4
  * Time: 11:29
  */
@@ -41,7 +41,7 @@ class MongoClient
 
     /**
      * 添加数据
-     * @Task
+     * @Task()
      * @param string $namespace 表名
      * @param array $document 数据
      * @return int|null
@@ -58,7 +58,7 @@ class MongoClient
 
     /**
      * 查询数据
-     * @Task
+     * @Task()
      * @param string $namespace 表名
      * @param array $filter 查询条件
      * @param array $options 附加条件
@@ -74,7 +74,7 @@ class MongoClient
 
     /**
      * 修改数据
-     * @Task
+     * @Task()
      * @param string $namespace 表名
      * @param array $filter 更改条件
      * @param array $data 更改后数据
@@ -92,7 +92,7 @@ class MongoClient
 
     /**
      * 删除数据
-     * @Task
+     * @Task()
      * @param string $namespace 表名
      * @param array $filter 删除条件
      * @param array $options 附加条件
