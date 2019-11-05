@@ -50,12 +50,12 @@ class CommonController extends AbstractController
      */
     public function sendCode()
     {
-        $account = $this->request->input('account');
-        $user = $this->container->get(UserModel::class)->getUserByAccount($account);
-        if (!$user) {
-            return $this->fail("用户不存在");
-        }
-        $result = $this->container->get(SendCode::class)->send($user['mobile']);
+        $mobile = $this->request->input('mobile');
+//        $user = $this->container->get(UserModel::class)->getUserByAccount($mobile);
+//        if (!$user) {
+//            return $this->fail("用户不存在");
+//        }
+        $result = $this->container->get(SendCode::class)->send($mobile);
         return $this->success($result);
     }
 }

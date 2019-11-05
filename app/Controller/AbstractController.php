@@ -73,4 +73,12 @@ abstract class AbstractController
     {
         return $this->response->json($this->fail($message));
     }
+
+    /**
+     * @return mixed|null
+     */
+    public function getUserId()
+    {
+        return getContext('userId');
+    }
 }

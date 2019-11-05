@@ -8,7 +8,6 @@
 
 namespace App\Service;
 
-use App\Constants\SocketCode;
 use App\Constants\SystemCode;
 use App\Model\UserApplyModel;
 use App\WebSocket\Common;
@@ -51,7 +50,7 @@ class ApplyService extends BaseService
         $socketCommon = $this->container->get(Common::class);
         $userFd = $socketCommon->getUserFd($request['friendId']);
         // 发送申请提醒
-        $socketCommon->sendTo($userFd, $this->sendMessage(SystemCode::OK, [], '好友申请添加提醒'));
+        $socketCommon->sendTo($userFd, $this->sendMessage(SystemCode::OK));
         return $this->success($result);
     }
 
@@ -78,6 +77,6 @@ class ApplyService extends BaseService
         if ($request['status'] == 2) {
             echo $userId;
         }
-        return $this->success();
+        return $this->success(1);
     }
 }

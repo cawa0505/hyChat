@@ -36,7 +36,7 @@ class UserModel extends BaseModel
      */
     public function getUserByAccount($account, $columns = ['*'])
     {
-        $user = $this->newQuery()->where('account', $account)->first($columns);
+        $user = $this->newQuery()->where('account', $account)->orWhere('phone', $account)->first($columns);
         if ($user) {
             return $user->toArray();
         }

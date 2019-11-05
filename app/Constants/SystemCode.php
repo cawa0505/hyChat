@@ -82,24 +82,6 @@ class SystemCode extends AbstractConstants
     const EMPTY_SIGNATURE = 10006;
 
     /**
-     * @HttpCode("401")
-     * @Messager("Timestamp is required")
-     */
-    const EMPTY_TIMESTAMP = 10007;
-
-    /**
-     * @HttpCode("401")
-     * @Message("Incorrect api key")
-     */
-    const INCORRECT_API_KEY = 10008;
-
-    /**
-     * @HttpCode("401")
-     * @Message("Incorrect signature")
-     */
-    const INCORRECT_SIGNATURE = 10009;
-
-    /**
      * @HttpCode("400")
      * @Message("Request is expired")
      */

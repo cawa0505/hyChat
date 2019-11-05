@@ -10,16 +10,21 @@ trait Response
 {
     /**
      * 拼装成功数据
-     * @param array $data
+     * @param $data
      * @param int $code
      * @return array
      */
-    public function success($data = [], $code = 200)
+    public function success($data, $code = 200)
     {
-        $count = count($data);
-        if ($count == count($data, 1) && $count) {
+        if (is_string($data)) {
             $count = 1;
+        } else {
+            $count = count($data);
+            if ($count == count($data, 1) && $count) {
+                $count = 1;
+            }
         }
+
         return [
             'code' => $code,
             'result' => [

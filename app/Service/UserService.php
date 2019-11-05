@@ -79,6 +79,8 @@ class UserService extends BaseService
         if (!$result) {
             return $this->fail("注册失败");
         }
+        $key = 'mobileVerifyCode:' . $phone;
+        redis()->del($key);
         $response = $this->userModel->getUserByAccount($account);
         return $this->success($response);
     }

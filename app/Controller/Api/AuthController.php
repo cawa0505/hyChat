@@ -34,7 +34,7 @@ class AuthController extends AbstractController
      */
     public function login(LoginRequest $request)
     {
-        $response = $this->userService->handleLogin($request->validated());
+        $response = $this->userService->handleLogin($request->all());
         return $this->success($response);
     }
 
@@ -44,14 +44,16 @@ class AuthController extends AbstractController
      */
     public function register(RegisterRequest $request)
     {
-        $cacheCode = redis()->get($request['phone']);
+        $phone = $request->input('phone');
+        $key = 'mobileVerifyCode:' . $phone;
+        $cacheCode = redis()->get($key);
         if (!$cacheCode) {
             return $this->error("验证码无效");
         }
-        if ($cacheCode != $request['code']) {
+        if ($cacheCode != $request->input('code')) {
             return $this->error("验证码不匹配");
         }
-        $response = $this->userService->handleRegister($request->validated());
+        $response = $this->userService->handleRegister($request->all());
         return $this->success($response);
     }
 
@@ -72,7 +74,7 @@ class AuthController extends AbstractController
      */
     public function retrieve(RegisterRequest $request)
     {
-        $response = $this->userService->updatePassword($request);
+        $response = $this->userService->updatePassword($request->all());
         return $this->success($response);
     }
 }

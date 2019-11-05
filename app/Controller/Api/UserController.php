@@ -34,8 +34,7 @@ class UserController extends AbstractController
      */
     public function info()
     {
-        $userId = getContext('userId');
-        $result = $this->userModel->getUserByUserId($userId);
+        $result = $this->userModel->getUserByUserId($this->getUserId());
         return $this->success($result);
     }
 
@@ -45,8 +44,7 @@ class UserController extends AbstractController
      */
     public function friend()
     {
-        $userId = getContext('userId');
-        $result = $this->container->get(UserFriendModel::class)->getUserFriend($userId);
+        $result = $this->container->get(UserFriendModel::class)->getUserFriend($this->getUserId());
         return $this->success($result);
     }
 
@@ -56,8 +54,7 @@ class UserController extends AbstractController
      */
     public function group()
     {
-        $userId = getContext('userId');
-        $result = $this->container->get(UserGroupModel::class)->getGroupByUserId($userId);
+        $result = $this->container->get(UserGroupModel::class)->getGroupByUserId($this->getUserId());
         return $this->success($result);
     }
 
@@ -67,8 +64,7 @@ class UserController extends AbstractController
      */
     public function apply()
     {
-        $userId = getContext('userId');
-        $result = $this->container->get(ApplyService::class)->getApplyByUserId($userId);
+        $result = $this->container->get(ApplyService::class)->getApplyByUserId($this->getUserId());
         return $this->success($result);
     }
 }
