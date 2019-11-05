@@ -33,6 +33,14 @@ class DecryptMiddleware implements MiddlewareInterface
     protected $response;
 
     /**
+     * @var array
+     */
+    protected $whiteList = [
+        '/api/auth/login',
+        '/api/auth/register',
+    ];
+
+    /**
      * TokenMiddleware constructor.
      * @param HttpResponse $response
      * @param RequestInterface $request
@@ -50,18 +58,22 @@ class DecryptMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if (!isset($request->encrypt)) {
-            return $this->response->json($this->fail("encrypt 不能为空"));
+        $requestUri = $request->getUri()->getPath();
+        // 忽略路由
+        if (!in_array($requestUri, $this->whiteList)) {
+            if (!isset($request->encrypt)) {
+                return $this->response->json($this->fail("encrypt 不能为空"));
+            }
+            /** @var RsaEncryption $rsa */
+            $rsa = container()->get(RsaEncryption::class);
+            $rsaArray = $rsa->privateDecrypt($request->encrypt);
+            if (!is_array($rsaArray)) {
+                logger("rsa")->error(json_encode($rsaArray));
+                return $this->response->json($this->fail("解析失败"));
+            }
+            unset($request->encrypt);
+            $request->withParsedBody($rsaArray);
         }
-        /** @var RsaEncryption $rsa */
-        $rsa = container()->get(RsaEncryption::class);
-        $rsaArray = $rsa->privateDecrypt($request->encrypt);
-        if (!is_array($rsaArray)) {
-            logger("rsa")->error(json_encode($rsaArray));
-            return $this->response->json($this->fail("解析失败"));
-        }
-        unset($request->encrypt);
-        $request->withParsedBody($rsaArray);
         return $handler->handle($request);
     }
 }

@@ -34,7 +34,6 @@ class AuthController extends AbstractController
      */
     public function login(LoginRequest $request)
     {
-        dd($request->all());
         $response = $this->userService->handleLogin($request->getParsedBody());
         return $this->success($response);
     }
