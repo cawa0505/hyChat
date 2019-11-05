@@ -65,11 +65,10 @@ class TokenMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         // 判断Token 验证token
-        $params = $request->getParsedBody();
+        $token = $request->getHeader('Authorization')[0] ?? '';
         $requestUri = $request->getUri()->getPath();
         // 忽略路由
         if (!in_array($requestUri, $this->whiteList)) {
-            $token = $params['token'] ?? '';
             if (!$token) {
                 return $this->response->json($this->fail("token不能为空"));
             }
@@ -88,7 +87,6 @@ class TokenMiddleware implements MiddlewareInterface
                 return $this->response->json($this->fail("该账号已在别处登陆,请您重新登陆"));
             }
             setContext('userId', $user['id']);
-            $request->withParsedBody(['userId' => $user['id']]);
         }
         return $handler->handle($request);
     }

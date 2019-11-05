@@ -14,6 +14,7 @@ use App\Request\Auth\LoginRequest;
 use App\Service\UserService;
 use Hyperf\Di\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Class AuthController

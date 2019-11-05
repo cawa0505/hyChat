@@ -38,7 +38,6 @@ class DecryptMiddleware implements MiddlewareInterface
      */
     protected $whiteList = [
         '/api/auth/login',
-        '/api/auth/register',
     ];
 
     /**
@@ -60,28 +59,36 @@ class DecryptMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $requestUri = $request->getUri()->getPath();
-        // 忽略路由
         if (!in_array($requestUri, $this->whiteList)) {
-            if (!isset($request->encrypt)) {
+            $param = $request->getParsedBody();
+            //私钥解密
+            if (!isset($param['encrypt'])) {
                 return $this->response->json($this->fail("encrypt 不能为空"));
             }
-            if (!isset($request->sign)) {
-                return $this->response->json($this->fail("sign 不能为空"));
-            }
-            //参数验签
-            $sign = container()->get(CheckSign::class);
-            if (!$sign->checkSign($request->getParsedBody())) {
-                return $this->response->json($this->fail("sign 不能为空"))->withStatus(422);
-            };
+
             /** @var RsaEncryption $rsa */
             $rsa = container()->get(RsaEncryption::class);
-            $rsaArray = $rsa->privateDecrypt($request->encrypt);
+            $rsaArray = $rsa->privateDecrypt($param['encrypt']);
+
             if (!is_array($rsaArray)) {
                 logger("rsa")->error(json_encode($rsaArray));
                 return $this->response->json($this->fail("解析失败"));
             }
-            unset($request->encrypt);
-            $request->withParsedBody($rsaArray);
+
+            //参数验签
+            if (!isset($rsaArray["sign"])) {
+                return $this->response->json($this->fail("sign 不能为空"));
+            }
+
+            setContext(ServerRequestInterface::class, $rsaArray);
+
+            $httpRequest = getContext(ServerRequestInterface::class);
+
+            /** @var CheckSign $sign */
+            $sign = container()->get(CheckSign::class);
+            if (!$sign->checkSign($httpRequest)) {
+                return $this->response->json($this->fail("签名错误"))->withStatus(422);
+            };
         }
         return $handler->handle($request);
     }

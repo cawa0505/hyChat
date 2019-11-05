@@ -18,7 +18,7 @@ class CheckSign
         if ($sing == $arr['sign']) {
             return true;
         } else {
-            logger("sign")->error("签名错误".$arr['sign']);
+            logger()->error("签名错误".$arr['sign']);
             return false;
         }
     }
