@@ -17,9 +17,9 @@ class SystemCode extends AbstractConstants
 {
     /**
      * @HttpCode("200")
-     * @Message("OK")
+     * @Message("success")
      */
-    const OK = 200;
+    const SUCCESS = 200;
 
     /**
      * @HttpCode("404")

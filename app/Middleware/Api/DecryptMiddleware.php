@@ -9,6 +9,7 @@
 namespace App\Middleware\Api;
 
 
+use App\Constants\SystemCode;
 use App\Traits\Response;
 use App\Utility\CheckSign;
 use App\Utility\RsaEncryption;
@@ -80,14 +81,12 @@ class DecryptMiddleware implements MiddlewareInterface
                 return $this->response->json($this->fail("sign 不能为空"));
             }
 
-            setContext(ServerRequestInterface::class, $rsaArray);
-
-            $httpRequest = getContext(ServerRequestInterface::class);
+            setContext('request', $rsaArray);
 
             /** @var CheckSign $sign */
             $sign = container()->get(CheckSign::class);
-            if (!$sign->checkSign($httpRequest)) {
-                return $this->response->json($this->fail("签名错误"))->withStatus(422);
+            if (!$sign->checkSign($rsaArray)) {
+                return $this->response->json($this->fail("签名错误"))->withStatus(SystemCode::UNPROCESSABLE_ENTITY);
             };
         }
         return $handler->handle($request);

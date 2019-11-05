@@ -50,7 +50,7 @@ class ApplyService extends BaseService
         $socketCommon = $this->container->get(Common::class);
         $userFd = $socketCommon->getUserFd($request['friendId']);
         // 发送申请提醒
-        $socketCommon->sendTo($userFd, $this->sendMessage(SystemCode::OK));
+        $socketCommon->sendTo($userFd, $this->sendMessage(SystemCode::SUCCESS));
         return $this->success($result);
     }
 

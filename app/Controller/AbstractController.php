@@ -75,10 +75,21 @@ abstract class AbstractController
     }
 
     /**
+     * 获取中间件解析token得到的userId
      * @return mixed|null
      */
-    public function getUserId()
+    protected function getUserId()
     {
         return getContext('userId');
+    }
+
+    /**
+     * 获取所有请求数据
+     * @return array
+     */
+    protected function getRequestData()
+    {
+        $requestData = getContext('request');
+        return array_merge($requestData, $this->request->all());
     }
 }
