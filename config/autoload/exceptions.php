@@ -7,7 +7,9 @@ use Hyperf\WebSocketServer\Exception\Handler\WebSocketExceptionHandler;
 return [
     'handler' => [
         'http' => [
-            App\Exception\AppExceptionHandler::class,
+            App\Exception\Handler\ValidationExceptionHandler::class,
+            App\Exception\Handler\AppExceptionHandler::class,
+
         ],
         'ws' => [
             WebSocketExceptionHandler::class

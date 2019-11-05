@@ -10,6 +10,7 @@ namespace App\Controller\Api;
 
 use App\Controller\AbstractController;
 use App\Model\UserModel;
+use App\Request\AuthRequest;
 use App\Service\UserService;
 use Hyperf\Di\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface;
@@ -28,21 +29,24 @@ class AuthController extends AbstractController
 
     /**
      * 用户登录
+     * @param AuthRequest $authRequest
      * @return ResponseInterface
      */
-    public function login()
+    public function login(AuthRequest $authRequest)
     {
-        $request = $this->request->getParsedBody();
-        $rules = [
-            'account' => 'required|min:8|alpha_num',
-            'password' => 'required|min:8|alpha_dash',
-        ];
-        // 表单验证
-        $validator = $this->validationFactory->make($request, $rules);
-        if ($validator->fails()) {
-            $errorMessage = $validator->errors();
-            return $this->error($errorMessage);
-        }
+        $result = $authRequest->all();
+        dd($result);
+//        $request = $this->request->getParsedBody();
+//        $rules = [
+//            'account' => 'required|min:8|alpha_num',
+//            'password' => 'required|min:8|alpha_dash',
+//        ];
+//        // 表单验证
+//        $validator = $this->validationFactory->make($request, $rules);
+//        if ($validator->fails()) {
+//            $errorMessage = $validator->errors();
+//            return $this->error($errorMessage);
+//        }
         $response = $this->userService->handleLogin($request);
         return $this->success($response);
     }
