@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Amqp\Consumer;
+namespace App\Queue\Consumer;
 
 use Hyperf\Amqp\Result;
 use Hyperf\Amqp\Annotation\Consumer;

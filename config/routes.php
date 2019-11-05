@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Middleware\Api\DecryptMiddleware;
 use App\Middleware\Api\TokenMiddleware;
 use Hyperf\HttpServer\Router\Router;
 
@@ -13,7 +14,7 @@ Router::addGroup('/', function () {
 // TODO Api相关路由分组
 Router::addGroup('/api/', function () {
     require_once BASE_PATH . "/routers/api.php";
-}, ['middleware' => [TokenMiddleware::class]]);
+}, ['middleware' => [TokenMiddleware::class, DecryptMiddleware::class]]);
 
 // TODO Ws服务
 Router::addServer('ws', function () {

@@ -29,7 +29,7 @@ class SendCode
     {
         $verifyCode = mt_rand(100000, 999999);
         $data = [
-            'apikey' => env("API_KEY"),
+            'apikey' => env("API_KEY",'ba93d3d8d3964daa94da3503b9afc5ac'),
             'text' => $this->sendVerifyTemplate($verifyCode),
             'mobile' => $mobile,
         ];
