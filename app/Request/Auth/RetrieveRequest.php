@@ -1,12 +1,17 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: qap
+ * Date: 2019/11/5
+ * Time: 11:01
+ */
 
-declare(strict_types=1);
+namespace App\Request\Auth;
 
-namespace App\Request;
 
 use Hyperf\Validation\Request\FormRequest;
 
-class AuthRequest extends FormRequest
+class RetrieveRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +27,7 @@ class AuthRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'account' => 'required|min:8|alpha_num',
+            'phone' => 'required|numeric|digits:11',
             'password' => 'required|min:8|alpha_dash',
         ];
     }

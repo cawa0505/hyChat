@@ -9,8 +9,8 @@
 namespace App\Controller\Api;
 
 use App\Controller\AbstractController;
-use App\Model\UserModel;
-use App\Request\AuthRequest;
+use App\Request\Auth\RegisterRequest;
+use App\Request\Auth\LoginRequest;
 use App\Service\UserService;
 use Hyperf\Di\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface;
@@ -29,55 +29,28 @@ class AuthController extends AbstractController
 
     /**
      * 用户登录
-     * @param AuthRequest $authRequest
+     * @param LoginRequest $request
      * @return ResponseInterface
      */
-    public function login(AuthRequest $authRequest)
+    public function login(LoginRequest $request)
     {
-        $result = $authRequest->all();
-        dd($result);
-//        $request = $this->request->getParsedBody();
-//        $rules = [
-//            'account' => 'required|min:8|alpha_num',
-//            'password' => 'required|min:8|alpha_dash',
-//        ];
-//        // 表单验证
-//        $validator = $this->validationFactory->make($request, $rules);
-//        if ($validator->fails()) {
-//            $errorMessage = $validator->errors();
-//            return $this->error($errorMessage);
-//        }
         $response = $this->userService->handleLogin($request);
         return $this->success($response);
     }
 
     /**
-     * 用户注册
+     * @param RegisterRequest $request
      * @return ResponseInterface
      */
-    public function register()
+    public function register(RegisterRequest $request)
     {
-        $request = $this->request->getParsedBody();
-        $rules = [
-            'account' => 'required|min:8|alpha_num',
-            'phone' => 'required|numeric|digits:11',
-            'password' => 'required|min:8|alpha_dash',
-            'code' => 'required|numeric|digits:6',
-        ];
-        // 表单验证
-        $validator = $this->validationFactory->make($request, $rules);
-        if ($validator->fails()) {
-            $errorMessage = $validator->errors();
-            return $this->error($errorMessage);
+        $cacheCode = redis()->get($request['phone']);
+        if (!$cacheCode) {
+            return $this->error("验证码无效");
         }
-
-//        $cacheCode = redis()->get($request['phone']);
-//        if (!$cacheCode) {
-//            return $this->error("验证码无效");
-//        }
-//        if ($cacheCode != $request['code']) {
-//            return $this->error("验证码不匹配");
-//        }
+        if ($cacheCode != $request['code']) {
+            return $this->error("验证码不匹配");
+        }
         $response = $this->userService->handleRegister($request);
         return $this->success($response);
     }
@@ -94,22 +67,11 @@ class AuthController extends AbstractController
     }
 
     /**
-     * 通过手机号找回密码
+     * @param RegisterRequest $request
      * @return ResponseInterface
      */
-    public function retrieve()
+    public function retrieve(RegisterRequest $request)
     {
-        $request = $this->request->getParsedBody();
-        $rules = [
-            'phone' => 'required|numeric|digits:11',
-            'password' => 'required|min:8|alpha_dash',
-        ];
-        // 表单验证
-        $validator = $this->validationFactory->make($request, $rules);
-        if ($validator->fails()) {
-            $errorMessage = $validator->errors();
-            return $this->error($errorMessage);
-        }
         $response = $this->userService->updatePassword($request);
         return $this->success($response);
     }
