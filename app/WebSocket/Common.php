@@ -254,7 +254,13 @@ class Common
         foreach ($userIds as $userId) {
             $receivers[] = $this->getUserFd($userId);
         }
-        return $this->sendToSome($message, $receivers, $excludeUserId);
+        $exclude = [];
+        if ($excludeUserId) {
+            foreach ($excludeUserId as $userId) {
+                $exclude[] = $this->getUserFd($userId);
+            }
+        }
+        return $this->sendToSome($message, $receivers, $exclude);
     }
 
     /**
