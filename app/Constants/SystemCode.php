@@ -13,7 +13,7 @@ use Hyperf\Constants\Annotation\Constants;
  * @method static getMessage(int $code)
  * @method static getHttpCode(int $code)
  */
-class StatusCode extends AbstractConstants
+class SystemCode extends AbstractConstants
 {
     /**
      * @HttpCode("200")
