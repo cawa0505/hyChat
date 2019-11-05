@@ -34,7 +34,7 @@ class AuthController extends AbstractController
      */
     public function login(LoginRequest $request)
     {
-        $response = $this->userService->handleLogin($request->getParsedBody());
+        $response = $this->userService->handleLogin($request->validated());
         return $this->success($response);
     }
 
@@ -51,7 +51,7 @@ class AuthController extends AbstractController
         if ($cacheCode != $request['code']) {
             return $this->error("验证码不匹配");
         }
-        $response = $this->userService->handleRegister($request);
+        $response = $this->userService->handleRegister($request->validated());
         return $this->success($response);
     }
 

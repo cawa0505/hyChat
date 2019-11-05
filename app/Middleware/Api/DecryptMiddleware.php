@@ -10,6 +10,7 @@ namespace App\Middleware\Api;
 
 
 use App\Traits\Response;
+use App\Utility\CheckSign;
 use App\Utility\RsaEncryption;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface as HttpResponse;
@@ -64,6 +65,14 @@ class DecryptMiddleware implements MiddlewareInterface
             if (!isset($request->encrypt)) {
                 return $this->response->json($this->fail("encrypt 不能为空"));
             }
+            if (!isset($request->sign)) {
+                return $this->response->json($this->fail("sign 不能为空"));
+            }
+            //参数验签
+            $sign = container()->get(CheckSign::class);
+            if (!$sign->checkSign($request->getParsedBody())) {
+                return $this->response->json($this->fail("sign 不能为空"))->withStatus(422);
+            };
             /** @var RsaEncryption $rsa */
             $rsa = container()->get(RsaEncryption::class);
             $rsaArray = $rsa->privateDecrypt($request->encrypt);
