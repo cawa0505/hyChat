@@ -8,7 +8,7 @@ class GenNameFirstLetter
 {
     /**
      * 截取姓名首字母
-     * @param $name
+     * @param $userName
      * @return bool|string
      */
     public function getFirstChar($userName)
@@ -44,7 +44,6 @@ class GenNameFirstLetter
             if ($asc >= -11847 and $asc <= -11056) return "Y";
             if ($asc >= -11055 and $asc <= -10247) return "Z";
         } else if (ord($s) >= 48 and ord($s) <= 57) { //数字开头
-
             switch (iconv_substr($s, 0, 1, 'utf-8')) {
                 case 1:
                     return "Y";
@@ -67,17 +66,15 @@ class GenNameFirstLetter
                 case 0:
                     return "L";
             }
-        } else if (ord($s) >= 65 and ord($s) <= 90) { //大写英文开头
-
+        } else if (ord($s) >= 65 and ord($s) <= 90) {
+            //大写英文开头
             return substr($s, 0, 1);
-
-        } else if (ord($s) >= 97 and ord($s) <= 122) { //小写英文开头
-
+        } else if (ord($s) >= 97 and ord($s) <= 122) {
+            //小写英文开头
             return strtoupper(substr($s, 0, 1));
-
         } else {
-            return "#";
             //中英混合的词语，不适合上面的各种情况，因此直接提取首个字符即可
+            return "#";
         }
     }
 

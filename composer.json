@@ -17,6 +17,7 @@
         "ext-redis": "*",
         "ext-mongodb": "*",
         "ext-openssl": "*",
+        "ext-iconv": "*",
         "ext-swoole": ">=4.2",
         "hyperf/cache": "^1.1",
         "hyperf/command": "^1.1",
