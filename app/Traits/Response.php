@@ -2,6 +2,8 @@
 
 namespace App\Traits;
 
+use App\Constants\ApiCode;
+
 /**
  * Trait ResponseTrait
  * @package App\Traits
@@ -16,6 +18,7 @@ trait Response
      */
     public function success($data, $code = 200)
     {
+
         if (is_string($data)) {
             $count = 1;
         } else {
@@ -27,7 +30,8 @@ trait Response
 
         return [
             'code' => $code,
-            'result' => [
+            'result' =>
+                [
                 'count' => $count,
                 'data' => $data
             ]
@@ -40,8 +44,11 @@ trait Response
      * @param string $message
      * @return array
      */
-    public function fail($message = 'error', $code = 100)
+    public function fail(int $code=100,$message=null)
     {
+        if (is_null($message)) {
+            $message= ApiCode::getMessage($code);
+        }
         return [
             'code' => $code,
             'message' => $message

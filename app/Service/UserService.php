@@ -8,6 +8,7 @@
 
 namespace App\Service;
 
+use App\Constants\ApiCode;
 use App\Model\UserModel;
 use App\Utility\SendCode;
 use App\WebSocket\Common;
@@ -67,7 +68,7 @@ class UserService extends BaseService
         $phone = $request['phone'];
         $user = $this->userModel->getUserByAccount($account);
         if ($user) {
-            return $this->fail("此用户已存在");
+            return $this->fail(ApiCode::AUTH_USER_EXIST);
         }
         $data = [
             'account' => $account,
@@ -77,7 +78,7 @@ class UserService extends BaseService
         ];
         $result = $this->userModel->createAccount($data);
         if (!$result) {
-            return $this->fail("注册失败");
+            return $this->fail(ApiCode::AUTH_REGISTER_ERR);
         }
         $key = 'mobileVerifyCode:' . $phone;
         redis()->del($key);

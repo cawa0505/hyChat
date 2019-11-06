@@ -8,6 +8,7 @@
 
 namespace App\Controller\Api;
 
+use App\Constants\ApiCode;
 use App\Controller\AbstractController;
 use App\Request\Auth\RegisterRequest;
 use App\Request\Auth\LoginRequest;
@@ -48,10 +49,10 @@ class AuthController extends AbstractController
         $key = 'mobileVerifyCode:' . $phone;
         $cacheCode = redis()->get($key);
         if (!$cacheCode) {
-            return $this->errorResponse("验证码无效");
+            return $this->errorResponse(ApiCode::AUTH_CODE_ERROR);
         }
         if ($cacheCode != $request->input('code')) {
-            return $this->errorResponse("验证码不匹配");
+            return $this->errorResponse(ApiCode::AUTH_CODE_ERROR);
         }
         $response = $this->userService->handleRegister($request->all());
         return $this->successResponse($response);

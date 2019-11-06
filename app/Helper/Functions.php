@@ -172,3 +172,17 @@ if (!function_exists('mongoTask')) {
         return container()->get(\App\Utility\MongoClient::class);
     }
 }
+
+if (!function_exists('tableComment')) {
+
+    /**
+     * 表备注
+     * @param $table
+     * @param $comment
+     */
+    function tableComment($table,$comment)
+    {
+        $prefix=env('DB_PREFIX', '');
+        \Hyperf\DbConnection\Db::statement("ALTER TABLE `".$prefix.$table."` comment '".$comment."'");
+    }
+}

@@ -69,8 +69,8 @@ abstract class AbstractController
      * @param $message
      * @return \Psr\Http\Message\ResponseInterface
      */
-    protected function errorResponse($message)
+    protected function errorResponse($code=100,$message=null)
     {
-        return $this->response->json($this->fail($message));
+        return $this->response->json($this->fail($code,$message));
     }
 }
