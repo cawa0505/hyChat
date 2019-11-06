@@ -73,7 +73,7 @@ class SocketEvent implements OnOpenInterface, OnMessageInterface, OnCloseInterfa
                     'fd' => $request->fd
                 ];
                 $common->setUserFd($user['id'], json_encode($fdInfo));
-                $common->push($request->fd, 'welcome to you');
+                $server->push($request->fd, 'welcome to you');
                 $common->sendToSome(sprintf("用户{$request->fd}加入聊天室"), $common->getConnectionList(), [$request->fd]);
             }
         }

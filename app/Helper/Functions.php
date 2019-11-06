@@ -165,11 +165,11 @@ if (!function_exists("queue")) {
 
 if (!function_exists('mongoTask')) {
     /**
-     * @return \App\Utility\MongoClient
+     * @return \App\Utility\Client\MongoClient
      */
     function mongoTask()
     {
-        return container()->get(\App\Utility\MongoClient::class);
+        return container()->get(\App\Utility\Client\MongoClient::class);
     }
 }
 

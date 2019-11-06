@@ -71,7 +71,7 @@ class ApplyService extends BaseService
      * @param $userId
      * @return array
      */
-    public function review($request, $userId)
+    public function reviewApply($request, $userId)
     {
         // status 1 通过 2 拒绝
         if ($request['status'] == 2) {

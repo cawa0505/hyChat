@@ -38,6 +38,7 @@ class DecryptMiddleware implements MiddlewareInterface
      * @var array
      */
     protected $whiteList = [
+        '/',
         '/api/auth/login',
     ];
 

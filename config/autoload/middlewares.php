@@ -10,7 +10,7 @@ use Hyperf\Validation\Middleware\ValidationMiddleware;
 return [
     'http' => [
         CorsMiddleware::class,
-        DecryptMiddleware::class,
+//        DecryptMiddleware::class,
         ValidationMiddleware::class
     ],
 ];
