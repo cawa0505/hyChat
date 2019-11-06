@@ -16,14 +16,15 @@ class UserModel extends BaseModel
     protected $table = 'user';
 
     /**
+     * 通过手机号和账号搜索用户
      * @param $account
      * @return array|null
      */
     public function searchUserByAccount($account)
     {
         $user = $this->newQuery()
-            ->orWhere('account','like', $account."%")
-            ->orWhere("phone", 'like',$account)
+            ->orWhere('account', 'like', "$account%")
+            ->orWhere("phone", 'like', "$account%")
             ->get(['id', 'account', 'phone', 'nick_name', 'status', 'image_url']);
         if ($user) {
             return $user->toArray();
@@ -33,6 +34,7 @@ class UserModel extends BaseModel
     }
 
     /**
+     * 通过手机号或账号获取用户信息
      * @param $account
      * @param array $columns
      * @return array|null
@@ -48,6 +50,7 @@ class UserModel extends BaseModel
     }
 
     /**
+     * 通过用户ids 获取用户信息
      * @param $userIds
      * @param array $columns
      * @return array
@@ -63,6 +66,7 @@ class UserModel extends BaseModel
     }
 
     /**
+     * 通过用户id获取用户信息
      * @param $userId
      * @param array $columns
      * @return array|null

@@ -34,9 +34,7 @@ if (!function_exists('dd')) {
      */
     function dd(...$data)
     {
-        stdout()->info("-----------------打印调试开启-----------------");
         print_r($data);
-        stdout()->info("-----------------打印调试结束-----------------");
     }
 }
 

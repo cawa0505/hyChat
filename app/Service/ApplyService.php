@@ -8,8 +8,10 @@
 
 namespace App\Service;
 
+use App\Constants\ApiCode;
 use App\Constants\SystemCode;
 use App\Model\UserApplyModel;
+use App\Model\UserFriendModel;
 use App\WebSocket\Common;
 use Hyperf\Di\Annotation\Inject;
 
@@ -34,7 +36,7 @@ class ApplyService extends BaseService
     public function createApply($request, $userId)
     {
         if ($request['friendId'] == $userId) {
-            return $this->fail("不能添加自己为好友");
+            return $this->fail(ApiCode::CANT_ADD_SELF);
         }
         $data = [
             'apply_user_id' => $userId,
@@ -48,9 +50,8 @@ class ApplyService extends BaseService
         $result = $this->userApplyModel->create($data);
         /** 实例化socketCommon对象 @var Common $socketCommon */
         $socketCommon = container()->get(Common::class);
-        $userFd = $socketCommon->getUserFd($request['friendId']);
         // 发送申请提醒
-        $socketCommon->sendTo($userFd, $this->sendMessage(SystemCode::SUCCESS));
+        $socketCommon->sendToUser($request['friendId'], $this->sendMessage(SystemCode::SUCCESS));
         return $this->success($result);
     }
 
@@ -73,10 +74,16 @@ class ApplyService extends BaseService
      */
     public function reviewApply($request, $userId)
     {
-        // status 1 通过 2 拒绝
+        // TODO status 1 通过 2 拒绝
         if ($request['status'] == 2) {
-            echo $userId;
+            echo "拒绝";
         }
-        return $this->success(1);
+        /** @var UserApplyModel $userApply */
+        $userApply = container()->get(UserApplyModel::class);
+        $applyResult = $userApply->getApplyById($request['applyId']);
+        /** @var UserFriendModel $friend */
+        $friend = container()->get(UserFriendModel::class);
+        $result = $friend->createFriend($applyResult['user_id'], $applyResult['apply_user_id']);
+        return $this->success($result);
     }
 }

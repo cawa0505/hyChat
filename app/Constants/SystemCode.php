@@ -52,7 +52,7 @@ class SystemCode extends AbstractConstants
     const INCORRECT_PASSWORD = 10001;
 
     /**
-     * @HttpCode("400")
+     * @HttpCode("10002")
      * @Message("Token is required")
      */
     const EMPTY_TOKEN = 10002;

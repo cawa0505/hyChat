@@ -66,12 +66,13 @@ abstract class AbstractController
     }
 
     /**
-     * @param $message
+     * @param int $code
+     * @param null $message
      * @return \Psr\Http\Message\ResponseInterface
      */
-    protected function errorResponse($code=100,$message=null)
+    protected function errorResponse($code = 100, $message = null)
     {
-        return $this->response->json($this->fail($code,$message));
+        return $this->response->json($this->fail($code, $message));
     }
 
     /**
