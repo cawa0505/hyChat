@@ -10,9 +10,10 @@ namespace App\Controller\Api;
 
 
 use App\Controller\AbstractController;
+use App\Request\Apply\CreateRequest;
+use App\Request\Apply\ReviewRequest;
 use App\Service\ApplyService;
 use Hyperf\Di\Annotation\Inject;
-use MongoDB\Driver\Exception\Exception;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -29,46 +30,23 @@ class ApplyController extends AbstractController
 
     /**
      * 添加好友申请
+     * @param CreateRequest $request
      * @return ResponseInterface
      */
-    public function create()
+    public function create(CreateRequest $request)
     {
-        $request = $this->request->all();
-        $rules = ['friendId' => 'required'];
-        // 表单验证
-        $validator = $this->validationFactory->make($request, $rules);
-        if ($validator->fails()) {
-            $errorMessage = $validator->errors()->first();
-            return $this->errorResponse($errorMessage);
-        }
-        $result = $this->applyService->createApply($request, $this->getUserId());
-        return $this->successResponse($result);
-    }
-
-    /**
-     * @return ResponseInterface
-     */
-    public function record()
-    {
-        $result = $this->applyService->getApplyByUserId($this->getUserId());
+        $result = $this->applyService->createApply($request->all(), $this->getUserId());
         return $this->successResponse($result);
     }
 
     /**
      * 审核好友申请
+     * @param ReviewRequest $request
      * @return ResponseInterface
      */
-    public function review()
+    public function review(ReviewRequest $request)
     {
-        $request = $this->request->getParsedBody();
-        $rules = ['applyId' => 'required', 'status' => 'required'];
-        // 表单验证
-        $validator = $this->validationFactory->make($request, $rules);
-        if ($validator->fails()) {
-            $errorMessage = $validator->errors()->first();
-            return $this->errorResponse($errorMessage);
-        }
-        $result = $this->applyService->review($request, $this->getUserId());
+        $result = $this->applyService->reviewApply($request->all(), $this->getUserId());
         return $this->successResponse($result);
     }
 }

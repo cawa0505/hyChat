@@ -22,8 +22,8 @@ class UserModel extends BaseModel
     public function searchUserByAccount($account)
     {
         $user = $this->newQuery()
-            ->orWhereIn('account', $account)
-            ->orWhereIn("phone", $account)
+            ->orWhere('account','like', $account."%")
+            ->orWhere("phone", 'like',$account)
             ->get(['id', 'account', 'phone', 'nick_name', 'status', 'image_url']);
         if ($user) {
             return $user->toArray();
