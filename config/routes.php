@@ -15,12 +15,6 @@ Router::addGroup('/api/', function () {
     require_once BASE_PATH . "/routers/api.php";
 }, ['middleware' => [TokenMiddleware::class]]);
 
-// TODO Ws服务
-Router::addServer('wsApp', function () {
-    Router::get('/wsApp', 'App\WebSocket\Event\AppSocketEvent');
-});
-
-// TODO Ws服务
-Router::addServer('wsPc', function () {
-    Router::get('/wsPc', 'App\WebSocket\Event\PcSocketEvent');
+Router::addServer('socket', function () {
+    Router::get('/socket', 'App\WebSocket\AppSocketEvent');
 });
