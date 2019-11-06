@@ -37,11 +37,11 @@ class RoomController extends AbstractController
         $validator = $this->validationFactory->make($request, $rules);
         if ($validator->fails()) {
             $errorMessage = $validator->errors()->first();
-            return $this->error($errorMessage);
+            return $this->errorResponse($errorMessage);
         }
         $userId = getContext("userId");
         $result = $this->roomService->createRoom($userId, $request['friendId']);
-        return $this->success($result);
+        return $this->successResponse($result);
     }
 
     /**
@@ -56,10 +56,10 @@ class RoomController extends AbstractController
         $validator = $this->validationFactory->make($request, $rules);
         if ($validator->fails()) {
             $errorMessage = $validator->errors()->first();
-            return $this->error($errorMessage);
+            return $this->errorResponse($errorMessage);
         }
         $userId = getContext("userId");
         $result = $this->roomService->deleteRoom($userId, $request['friendId']);
-        return $this->success($result);
+        return $this->successResponse($result);
     }
 }

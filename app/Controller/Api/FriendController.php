@@ -31,16 +31,9 @@ class FriendController extends AbstractController
      */
     public function search()
     {
-        $request = $this->request->getParsedBody();
-        $rules = ['account' => 'required'];
-        // 表单验证
-        $validator = $this->validationFactory->make($request, $rules);
-        if ($validator->fails()) {
-            $errorMessage = $validator->errors()->first();
-            return $this->error($errorMessage);
-        }
-        $result = $this->friendService->searchFriend($request['account']);
-        return $this->success($result);
+        $account = $this->request->inputs(['account','phone']);
+        $result = $this->friendService->searchFriend($account);
+        return $this->successResponse($result);
     }
 
     /**
@@ -49,16 +42,8 @@ class FriendController extends AbstractController
      */
     public function delete()
     {
-        $request = $this->request->getParsedBody();
-        $rules = ['friendId' => 'required|numeric'];
-        // 表单验证
-        $validator = $this->validationFactory->make($request, $rules);
-        if ($validator->fails()) {
-            $errorMessage = $validator->errors()->first();
-            return $this->error($errorMessage);
-        }
-        $userId = getContext('userId');
-        $result = $this->friendService->deleteFriend($request['friendId'], $userId);
-        return $this->success($result);
+        $friendId = $this->request->input('friendId');
+        $result = $this->friendService->deleteFriend($friendId, $this->getUserId());
+        return $this->successResponse($result);
     }
 }

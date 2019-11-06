@@ -32,17 +32,17 @@ class ApplyController extends AbstractController
      */
     public function create()
     {
-        $request = $this->request->getParsedBody();
+        $request = $this->request->input('friendId');
         $rules = ['friendId' => 'required'];
         // 表单验证
         $validator = $this->validationFactory->make($request, $rules);
         if ($validator->fails()) {
             $errorMessage = $validator->errors()->first();
-            return $this->error($errorMessage);
+            return $this->errorResponse($errorMessage);
         }
         $userId = getContext('userId');
         $result = $this->applyService->createApply($request, $userId);
-        return $this->success($result);
+        return $this->successResponse($result);
     }
 
     /**
@@ -57,10 +57,10 @@ class ApplyController extends AbstractController
         $validator = $this->validationFactory->make($request, $rules);
         if ($validator->fails()) {
             $errorMessage = $validator->errors()->first();
-            return $this->error($errorMessage);
+            return $this->errorResponse($errorMessage);
         }
         $userId = getContext('userId');
         $result = $this->applyService->review($request,$userId);
-        return $this->success($result);
+        return $this->successResponse($result);
     }
 }

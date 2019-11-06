@@ -47,7 +47,7 @@ class ApplyService extends BaseService
         // 创建申请记录
         $result = $this->userApplyModel->create($data);
         /** 实例化socketCommon对象 @var Common $socketCommon */
-        $socketCommon = $this->container->get(Common::class);
+        $socketCommon = container()->get(Common::class);
         $userFd = $socketCommon->getUserFd($request['friendId']);
         // 发送申请提醒
         $socketCommon->sendTo($userFd, $this->sendMessage(SystemCode::SUCCESS));

@@ -81,7 +81,9 @@ class DecryptMiddleware implements MiddlewareInterface
                 return $this->response->json($this->fail("sign 不能为空"));
             }
 
-            setContext('request', $rsaArray);
+            $request = $request->withParsedBody($rsaArray);
+            /** @var ServerRequestInterface $server */
+            setContext(ServerRequestInterface::class, $request);
 
             /** @var CheckSign $sign */
             $sign = container()->get(CheckSign::class);

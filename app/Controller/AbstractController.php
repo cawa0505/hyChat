@@ -60,7 +60,7 @@ abstract class AbstractController
      * @param array $data
      * @return \Psr\Http\Message\ResponseInterface
      */
-    protected function success($data = [])
+    protected function successResponse($data = [])
     {
         return $this->response->json($data);
     }
@@ -69,27 +69,8 @@ abstract class AbstractController
      * @param $message
      * @return \Psr\Http\Message\ResponseInterface
      */
-    protected function error($message)
+    protected function errorResponse($message)
     {
         return $this->response->json($this->fail($message));
-    }
-
-    /**
-     * 获取中间件解析token得到的userId
-     * @return mixed|null
-     */
-    protected function getUserId()
-    {
-        return getContext('userId');
-    }
-
-    /**
-     * 获取所有请求数据
-     * @return array
-     */
-    protected function getRequestData()
-    {
-        $requestData = getContext('request');
-        return array_merge($requestData, $this->request->all());
     }
 }

@@ -16,10 +16,4 @@ use Psr\Container\ContainerInterface;
 class BaseService
 {
     use Response;
-
-    /**
-     * @Inject
-     * @var ContainerInterface
-     */
-    protected $container;
 }

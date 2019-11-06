@@ -86,7 +86,10 @@ class TokenMiddleware implements MiddlewareInterface
             if ($token != $userToken) {
                 return $this->response->json($this->fail("该账号已在别处登陆,请您重新登陆"));
             }
-            setContext('userId', $user['id']);
+
+            $request = $request->withParsedBody(['userId' => $user['id']]);
+            /** @var ServerRequestInterface $server */
+            setContext(ServerRequestInterface::class, $request);
         }
         return $handler->handle($request);
     }

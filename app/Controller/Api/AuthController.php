@@ -14,7 +14,6 @@ use App\Request\Auth\LoginRequest;
 use App\Service\UserService;
 use Hyperf\Di\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Class AuthController
@@ -36,7 +35,7 @@ class AuthController extends AbstractController
     public function login(LoginRequest $request)
     {
         $response = $this->userService->handleLogin($request->all());
-        return $this->success($response);
+        return $this->successResponse($response);
     }
 
     /**
@@ -49,13 +48,13 @@ class AuthController extends AbstractController
         $key = 'mobileVerifyCode:' . $phone;
         $cacheCode = redis()->get($key);
         if (!$cacheCode) {
-            return $this->error("验证码无效");
+            return $this->errorResponse("验证码无效");
         }
         if ($cacheCode != $request->input('code')) {
-            return $this->error("验证码不匹配");
+            return $this->errorResponse("验证码不匹配");
         }
         $response = $this->userService->handleRegister($request->all());
-        return $this->success($response);
+        return $this->successResponse($response);
     }
 
     /**
@@ -64,9 +63,8 @@ class AuthController extends AbstractController
      */
     public function logout()
     {
-        $userId = getContext('userId');
-        redis()->hDel('userToken', (string)$userId);
-        return $this->success();
+        redis()->hDel('userToken', (string)$this->getUserId());
+        return $this->successResponse();
     }
 
     /**
@@ -76,6 +74,6 @@ class AuthController extends AbstractController
     public function retrieve(RegisterRequest $request)
     {
         $response = $this->userService->updatePassword($request->all());
-        return $this->success($response);
+        return $this->successResponse($response);
     }
 }
