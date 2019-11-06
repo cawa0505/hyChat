@@ -2,13 +2,13 @@
 
 namespace App\WebSocket\Controller;
 
-use App\WebSocket\Common;
+use App\WebSocket\Service\CommonServer;
 
 /**
  * Class Index
  * @package App\WebSocket\Controller
  */
-class Index extends Common
+class Index extends CommonServer
 {
     /**
      * {"class":"Index","action":"index","content":"123456"}

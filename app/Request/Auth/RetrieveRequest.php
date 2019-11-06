@@ -28,6 +28,7 @@ class RetrieveRequest extends FormRequest
     {
         return [
             'phone' => 'required|numeric|digits:11',
+            'code' => 'required|numeric|digits:6',
             'password' => 'required|min:8|alpha_dash',
         ];
     }

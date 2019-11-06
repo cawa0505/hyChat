@@ -84,6 +84,12 @@ class ApplyService extends BaseService
         /** @var UserFriendModel $friend */
         $friend = container()->get(UserFriendModel::class);
         $result = $friend->createFriend($applyResult['user_id'], $applyResult['apply_user_id']);
+        //创建房间
+        mongoTask()->insert('user.room', ['user_id' => $userId, 'friend_id' => $applyResult['apply_user_id']]);
+        mongoTask()->insert('user.room', ['user_id' => $applyResult['apply_user_id'], 'friend_id' => $userId]);
+        /** @var Common $common */
+        $common = container()->get(Common::class);
+        $common->sendToSomeUser([$applyResult['apply_user_id'], $userId], "好友通过提醒");
         return $this->success($result);
     }
 }

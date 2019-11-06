@@ -16,6 +16,11 @@ Router::addGroup('/api/', function () {
 }, ['middleware' => [TokenMiddleware::class]]);
 
 // TODO Ws服务
-Router::addServer('ws', function () {
-    Router::get('/ws', 'App\WebSocket\SocketEvent');
+Router::addServer('wsApp', function () {
+    Router::get('/wsApp', 'App\WebSocket\Event\AppSocketEvent');
+});
+
+// TODO Ws服务
+Router::addServer('wsPc', function () {
+    Router::get('/wsPc', 'App\WebSocket\Event\PcSocketEvent');
 });

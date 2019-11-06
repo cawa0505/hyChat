@@ -35,4 +35,9 @@ class UserGroupModel extends BaseModel
         }
         return null;
     }
+
+    public function createGroup($data)
+    {
+        return $this->newQuery()->insert($data);
+    }
 }

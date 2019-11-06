@@ -10,7 +10,7 @@ namespace App\WebSocket\Controller;
 
 use App\Model\UserFriendModel;
 use App\Service\RoomService;
-use App\WebSocket\Common;
+use App\WebSocket\Service\CommonServer;
 use Hyperf\Di\Annotation\Inject;
 
 /**
@@ -18,7 +18,7 @@ use Hyperf\Di\Annotation\Inject;
  * Class Room
  * @package App\WebSocket\Controller
  */
-class Room extends Common
+class Room extends CommonServer
 {
     /**
      * @Inject()

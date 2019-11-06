@@ -45,7 +45,7 @@ class UserService extends BaseService
         // 单点登陆 给前一个设备推送消息
         $token = container()->get(Token::class)->encode($userInfo);
         /** @var Common $socketCommon */
-        $socketCommon =  container()->get(Common::class);
+        $socketCommon = container()->get(Common::class);
         $userFd = $socketCommon->getUserFd($userInfo['id']);
         if ($userFd) {
             $socketCommon->sendTo($userFd, $this->sendMessage(1, [], "已在别处登陆"));
@@ -86,15 +86,14 @@ class UserService extends BaseService
     }
 
     /**
-     * 找回密码
-     * @param $request
+     * 通过手机号修改密码
+     * @param $phone
+     * @param $password
      * @return array
      */
-    public function updatePassword($request)
+    public function updatePasswordByPhone($phone, $password)
     {
-        $phone = $request['phone'];
-        $password = makePasswordHash($request['password']);
-        $result = $this->userModel->updatePasswordByPhone($phone, $password);
+        $result = $this->userModel->updatePasswordByPhone($phone, makePasswordHash($password));
         if (!$result) {
             return $this->fail("密码修改失败");
         }

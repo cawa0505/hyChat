@@ -9,14 +9,14 @@
 namespace App\WebSocket\Controller;
 
 
-use App\WebSocket\Common;
+use App\WebSocket\Service\CommonServer;
 
 /**
  * 群组聊天
  * Class Group
  * @package App\WebSocket\Controller
  */
-class Group extends Common
+class Group extends CommonServer
 {
     /**
      * {"class":"Index","action":"index","content":{"userId":"1","message":"123456"}}
