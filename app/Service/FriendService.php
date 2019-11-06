@@ -31,6 +31,21 @@ class FriendService extends BaseService
     private $userFriendModel;
 
     /**
+     * @param $userId
+     * @return array
+     */
+    public function getUserFriend($userId)
+    {
+        $friendIds = $this->userFriendModel->getFriendIdsByUserId($userId);
+        if (!$friendIds) {
+            return $this->fail("好友为空");
+        }
+        $result = $this->userModel->getUserByUserIds($friendIds);
+        return $this->success($result);
+    }
+
+
+    /**
      * @param $account
      * @return array
      */

@@ -10,7 +10,6 @@ namespace App\Controller\Api;
 
 use App\Controller\AbstractController;
 use App\Utility\RsaEncryption;
-use App\Model\UserModel;
 use App\Utility\SendCode;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\AutoController;
@@ -51,10 +50,6 @@ class CommonController extends AbstractController
     public function sendCode()
     {
         $mobile = $this->request->input('mobile');
-        $user = $this->container->get(UserModel::class)->getUserByAccount($mobile);
-        if (!$user) {
-            return $this->fail("用户不存在");
-        }
         $result = $this->container->get(SendCode::class)->send($mobile);
         return $this->successResponse($result);
     }

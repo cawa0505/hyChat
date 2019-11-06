@@ -9,7 +9,6 @@
 namespace App\Service;
 
 use App\Model\UserModel;
-use App\Utility\SendCode;
 use App\WebSocket\Common;
 use App\Utility\Token;
 use Hyperf\Di\Annotation\Inject;
@@ -43,9 +42,9 @@ class UserService extends BaseService
         }
         unset($userInfo['password']);
         // 单点登陆 给前一个设备推送消息
-        $token = $this->container->get(Token::class)->encode($userInfo);
+        $token = container()->get(Token::class)->encode($userInfo);
         /** @var Common $socketCommon */
-        $socketCommon = $this->container->get(Common::class);
+        $socketCommon =  container()->get(Common::class);
         $userFd = $socketCommon->getUserFd($userInfo['id']);
         if ($userFd) {
             $socketCommon->sendTo($userFd, $this->sendMessage(1, [], "已在别处登陆"));

@@ -31,6 +31,7 @@ Router::post('user/apply', [UserController::class, 'apply']);
 
 // 好友添加申请
 Router::post('apply/create', [ApplyController::class, 'create']);
+Router::post('apply/record', [ApplyController::class, 'record']);
 // 好友添加审核
 Router::post('apply/review', [ApplyController::class, 'review']);
 

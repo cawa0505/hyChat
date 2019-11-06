@@ -10,6 +10,7 @@ namespace App\Utility;
 
 
 use Hyperf\Task\Annotation\Task;
+use Hyperf\Utils\Traits\StaticInstance;
 use MongoDB\Driver\BulkWrite;
 use MongoDB\Driver\Exception\Exception;
 use MongoDB\Driver\Manager;
@@ -18,6 +19,7 @@ use MongoDB\Driver\WriteConcern;
 
 class MongoClient
 {
+    use StaticInstance;
     /**
      * @var Manager
      */
@@ -26,7 +28,7 @@ class MongoClient
     /**
      * @return Manager
      */
-    protected function manager()
+    public function manager()
     {
         if ($this->manager instanceof Manager) {
             return $this->manager;

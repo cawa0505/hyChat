@@ -12,6 +12,7 @@ namespace App\Controller\Api;
 use App\Controller\AbstractController;
 use App\Service\ApplyService;
 use Hyperf\Di\Annotation\Inject;
+use MongoDB\Driver\Exception\Exception;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -32,7 +33,7 @@ class ApplyController extends AbstractController
      */
     public function create()
     {
-        $request = $this->request->input('friendId');
+        $request = $this->request->all();
         $rules = ['friendId' => 'required'];
         // 表单验证
         $validator = $this->validationFactory->make($request, $rules);
@@ -40,8 +41,16 @@ class ApplyController extends AbstractController
             $errorMessage = $validator->errors()->first();
             return $this->errorResponse($errorMessage);
         }
-        $userId = getContext('userId');
-        $result = $this->applyService->createApply($request, $userId);
+        $result = $this->applyService->createApply($request, $this->getUserId());
+        return $this->successResponse($result);
+    }
+
+    /**
+     * @return ResponseInterface
+     */
+    public function record()
+    {
+        $result = $this->applyService->getApplyByUserId($this->getUserId());
         return $this->successResponse($result);
     }
 
@@ -52,15 +61,14 @@ class ApplyController extends AbstractController
     public function review()
     {
         $request = $this->request->getParsedBody();
-        $rules = ['applyId' => 'required','status'=> 'required'];
+        $rules = ['applyId' => 'required', 'status' => 'required'];
         // 表单验证
         $validator = $this->validationFactory->make($request, $rules);
         if ($validator->fails()) {
             $errorMessage = $validator->errors()->first();
             return $this->errorResponse($errorMessage);
         }
-        $userId = getContext('userId');
-        $result = $this->applyService->review($request,$userId);
+        $result = $this->applyService->review($request, $this->getUserId());
         return $this->successResponse($result);
     }
 }

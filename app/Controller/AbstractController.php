@@ -73,4 +73,13 @@ abstract class AbstractController
     {
         return $this->response->json($this->fail($message));
     }
+
+    /**
+     * 获取中间件解析token得到的userId
+     * @return mixed|null
+     */
+    protected function getUserId()
+    {
+        return getContext('userId');
+    }
 }

@@ -9,10 +9,10 @@
 namespace App\Controller\Api;
 
 use App\Controller\AbstractController;
-use App\Model\UserFriendModel;
 use App\Model\UserGroupModel;
 use App\Model\UserModel;
 use App\Service\ApplyService;
+use App\Service\FriendService;
 use Hyperf\Di\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface;
 
@@ -34,9 +34,9 @@ class UserController extends AbstractController
      */
     public function info()
     {
-        dd($this->request->all());
         $result = $this->userModel->getUserByUserId($this->getUserId());
-        return $this->successResponse($result);
+        unset($result['password']);
+        return $this->successResponse($this->success($result));
     }
 
     /**
@@ -45,7 +45,7 @@ class UserController extends AbstractController
      */
     public function friend()
     {
-        $result = $this->container->get(UserFriendModel::class)->getUserFriend($this->getUserId());
+        $result = $this->container->get(FriendService::class)->getUserFriend($this->getUserId());
         return $this->successResponse($result);
     }
 
@@ -55,8 +55,9 @@ class UserController extends AbstractController
      */
     public function group()
     {
+
         $result = $this->container->get(UserGroupModel::class)->getGroupByUserId($this->getUserId());
-        return $this->successResponse($result);
+        return $this->successResponse($this->success($result));
     }
 
     /**
@@ -66,6 +67,6 @@ class UserController extends AbstractController
     public function apply()
     {
         $result = $this->container->get(ApplyService::class)->getApplyByUserId($this->getUserId());
-        return $this->successResponse($result);
+        return $this->successResponse($this->success($result));
     }
 }
