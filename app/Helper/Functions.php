@@ -35,7 +35,7 @@ if (!function_exists('dd')) {
     function dd(...$data)
     {
         stdout()->info("-----------------打印调试开启-----------------");
-        print_r($data);
+        var_dump($data);
         stdout()->info("-----------------打印调试结束-----------------");
     }
 }
@@ -184,5 +184,18 @@ if (!function_exists('tableComment')) {
     {
         $prefix=env('DB_PREFIX', '');
         \Hyperf\DbConnection\Db::statement("ALTER TABLE `".$prefix.$table."` comment '".$comment."'");
+    }
+}
+
+if (!function_exists('getAction')) {
+
+    /**
+     * 获取控制器方法名
+     * @param $table
+     * @param $comment
+     */
+    function getAction($path)
+    {
+        return trim(end(explode("/",$path))," ");
     }
 }

@@ -46,8 +46,9 @@ trait Response
      */
     public function fail(int $code=100,$message=null)
     {
+
         if (is_null($message)) {
-            $message= ApiCode::getMessage($code);
+            $message= ApiCode::getMessage($code)??"未知错误";
         }
         return [
             'code' => $code,

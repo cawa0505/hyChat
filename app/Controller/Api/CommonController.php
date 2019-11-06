@@ -53,4 +53,22 @@ class CommonController extends AbstractController
         $result = $this->container->get(SendCode::class)->send($mobile);
         return $this->successResponse($result);
     }
+
+    /**
+     * 上传文件
+     * @return ResponseInterface
+     */
+    public function upload()
+    {
+        $image = $this->request->file('file');
+        $name = uniqid() . '.' . $image->getExtension();
+        $destinationPath = BASE_PATH. "/upload/file/";
+        if (!is_dir($destinationPath)) {
+            mkdir($destinationPath, 0777, true);
+        }
+        $image->moveTo($destinationPath.$name);
+        $demine=$this->request->getUri()->getHost();
+        $ret_data=['url' => $demine."/upload/file/" . $name, 'path' => '/file/' . $name];
+        return $this->successResponse($ret_data);
+    }
 }

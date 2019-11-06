@@ -40,19 +40,21 @@ class AuthController extends AbstractController
     }
 
     /**
+     * 用户注册
      * @param RegisterRequest $request
      * @return ResponseInterface
      */
     public function register(RegisterRequest $request)
     {
         $phone = $request->input('phone');
+        //验证码
         $key = 'mobileVerifyCode:' . $phone;
         $cacheCode = redis()->get($key);
         if (!$cacheCode) {
             return $this->errorResponse(ApiCode::AUTH_CODE_ERROR);
         }
         if ($cacheCode != $request->input('code')) {
-            return $this->errorResponse(ApiCode::AUTH_CODE_ERROR);
+            return $this->errorResponse(ApiCode::AUTH_CODE_NOT_EXIST);
         }
         $response = $this->userService->handleRegister($request->all());
         return $this->successResponse($response);

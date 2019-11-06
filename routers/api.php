@@ -28,6 +28,8 @@ Router::post('user/friend', [UserController::class, 'friend']);
 Router::post('user/group', [UserController::class, 'group']);
 // 我的申请
 Router::post('user/apply', [UserController::class, 'apply']);
+// 我的申请
+Router::post('user/editUserinfo', [UserController::class, 'editUserinfo']);
 
 // 好友添加申请
 Router::post('apply/create', [ApplyController::class, 'create']);

@@ -47,7 +47,9 @@ class UserModel extends BaseModel
         return [];
     }
 
+
     /**
+     * 通过ID获取数据
      * @param $userIds
      * @param array $columns
      * @return array
@@ -97,4 +99,16 @@ class UserModel extends BaseModel
     {
         return $this->newQuery()->where('phone', $phone)->update(['password' => $password]);
     }
+
+    /**
+     * 更新用户信息
+     * @param $data
+     * @param $userid
+     * @return int
+     */
+    public function updateUserInfo($data,$userid)
+    {
+        return $this->newQuery()->where("user_id",$userid)->update($data);
+    }
+
 }

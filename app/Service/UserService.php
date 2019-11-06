@@ -33,13 +33,13 @@ class UserService extends BaseService
         $password = $request['password'];
         $userInfo = $this->userModel->getUserByAccount($account);
         if (!$userInfo) {
-            return $this->fail("账号不存在");
+            return $this->fail(ApiCode::AUTH_USER_NOT_EXIST);
         }
         if (!$userInfo['status']) {
-            return $this->fail("该账户已被锁定");
+            return $this->fail(ApiCode::AUTH_USER_LOCK);
         }
         if (!validatePasswordHash($password, $userInfo['password'])) {
-            return $this->fail("用户名密码不匹配");
+            return $this->fail(ApiCode::AUTH_PASSWD_ERR);
         }
         unset($userInfo['password']);
         // 单点登陆 给前一个设备推送消息
@@ -96,8 +96,33 @@ class UserService extends BaseService
         $password = makePasswordHash($request['password']);
         $result = $this->userModel->updatePasswordByPhone($phone, $password);
         if (!$result) {
-            return $this->fail("密码修改失败");
+            return $this->fail(ApiCode::AUTH_PASSWD_EDIT_ERR);
         }
         return $this->success($result);
     }
+
+    /**
+     * 编辑用户信息
+     * @param $params
+     * @param $user_id
+     * @return array
+     */
+    public function editUserinfo($params,$user_id)
+    {
+        $user=$this->userModel->getUserByUserIds($user_id);
+
+        if(!$user){
+
+            return $this->fail(ApiCode::AUTH_USER_NOT_EXIST);
+        }
+
+        $result=$this->userModel->updateUserInfo($params,$user_id);
+
+        if (!$result) {
+
+            return $this->fail(ApiCode::OPERATION_FAIL);
+        }
+        return $this->success($result);
+    }
+
 }

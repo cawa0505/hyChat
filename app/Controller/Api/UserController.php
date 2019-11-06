@@ -11,8 +11,10 @@ namespace App\Controller\Api;
 use App\Controller\AbstractController;
 use App\Model\UserGroupModel;
 use App\Model\UserModel;
+use App\Request\UserRequest;
 use App\Service\ApplyService;
 use App\Service\FriendService;
+use App\Service\UserService;
 use Hyperf\Di\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface;
 
@@ -27,6 +29,11 @@ class UserController extends AbstractController
      * @var UserModel
      */
     private $userModel;
+    /**
+     * @Inject
+     * @var UserService
+     */
+    private $userService;
 
     /**
      * 用户详情
@@ -69,4 +76,16 @@ class UserController extends AbstractController
         $result = $this->container->get(ApplyService::class)->getApplyByUserId($this->getUserId());
         return $this->successResponse($this->success($result));
     }
+
+    /**
+     *  更新用户信息
+     * @return ResponseInterface
+     */
+    public function editUserinfo(UserRequest $request)
+    {
+        $params=$this->request->all();
+        $result=$this->userService->editUserinfo($params,$this->getUserId());
+        return $this->successResponse($this->success($result));
+    }
+
 }
