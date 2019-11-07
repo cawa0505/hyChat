@@ -8,15 +8,10 @@
 
 namespace App\WebSocket;
 
-use App\Model\UserModel;
 use App\Utility\Token;
-use App\WebSocket\Service\CommonServer;
 use Hyperf\Contract\OnCloseInterface;
 use Hyperf\Contract\OnMessageInterface;
 use Hyperf\Contract\OnOpenInterface;
-use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Di\Annotation\Inject;
-use Psr\Container\ContainerInterface;
 use ReflectionClass;
 use ReflectionException;
 use Swoole\Http\Request;
@@ -30,20 +25,9 @@ use Swoole\WebSocket\Server;
 class AppSocketEvent implements OnOpenInterface, OnMessageInterface, OnCloseInterface
 {
     /**
-     * @Inject()
-     * @var ContainerInterface
+     * @var
      */
-    protected $container;
-
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
-
-    public function __construct(StdoutLoggerInterface $stdoutLogger)
-    {
-        $this->logger = $stdoutLogger;
-    }
+    private $loginType;
 
     /**
      * @param Server $server
@@ -53,29 +37,36 @@ class AppSocketEvent implements OnOpenInterface, OnMessageInterface, OnCloseInte
     {
         $params = $request->get;
         $server->getClientInfo($request->fd);
-        if (!isset($params['token']) || empty($params['token'])) {
-            $this->logger->info('token为空');
-        } else {
-            $tokenData = $this->container->get(Token::class)->decode($params['token']);
-            if ($tokenData['status'] == 0) {
-                $server->push($request->fd, $tokenData['msg']);
-            } else {
-                $userInfo = (array)$tokenData['result']['data'];
-                // 将fd和用户id绑定
-                $login_type = $userInfo['login_type'];
-                $server->bind($request->fd, $userInfo['id']);
-                //设置userId关联的fd
-                /** @var CommonServer $common */
-                $common = $this->container->get(CommonServer::class);
-                $fdInfo = [
-                    'ip' => swoole_get_local_ip()['eth0'],
-                    'port' => env("SOCKET_PORT", 9502),
-                    'fd' => $request->fd
-                ];
-                $common->setUserFd($login_type, $userInfo['id'], json_encode($fdInfo));
-                $server->push($request->fd, 'welcome to you');
-            }
+        if (!isset($params['token']) || !$params['token']) {
+            stdout()->info('token为空');
+            $server->close($request->fd);
+            return;
         }
+        if ($params['token'] == "system") {
+            $server->push($request->fd, 'welcome to you');
+            return;
+        }
+        $tokenData = container()->get(Token::class)->decode($params['token']);
+        if ($tokenData['status'] == 0) {
+            $server->push($request->fd, $tokenData['msg']);
+            $server->close($request->fd);
+            return;
+        }
+        $userInfo = (array)$tokenData['result']['data'];
+        $this->loginType = $userInfo['login_type'];
+        // 将fd和用户id绑定
+        $server->bind($request->fd, $userInfo['id']);
+        //设置userId关联的fd
+        /** @var Common $userService */
+        $common = container()->get(Common::class);
+        $fdInfo = [
+            'ip' => getLocalIp(),
+            'port' => env("SOCKET_PORT", 9502),
+            'fd' => $request->fd
+        ];
+        stdout()->info(json_encode($fdInfo));
+        $common->setUserFd($userInfo['id'], json_encode($fdInfo), $this->loginType);
+        $server->push($request->fd, 'welcome to you');
     }
 
     /**
@@ -88,34 +79,34 @@ class AppSocketEvent implements OnOpenInterface, OnMessageInterface, OnCloseInte
         $data = $frame->data;
         if ($data == 'PING') {
             $server->push($frame->fd, 'PONG');
-        } else {
-            $data = json_decode($data, true);
-            if (!is_array($data)) {
-                $server->push($frame->fd, "decode message error!");
+            return;
+        }
+        $data = json_decode($data, true);
+        if (!is_array($data)) {
+            $server->push($frame->fd, "decode message error!");
+            return;
+        }
+        $class = '\\App\\WebSocket\\Controller\\' . ucfirst($data['controller']);
+        $action = $data['action'];
+        $params = [];
+        if (!empty($data['content'])) {
+            $content = $data['content'];
+            $params = is_array($content) ? $content : ['content' => $content];
+        }
+        try {
+            if (!class_exists($class)) {
+                $server->push($frame->fd, "class {$class} not found");
                 return;
             }
-            $class = '\\App\\WebSocket\\Controller\\' . ucfirst($data['class']);
-            $action = $data['action'];
-            $params = [];
-            if (!empty($data['content'])) {
-                $content = $data['content'];
-                $params = is_array($content) ? $content : ['content' => $content];
+            $ref = new ReflectionClass($class);
+            if (!$ref->hasMethod($action)) {
+                $server->push($frame->fd, "class {$class} action {$action} not found");
+                return;
             }
-            try {
-                if (!class_exists($class)) {
-                    $server->push($frame->fd, "class {$class} not found");
-                    return;
-                }
-                $ref = new ReflectionClass($class);
-                if (!$ref->hasMethod($action)) {
-                    $server->push($frame->fd, "class {$class} action {$action} not found");
-                    return;
-                }
-                $obj = new $class($server, $frame, $this->container);
-                call_user_func_array([$obj, $action], $params);
-            } catch (ReflectionException $exception) {
-                $this->logger->error($exception->getMessage());
-            }
+            $controller = new $class($server, $frame, $params, (int)$this->loginType);
+            $controller->$action();
+        } catch (ReflectionException $exception) {
+            stdout()->error($exception->getMessage());
         }
     }
 
@@ -129,15 +120,14 @@ class AppSocketEvent implements OnOpenInterface, OnMessageInterface, OnCloseInte
     {
         $info = $server->connection_info($fd);
         if (isset($info['websocket_status']) && $info['websocket_status'] !== 0) {
-            /** @var CommonServer $common */
-            $common = $this->container->get(CommonServer::class);
+            /** @var Common $userService */
+            $common = container()->get(Common::class);
             // 获取fd关联的uid
             $userId = $common->getFdUser($fd);
             if ($userId) {
                 // 删除fd关联的userId
-                $common->deleteUserFd($userId);
+                $common->deleteUserFd($userId, $this->loginType);
             }
-            $common->sendToSome(sprintf("用户{$fd}离开聊天室"), $common->getConnectionList(), [$fd]);
         }
     }
 }

@@ -8,18 +8,17 @@
 
 namespace App\WebSocket\Controller;
 
-
-use App\WebSocket\Service\CommonServer;
+use App\WebSocket\Common;
 
 /**
  * 群组聊天
  * Class Group
  * @package App\WebSocket\Controller
  */
-class Group extends CommonServer
+class Group extends Common
 {
     /**
-     * {"class":"Index","action":"index","content":{"userId":"1","message":"123456"}}
+     * {"controller":"Index","action":"index","content":{"userId":"1","message":"123456"}}
      */
     public function send()
     {

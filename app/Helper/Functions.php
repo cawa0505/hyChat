@@ -12,6 +12,8 @@ use Hyperf\Framework\Logger\StdoutLogger;
 use Hyperf\Logger\LoggerFactory;
 use Hyperf\Redis\RedisFactory;
 use Hyperf\Server\ServerFactory;
+use Hyperf\WebSocketClient\Client;
+use Hyperf\WebSocketClient\ClientFactory;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Swoole\Server;
@@ -136,6 +138,26 @@ if (!function_exists('getServer')) {
     }
 }
 
+if (!function_exists('socketClient')) {
+    /**
+     * @param $host
+     * @return Client
+     */
+    function socketClient($host)
+    {
+        /** @var ClientFactory $client */
+        $client = container()->get(ClientFactory::class);
+        return $client->create($host);
+    }
+}
+
+if (!function_exists("getLocalIp")) {
+    function getLocalIp()
+    {
+        return swoole_get_local_ip()['eth0'];
+    }
+}
+
 if (!function_exists("redis")) {
     /**
      * @param string $name
@@ -180,10 +202,10 @@ if (!function_exists('tableComment')) {
      * @param $table
      * @param $comment
      */
-    function tableComment($table,$comment)
+    function tableComment($table, $comment)
     {
-        $prefix=env('DB_PREFIX', '');
-        \Hyperf\DbConnection\Db::statement("ALTER TABLE `".$prefix.$table."` comment '".$comment."'");
+        $prefix = env('DB_PREFIX', '');
+        \Hyperf\DbConnection\Db::statement("ALTER TABLE `" . $prefix . $table . "` comment '" . $comment . "'");
     }
 }
 
@@ -196,6 +218,6 @@ if (!function_exists('getAction')) {
      */
     function getAction($path)
     {
-        return trim(end(explode("/",$path))," ");
+        return trim(end(explode("/", $path)), " ");
     }
 }
