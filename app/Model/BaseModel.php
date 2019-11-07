@@ -29,7 +29,7 @@ abstract class BaseModel extends Model implements CacheableInterface
      */
     public function getOne($where)
     {
-        return $this->newQuery()->first()->toArray();
+        return $this->newQuery()->where($where)->first()->toArray();
     }
 
     /**
@@ -53,5 +53,54 @@ abstract class BaseModel extends Model implements CacheableInterface
             }
         }
         return $model->get()->toArray();
+    }
+
+    /**
+     * 获取缓存
+     * @param $key
+     * @return mixed
+     * @throws \MongoDB\Driver\Exception\Exception
+     */
+    public function getCache($key)
+    {
+        $cacheConfig = $this->getCacheConfig($key);
+        if(!$cacheConfig) return [];
+        return mongoTask()->query($cacheConfig["key"])??[];
+    }
+
+    /**
+     * 写入缓存
+     * @param $key
+     * @param $data
+     * @return int|null
+     */
+    public function saveCache($key,$data)
+    {
+        $cacheConfig = $this->getCacheConfig($key);
+        return mongoTask()->insert($cacheConfig["key"],$data);
+    }
+    /**
+     * 获取缓存配置
+     * @param $key
+     * @return mixed
+     */
+    private function getCacheConfig($key)
+    {
+        $cacheConfig = config('api.cache_key');
+        if (isset($cacheConfig[$key])) {
+            return $cacheConfig[$key];
+        } else {
+            return $cacheConfig['defualt'];
+        }
+    }
+    /**
+     * 刷新缓存
+     * @param $key
+     * @return bool
+     */
+    public function flushCache($key)
+    {
+        $cacheConfig = $this->getCacheConfig($key);
+        return mongoTask()->delete($cacheConfig["key"],[]);
     }
 }

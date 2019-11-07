@@ -77,6 +77,7 @@ class AppSocketEvent implements OnOpenInterface, OnMessageInterface, OnCloseInte
     public function onMessage(Server $server, Frame $frame): void
     {
         $data = $frame->data;
+        dd($data);
         if ($data == 'PING') {
             $server->push($frame->fd, 'PONG');
             return;

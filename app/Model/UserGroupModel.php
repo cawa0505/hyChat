@@ -23,7 +23,7 @@ class UserGroupModel extends BaseModel
 
 
     /**
-     * 通过用户id获取群组
+     * todo 通过用户id获取群组
      * @param $userId
      * @param array $columns
      * @return array|null
@@ -37,9 +37,14 @@ class UserGroupModel extends BaseModel
         return null;
     }
 
+    /**
+     * TODO 创建群组
+     * @param $data
+     * @return int
+     */
     public function createGroup($data)
     {
-        return $this->newQuery()->insert($data);
+        return $this->newQuery()->insertGetId($data);
     }
 
     /**
@@ -51,5 +56,15 @@ class UserGroupModel extends BaseModel
     public function updateGroupInfo($param,$userId)
     {
         return $this->newQuery()->where("user_id",$userId)->update($param);
+    }
+
+    /**
+     * 删除群组
+     * @param $id 群组ID
+     * @return int|mixed
+     */
+    public function deleteGroup($id)
+    {
+       return $this->newQuery()->where("id",$id)->delete();
     }
 }

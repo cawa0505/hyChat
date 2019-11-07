@@ -27,18 +27,28 @@ class GroupRequest extends FormRequest
     public function rules(): array
     {
         $action = getAction($this->path());
-        if ($action == "create") {
-            return [
-                'userIds' => 'require|array|integer'
-            ];
+        switch ($action){
+            case "create":
+                return [
+                    'userIds' => 'require|array|integer'
+                ];
+                break;
+            case "update":
+                return [
+                    'id' => 'require|integer',
+                    'group_name' => 'string',
+                    "group_notice"=>"string"
+                ];
+                break;
+            case "delete":
+            case "join":
+                return [
+                    'id' => 'require|integer',
+                ];
+            default:
+                return [];
+
         }
-        if ($action == "update") {
-            return [
-                'id' => 'require|integer',
-                'group_name' => 'string',
-                "group_notice"=>"string"
-            ];
-        }
-        return [];
+
     }
 }
