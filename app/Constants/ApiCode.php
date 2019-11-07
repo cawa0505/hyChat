@@ -93,4 +93,12 @@ class ApiCode extends AbstractConstants
      * @Message("不能添加自己为好友")
      */
     const CANT_ADD_SELF = 2000;
+    // TODO ----------------------群组 2300-2400-------------------------
+    /**
+     * @HttpCode("2301")
+     * @Message("群组不存在")
+     */
+    const GROUP_NOT_EXIST = 2301;
+
+
 }

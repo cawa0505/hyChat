@@ -22,6 +22,15 @@ class UserGroupModel extends BaseModel
     protected $table = 'user_group';
 
     /**
+     * 通过ID获取单条数据
+     * @param $id
+     * @return array|null
+     */
+    public function getFind($id)
+    {
+        return $this->newQuery()->find($id)->toArray();
+    }
+    /**
      * 通过用户id获取群组
      * @param $userId
      * @param array $columns
@@ -39,5 +48,10 @@ class UserGroupModel extends BaseModel
     public function createGroup($data)
     {
         return $this->newQuery()->insert($data);
+    }
+
+    public function updateGroupInfo($param,$userId)
+    {
+        return $this->newQuery()->where("user_id",$userId)->update($param);
     }
 }

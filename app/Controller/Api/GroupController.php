@@ -43,7 +43,10 @@ class GroupController extends AbstractController
      */
     public function update()
     {
-
+        $param=$this->request->all();
+        $user_id=$this->getUserId();
+        $result=$this->groupService->updateGroupInfo($param,$user_id);
+        return $this->successResponse($result);
     }
 
     /**

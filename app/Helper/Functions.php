@@ -191,8 +191,8 @@ if (!function_exists('getAction')) {
 
     /**
      * 获取控制器方法名
-     * @param $table
-     * @param $comment
+     * @param $path
+     * @return string
      */
     function getAction($path)
     {

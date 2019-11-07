@@ -9,6 +9,7 @@
 namespace App\Service;
 
 
+use App\Constants\ApiCode;
 use App\Model\UserGroupModel;
 use App\Utility\Random;
 use Hyperf\DbConnection\Db;
@@ -40,5 +41,31 @@ class GroupService extends BaseService
             Db::rollBack();
             return $this->fail(100);
         }
+        return $this->success($createGroupResult);
+    }
+
+    /**
+     * 更新群组信息
+     * @param $param
+     * @param $user_id
+     * @return array
+     */
+    public function updateGroupInfo($param,$user_id)
+    {
+
+        if(!isset($param["id"])) return $this->fail(ApiCode::GROUP_NOT_EXIST);
+
+        $group = $this->groupModel->getFind($param["id"]);
+
+        if(is_array($group)) return $this->fail(ApiCode::GROUP_NOT_EXIST);
+
+        $result = $this->groupModel->updateGroupInfo($param,$user_id);
+
+        if(!$result){
+
+            return $this->fail(ApiCode::OPERATION_FAIL);
+        }
+
+        return $this->success($result);
     }
 }
