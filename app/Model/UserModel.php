@@ -106,12 +106,12 @@ class UserModel extends BaseModel
     /**
      * 更新用户信息
      * @param $data
-     * @param $userid
+     * @param $userId
      * @return int
      */
-    public function updateUserInfo($data,$userid)
+    public function updateUserInfo($data, $userId)
     {
-        return $this->newQuery()->where("user_id",$userid)->update($data);
+        return $this->newQuery()->where("user_id", $userId)->update($data);
     }
 
 }

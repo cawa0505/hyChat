@@ -10,8 +10,8 @@ namespace App\Service;
 
 use App\Constants\ApiCode;
 use App\Model\UserModel;
-use App\WebSocket\Common;
 use App\Utility\Token;
+use App\WebSocket\Service\CommonServer;
 use Hyperf\Di\Annotation\Inject;
 
 class UserService extends BaseService
@@ -44,8 +44,8 @@ class UserService extends BaseService
         unset($userInfo['password']);
         // 单点登陆 给前一个设备推送消息
         $token = container()->get(Token::class)->encode($userInfo);
-        /** @var Common $socketCommon */
-        $socketCommon = container()->get(Common::class);
+        /** @var CommonServer $socketCommon */
+        $socketCommon = container()->get(CommonServer::class);
         $userFd = $socketCommon->getUserFd($userInfo['id']);
         if ($userFd) {
             $socketCommon->sendTo($userFd, $this->sendMessage(1, [], "已在别处登陆"));
@@ -106,22 +106,16 @@ class UserService extends BaseService
      * @param $user_id
      * @return array
      */
-    public function editUserinfo($params,$user_id)
+    public function updateUserInfo($params, $user_id)
     {
-        $user=$this->userModel->getUserByUserIds($user_id);
-
-        if(!$user){
-
+        $user = $this->userModel->getUserByUserIds($user_id);
+        if (!$user) {
             return $this->fail(ApiCode::AUTH_USER_NOT_EXIST);
         }
-
-        $result=$this->userModel->updateUserInfo($params,$user_id);
-
+        $result = $this->userModel->updateUserInfo($params, $user_id);
         if (!$result) {
-
             return $this->fail(ApiCode::OPERATION_FAIL);
         }
         return $this->success($result);
     }
-
 }

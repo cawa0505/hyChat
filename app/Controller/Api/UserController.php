@@ -78,14 +78,13 @@ class UserController extends AbstractController
     }
 
     /**
-     *  更新用户信息
+     * 更新用户信息
+     * @param UserRequest $request
      * @return ResponseInterface
      */
-    public function editUserinfo(UserRequest $request)
+    public function updateUserInfo(UserRequest $request)
     {
-        $params=$this->request->all();
-        $result=$this->userService->editUserinfo($params,$this->getUserId());
+        $result = $this->userService->updateUserInfo($request->all(), $this->getUserId());
         return $this->successResponse($this->success($result));
     }
-
 }

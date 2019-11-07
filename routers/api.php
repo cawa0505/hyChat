@@ -9,6 +9,7 @@
 use App\Controller\Api\ApplyController;
 use App\Controller\Api\AuthController;
 use App\Controller\Api\FriendController;
+use App\Controller\Api\GroupController;
 use App\Controller\Api\RoomController;
 use App\Controller\Api\UserController;
 use Hyperf\HttpServer\Router\Router;
@@ -48,10 +49,10 @@ Router::post('room/create', [RoomController::class, 'create']);
 Router::post('room/delete', [RoomController::class, 'delete']);
 
 // 添加群组
-Router::post('group/create', [FriendController::class, 'create']);
+Router::post('group/create', [GroupController::class, 'create']);
 // 修改群组
-Router::post('group/update', [FriendController::class, 'update']);
+Router::post('group/update', [GroupController::class, 'update']);
 // 删除群组
-Router::post('group/delete', [FriendController::class, 'delete']);
+Router::post('group/delete', [GroupController::class, 'delete']);
 // 申请加入
-Router::post('group/join', [FriendController::class, 'join']);
+Router::post('group/join', [GroupController::class, 'join']);

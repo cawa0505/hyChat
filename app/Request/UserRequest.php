@@ -17,24 +17,22 @@ class UserRequest extends FormRequest
     }
 
     /**
-     * Get the validation rules that apply to the request.
+     * @return array
      */
     public function rules(): array
     {
         $action = getAction($this->path());
-        switch ($action) {
-            case "editUserinfo":
-                return [
-                    "image_url"=>"required|string",
-                    "nick_name"=>"required|string",
-                    "sex"=>"required|int:0,1,2",
-                    "country_id"=>"required|int",
-                    "province_id"=>"required|int",
-                    "city_id"=>"required|int",
-                    "ind_sign"=>"required|string",
-                ];
-                break;
-
+        if ($action == "updateUserInfo") {
+            return [
+                "image_url" => "required|string",
+                "nick_name" => "required|string",
+                "sex" => "required|int:0,1,2",
+                "country_id" => "required|int",
+                "province_id" => "required|int",
+                "city_id" => "required|int",
+                "ind_sign" => "required|string",
+            ];
         }
+        return [];
     }
 }

@@ -10,7 +10,7 @@ namespace App\Controller\Api;
 
 
 use App\Controller\AbstractController;
-use App\Request\Room\CreateRequest;
+use App\Request\RoomRequest;
 use App\Service\RoomService;
 use Hyperf\Di\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface;
@@ -29,10 +29,10 @@ class RoomController extends AbstractController
 
     /**
      * 创建房间
-     * @param CreateRequest $request
+     * @param RoomRequest $request
      * @return ResponseInterface
      */
-    public function create(CreateRequest $request)
+    public function create(RoomRequest $request)
     {
         $result = $this->roomService->createRoom($this->getUserId(), $request->input('friendId'));
         return $this->successResponse($result);
@@ -40,10 +40,10 @@ class RoomController extends AbstractController
 
     /**
      * 删除房间
-     * @param CreateRequest $request
+     * @param RoomRequest $request
      * @return ResponseInterface
      */
-    public function delete(CreateRequest $request)
+    public function delete(RoomRequest $request)
     {
         $result = $this->roomService->deleteRoom($this->getUserId(), $request->input('friendId'));
         return $this->successResponse($result);
