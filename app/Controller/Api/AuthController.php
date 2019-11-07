@@ -65,8 +65,8 @@ class AuthController extends AbstractController
      */
     public function logout()
     {
-        redis()->hDel('userToken', (string)$this->getUserId());
-        return $this->successResponse();
+        $result = redis()->hDel('userToken', $this->getUserId() . "_" . getContext('login_type'));
+        return $this->successResponse([$result]);
     }
 
     /**

@@ -80,9 +80,8 @@ class TokenMiddleware implements MiddlewareInterface
                 return $this->response->json($this->fail($decodeToken['msg']));
             }
             $user = (array)$decodeToken['result']['data'];
-            dd($user);
             // 单点登陆处理
-            $userToken = redis()->hGet('userToken',$user['id'] . "_" . $user['login_type']);
+            $userToken = redis()->hGet('userToken', $user['id'] . "_" . $user['login_type']);
             if (!$userToken) {
                 return $this->response->json($this->fail(ApiCode::NOT_LOGIN));
             }
@@ -90,6 +89,7 @@ class TokenMiddleware implements MiddlewareInterface
                 return $this->response->json($this->fail(ApiCode::RENEW_LOGIN));
             }
             setContext('userId', $user['id']);
+            setContext('login_type', $user['login_type']);
         }
         return $handler->handle($request);
     }

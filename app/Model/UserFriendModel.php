@@ -12,11 +12,6 @@ namespace App\Model;
 class UserFriendModel extends BaseModel
 {
     /**
-     * 关闭自动更新时间
-     * @var bool
-     */
-    public $timestamps = false;
-    /**
      * @var string
      */
     protected $table = 'user_friend';

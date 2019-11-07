@@ -70,7 +70,7 @@ class AppSocketEvent implements OnOpenInterface, OnMessageInterface, OnCloseInte
                 $common = $this->container->get(CommonServer::class);
                 $fdInfo = [
                     'ip' => swoole_get_local_ip()['eth0'],
-                    'port' => 9501,
+                    'port' => env("SOCKET_PORT", 9502),
                     'fd' => $request->fd
                 ];
                 $common->setUserFd($user['id'], json_encode($fdInfo));
