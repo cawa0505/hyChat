@@ -28,19 +28,23 @@ class GroupService extends BaseService
     private $groupModel;
 
     /**
+     * 创建群组
      * @param $createUserId
      * @param $userIds
      * @return array
      */
     public function createGroup($createUserId, $userIds)
     {
+        //生成群组名称
         $groupName = Random::character(10);
         Db::beginTransaction();
         $createGroupResult = $this->groupModel->createGroup(['user_id' => $createUserId, 'group_name' => $groupName]);
         if(!$createGroupResult){
             Db::rollBack();
-            return $this->fail(100);
+            return $this->fail(ApiCode::GROUP_CREATE_FAIL);
         }
+
+
         Db::commit();
         return $this->success($createGroupResult);
     }

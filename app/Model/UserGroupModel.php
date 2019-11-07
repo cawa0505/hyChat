@@ -39,7 +39,7 @@ class UserGroupModel extends BaseModel
 
     public function createGroup($data)
     {
-        return $this->newQuery()->insert($data);
+        return $this->newQuery()->insertGetId($data);
     }
 
     /**

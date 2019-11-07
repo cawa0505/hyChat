@@ -99,6 +99,11 @@ class ApiCode extends AbstractConstants
      * @Message("群组不存在")
      */
     const GROUP_NOT_EXIST = 2301;
+    /**
+     * @HttpCode("2302")
+     * @Message("群组创建失败")
+     */
+    const GROUP_CREATE_FAIL = 2302;
 
 
 }
