@@ -14,5 +14,11 @@ use Hyperf\ModelCache\CacheableInterface;
  */
 abstract class BaseModel extends Model implements CacheableInterface
 {
+    /**
+     * 关闭自动更新时间
+     * @var bool
+     */
+    public $timestamps = false;
+
     use Cacheable;
 }

@@ -100,6 +100,8 @@ class UserService extends BaseService
         if (!$result) {
             return $this->fail(ApiCode::AUTH_PASSWD_EDIT_ERR);
         }
+        $key = 'mobileVerifyCode:' . $phone;
+        redis()->del($key);
         return $this->success($result);
     }
 

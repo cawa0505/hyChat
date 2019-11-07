@@ -19,7 +19,8 @@ Router::post('auth/login', [AuthController::class, 'login']);
 Router::post('auth/register', [AuthController::class, 'register']);
 // 退出
 Router::post('auth/logout', [AuthController::class, 'logout']);
-
+// 忘记密码重置
+Router::post('auth/retrieve', [AuthController::class, 'retrieve']);
 
 // 用户详情
 Router::post('user/info', [UserController::class, 'info']);
