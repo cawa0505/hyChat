@@ -274,11 +274,12 @@ class CommonServer
 
     /**
      * 设置user关联的fd
-     * @param $userId
-     * @param $fd
+     * @param $login_type int 登陆端
+     * @param $userId int 用户id
+     * @param $fd int
      * @return bool|int
      */
-    public function setUserFd($userId, $fd)
+    public function setUserFd($login_type,$userId, $fd)
     {
         return redis()->hSet('userFd', (string)$userId, $fd);
     }

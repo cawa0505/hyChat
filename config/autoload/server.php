@@ -12,7 +12,7 @@ return [
             'name' => 'http',
             'type' => Server::SERVER_HTTP,
             'host' => env('HTTP_HOST', '0.0.0.0'),
-            'port' => env('HTTP_PORT', 9501),
+            'port' => (int)env('HTTP_PORT', 9501),
             'sock_type' => SWOOLE_SOCK_TCP,
             'callbacks' => [
                 SwooleEvent::ON_REQUEST => [Hyperf\HttpServer\Server::class, 'onRequest'],
@@ -22,7 +22,7 @@ return [
             'name' => 'socket',
             'type' => Server::SERVER_WEBSOCKET,
             'host' => env('SOCKET_HOST', '0.0.0.0'),
-            'port' => env('SOCKET_PORT', 9501),
+            'port' => (int)env('SOCKET_PORT', 9502),
             'sock_type' => SWOOLE_SOCK_TCP,
             'callbacks' => [
                 SwooleEvent::ON_HAND_SHAKE => [Hyperf\WebSocketServer\Server::class, 'onHandShake'],
