@@ -41,6 +41,7 @@ class GroupService extends BaseService
             Db::rollBack();
             return $this->fail(100);
         }
+        Db::commit();
         return $this->success($createGroupResult);
     }
 
@@ -52,10 +53,9 @@ class GroupService extends BaseService
      */
     public function updateGroupInfo($param,$user_id)
     {
-
         if(!isset($param["id"])) return $this->fail(ApiCode::GROUP_NOT_EXIST);
 
-        $group = $this->groupModel->getFind($param["id"]);
+        $group = $this->groupModel->getOne(["id"=>$param["id"]]);
 
         if(is_array($group)) return $this->fail(ApiCode::GROUP_NOT_EXIST);
 
@@ -65,7 +65,6 @@ class GroupService extends BaseService
 
             return $this->fail(ApiCode::OPERATION_FAIL);
         }
-
         return $this->success($result);
     }
 }

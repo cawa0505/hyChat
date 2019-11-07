@@ -34,6 +34,7 @@ class GroupRequest extends FormRequest
         }
         if ($action == "update") {
             return [
+                'id' => 'require|integer',
                 'group_name' => 'string',
                 "group_notice"=>"string"
             ];
