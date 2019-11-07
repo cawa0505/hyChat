@@ -50,18 +50,24 @@ class GroupController extends AbstractController
     }
 
     /**
-     * 删除群组
+     * 解散群组
+     * @param GroupRequest $request
+     * @return ResponseInterface
      */
-    public function delete()
+    public function delete(GroupRequest $request)
     {
-
+        $groupResult=$this->groupService->deleteGroup($request->input("id"));
+        return $this->successResponse($groupResult);
     }
 
     /**
      * 加入申请
+     * @param GroupRequest $request
+     * @return ResponseInterface
      */
-    public function join()
+    public function join(GroupRequest $request)
     {
-
+        $result=$this->groupService->joinMember($request->input("id"),$this->getUserId());
+        return $this->successResponse($result);
     }
 }
