@@ -51,11 +51,7 @@ class UserModel extends BaseModel
 
 
     /**
-<<<<<<< HEAD
-     * 通过ID获取数据
-=======
      * 通过用户ids 获取用户信息
->>>>>>> 7b3122e5c4e0e49219bad2abd5628da5d6f9b91b
      * @param $userIds
      * @param array $columns
      * @return array
