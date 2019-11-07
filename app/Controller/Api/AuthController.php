@@ -10,9 +10,7 @@ namespace App\Controller\Api;
 
 use App\Constants\ApiCode;
 use App\Controller\AbstractController;
-use App\Request\Auth\RegisterRequest;
-use App\Request\Auth\LoginRequest;
-use App\Request\Auth\RetrieveRequest;
+use App\Request\AuthRequest;
 use App\Service\UserService;
 use Hyperf\Di\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface;
@@ -31,10 +29,10 @@ class AuthController extends AbstractController
 
     /**
      * 用户登录
-     * @param LoginRequest $request
+     * @param AuthRequest $request
      * @return ResponseInterface
      */
-    public function login(LoginRequest $request)
+    public function login(AuthRequest $request)
     {
         $response = $this->userService->handleLogin($request->all());
         return $this->successResponse($response);
@@ -42,10 +40,10 @@ class AuthController extends AbstractController
 
     /**
      * 用户注册
-     * @param RegisterRequest $request
+     * @param AuthRequest $request
      * @return ResponseInterface
      */
-    public function register(RegisterRequest $request)
+    public function register(AuthRequest $request)
     {
         $phone = $request->input('phone');
         //验证码
@@ -73,10 +71,10 @@ class AuthController extends AbstractController
 
     /**
      * 忘记密码修改密码
-     * @param RetrieveRequest $request
+     * @param AuthRequest $request
      * @return ResponseInterface
      */
-    public function retrieve(RetrieveRequest $request)
+    public function retrieve(AuthRequest $request)
     {
         $phone = $request->input('phone');
         $key = 'mobileVerifyCode:' . $phone;

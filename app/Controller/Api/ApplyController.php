@@ -10,8 +10,7 @@ namespace App\Controller\Api;
 
 
 use App\Controller\AbstractController;
-use App\Request\Apply\CreateRequest;
-use App\Request\Apply\ReviewRequest;
+use App\Request\ApplyRequest;
 use App\Service\ApplyService;
 use Hyperf\Di\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface;
@@ -30,10 +29,10 @@ class ApplyController extends AbstractController
 
     /**
      * 添加好友申请
-     * @param CreateRequest $request
+     * @param ApplyRequest $request
      * @return ResponseInterface
      */
-    public function create(CreateRequest $request)
+    public function create(ApplyRequest $request)
     {
         $result = $this->applyService->createApply($request->all(), $this->getUserId());
         return $this->successResponse($result);
@@ -41,10 +40,10 @@ class ApplyController extends AbstractController
 
     /**
      * 审核好友申请
-     * @param ReviewRequest $request
+     * @param ApplyRequest $request
      * @return ResponseInterface
      */
-    public function review(ReviewRequest $request)
+    public function review(ApplyRequest $request)
     {
         $result = $this->applyService->reviewApply($request->all(), $this->getUserId());
         return $this->successResponse($result);

@@ -17,5 +17,5 @@ Router::addGroup('/api/', function () {
 
 // TODO Ws服务
 Router::addServer('socket', function () {
-    Router::get('/', 'App\WebSocket\Event\AppSocketEvent');
+    Router::get('/socket', 'App\WebSocket\AppSocketEvent');
 });

@@ -10,7 +10,7 @@ namespace App\Controller\Api;
 
 
 use App\Controller\AbstractController;
-use App\Request\Group\CreateRequest;
+use App\Request\GroupRequest;
 use App\Service\GroupService;
 use Hyperf\Di\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface;
@@ -29,10 +29,10 @@ class GroupController extends AbstractController
 
     /**
      * 创建群组
-     * @param CreateRequest $request
+     * @param GroupRequest $request
      * @return ResponseInterface
      */
-    public function create(CreateRequest $request)
+    public function create(GroupRequest $request)
     {
         $result = $this->groupService->createGroup($this->getUserId(),$request->input('userIds'));
         return $this->successResponse($result);
