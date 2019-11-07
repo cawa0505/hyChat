@@ -39,6 +39,16 @@ class ApplyController extends AbstractController
     }
 
     /**
+     * 申请记录
+     * @return ResponseInterface
+     */
+    public function record()
+    {
+        $result = $this->applyService->getApplyByUserId($this->getUserId());
+        return $this->successResponse($this->success($result));
+    }
+
+    /**
      * 审核好友申请
      * @param ApplyRequest $request
      * @return ResponseInterface

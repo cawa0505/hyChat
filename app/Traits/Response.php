@@ -41,14 +41,14 @@ trait Response
     /**
      * 异常返回
      * @param int $code
-     * @param string $message
+     * @param null $message
      * @return array
      */
     public function fail(int $code = 100, $message = null)
     {
 
         if (is_null($message)) {
-            $message= ApiCode::getMessage($code)??"未知错误";
+            $message = ApiCode::getMessage($code) ?? "未知错误";
         }
         return [
             'code' => $code,

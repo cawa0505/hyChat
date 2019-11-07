@@ -68,16 +68,6 @@ class UserController extends AbstractController
     }
 
     /**
-     * 我的申请
-     * @return ResponseInterface
-     */
-    public function apply()
-    {
-        $result = $this->container->get(ApplyService::class)->getApplyByUserId($this->getUserId());
-        return $this->successResponse($this->success($result));
-    }
-
-    /**
      * 更新用户信息
      * @param UserRequest $request
      * @return ResponseInterface
