@@ -32,6 +32,13 @@ class GroupRequest extends FormRequest
                 'userIds' => 'require|array|integer'
             ];
         }
+        if ($action == "update") {
+            return [
+                'id' => 'require|integer',
+                'group_name' => 'string',
+                "group_notice"=>"string"
+            ];
+        }
         return [];
     }
 }

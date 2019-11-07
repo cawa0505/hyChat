@@ -41,7 +41,7 @@ class UserService extends BaseService
             return $this->fail(ApiCode::AUTH_USER_LOCK);
         }
         if (!validatePasswordHash($password, $userInfo['password'])) {
-            return $this->fail(ApiCode::AUTH_PASSWD_ERR);
+            return $this->fail(ApiCode::AUTH_PASS_ERR);
         }
         unset($userInfo['password']);
         $userInfo['login_type'] = $type;
@@ -98,7 +98,7 @@ class UserService extends BaseService
     {
         $result = $this->userModel->updatePasswordByPhone($phone, makePasswordHash($password));
         if (!$result) {
-            return $this->fail(ApiCode::AUTH_PASSWD_EDIT_ERR);
+            return $this->fail(ApiCode::AUTH_PASS_EDIT_ERR);
         }
         $key = 'mobileVerifyCode:' . $phone;
         redis()->del($key);

@@ -63,7 +63,7 @@ class ApiCode extends AbstractConstants
      * @HttpCode("1007")
      * @Message("用户名密码不匹配")
      */
-    const AUTH_PASSWD_ERR = 1007;
+    const AUTH_PASS_ERR = 1007;
     /**
      * @HttpCode("1008")
      * @Message("已在别处登陆")
@@ -73,7 +73,7 @@ class ApiCode extends AbstractConstants
      * @HttpCode("1008")
      * @Message("密码修改失败")
      */
-    const AUTH_PASSWD_EDIT_ERR = 1008;
+    const AUTH_PASS_EDIT_ERR = 1008;
 
     /**
      * @HttpCode("1020")
@@ -93,4 +93,12 @@ class ApiCode extends AbstractConstants
      * @Message("不能添加自己为好友")
      */
     const CANT_ADD_SELF = 2000;
+    // TODO ----------------------群组 2300-2400-------------------------
+    /**
+     * @HttpCode("2301")
+     * @Message("群组不存在")
+     */
+    const GROUP_NOT_EXIST = 2301;
+
+
 }

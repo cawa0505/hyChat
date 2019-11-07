@@ -40,10 +40,13 @@ class GroupController extends AbstractController
 
     /**
      * 更新群组信息
+     * @param GroupRequest $request
+     * @return ResponseInterface
      */
-    public function update()
+    public function update(GroupRequest $request)
     {
-
+        $result=$this->groupService->updateGroupInfo($request->all(),$this->getUserId());
+        return $this->successResponse($result);
     }
 
     /**
