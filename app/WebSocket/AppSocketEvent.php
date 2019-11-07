@@ -53,7 +53,6 @@ class AppSocketEvent implements OnOpenInterface, OnMessageInterface, OnCloseInte
     {
         $params = $request->get;
         $server->getClientInfo($request->fd);
-        $this->logger->info(json_encode($params));
         if (!isset($params['token']) || empty($params['token'])) {
             $this->logger->info('token为空');
         } else {
@@ -62,9 +61,9 @@ class AppSocketEvent implements OnOpenInterface, OnMessageInterface, OnCloseInte
                 $server->push($request->fd, $tokenData['msg']);
             } else {
                 $userInfo = (array)$tokenData['result']['data'];
-                $user = $this->container->get(UserModel::class)->getUserByUserId($userInfo['id']);
                 // 将fd和用户id绑定
-                $server->bind($request->fd, $user['id']);
+                $login_type = $userInfo['login_type'];
+                $server->bind($request->fd, $userInfo['id']);
                 //设置userId关联的fd
                 /** @var CommonServer $common */
                 $common = $this->container->get(CommonServer::class);
@@ -73,9 +72,8 @@ class AppSocketEvent implements OnOpenInterface, OnMessageInterface, OnCloseInte
                     'port' => env("SOCKET_PORT", 9502),
                     'fd' => $request->fd
                 ];
-                $common->setUserFd($user['id'], json_encode($fdInfo));
+                $common->setUserFd($login_type, $userInfo['id'], json_encode($fdInfo));
                 $server->push($request->fd, 'welcome to you');
-                $common->sendToSome(sprintf("用户{$request->fd}加入聊天室"), $common->getConnectionList());
             }
         }
     }
