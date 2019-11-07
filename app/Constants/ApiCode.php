@@ -15,7 +15,7 @@ use Hyperf\Constants\Annotation\Constants;
  */
 class ApiCode extends AbstractConstants
 {
-    /**----------------------通用验证------------------------- */
+    // TODO ----------------------通用验证100-500-------------------------
     /**
      * @HttpCode("1")
      * @Message("操作失败")
@@ -26,7 +26,9 @@ class ApiCode extends AbstractConstants
      * @Message("参数错误")
      */
     const PARAMS_ERROR = 2;
-    /**----------------------用户++1000------------------------- */
+
+
+    // TODO ----------------------用户 1000-1500-------------------------
     /**
      * @HttpCode("1001")
      * @Message("验证码不匹配")
@@ -73,5 +75,22 @@ class ApiCode extends AbstractConstants
      */
     const AUTH_PASSWD_EDIT_ERR = 1008;
 
+    /**
+     * @HttpCode("1020")
+     * @Message("未登录")
+     */
+    const NOT_LOGIN = 1020;
+    /**
+     * @HttpCode("1021")
+     * @Message("重新登录")
+     */
+    const RENEW_LOGIN = 1021;
 
+    // TODO ----------------------申请状态码 2000-2200-------------------------
+
+    /**
+     * @HttpCode("2000")
+     * @Message("不能添加自己为好友")
+     */
+    const CANT_ADD_SELF = 2000;
 }

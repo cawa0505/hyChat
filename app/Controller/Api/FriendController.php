@@ -31,8 +31,8 @@ class FriendController extends AbstractController
      */
     public function search()
     {
-        $request = $this->request->all();
-        $result = $this->friendService->searchFriend($request);
+        $account = $this->request->input('account');
+        $result = $this->friendService->searchFriend($account);
         return $this->successResponse($result);
     }
 

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Middleware\Api;
 
+use App\Constants\ApiCode;
+use App\Constants\SystemCode;
 use App\Traits\Response;
 use App\Utility\Token;
 use Hyperf\HttpServer\Contract\RequestInterface;
@@ -69,24 +71,25 @@ class TokenMiddleware implements MiddlewareInterface
         $requestUri = $request->getUri()->getPath();
         // 忽略路由
         if (!in_array($requestUri, $this->whiteList)) {
-            if (!$token) {
-                return $this->response->json($this->fail("token不能为空"));
-            }
-            // 解密token
-            $decodeToken = $this->container->get(Token::class)->decode($token);
-            if ($decodeToken['status'] == 0) {
-                return $this->response->json($this->fail($decodeToken['msg']));
-            }
-            $user = (array)$decodeToken['result']['data'];
-            // 单点登陆处理
-            $userToken = redis()->hGet('userToken', (string)$user['id']);
-            if (!$userToken) {
-                return $this->response->json($this->fail("请登录后进行操作."));
-            }
-            if ($token != $userToken) {
-                return $this->response->json($this->fail("该账号已在别处登陆,请您重新登陆"));
-            }
-            setContext('userId', $user['id']);
+//            if (!$token) {
+//                return $this->response->json($this->fail(SystemCode::EMPTY_TOKEN));
+//            }
+//            // 解密token
+//            $decodeToken = $this->container->get(Token::class)->decode($token);
+//            if ($decodeToken['status'] == 0) {
+//                return $this->response->json($this->fail($decodeToken['msg']));
+//            }
+//            $user = (array)$decodeToken['result']['data'];
+//            // 单点登陆处理
+//            $userToken = redis()->hGet('userToken', (string)$user['id']);
+//            if (!$userToken) {
+//                return $this->response->json($this->fail(ApiCode::NOT_LOGIN));
+//            }
+//            if ($token != $userToken) {
+//                return $this->response->json($this->fail(ApiCode::RENEW_LOGIN));
+//            }
+//            setContext('userId', $user['id']);
+            setContext('userId', $token);
         }
         return $handler->handle($request);
     }

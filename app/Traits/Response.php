@@ -32,9 +32,9 @@ trait Response
             'code' => $code,
             'result' =>
                 [
-                'count' => $count,
-                'data' => $data
-            ]
+                    'count' => $count,
+                    'data' => $data
+                ]
         ];
     }
 
@@ -44,7 +44,7 @@ trait Response
      * @param string $message
      * @return array
      */
-    public function fail(int $code=100,$message=null)
+    public function fail(int $code = 100, $message = null)
     {
 
         if (is_null($message)) {

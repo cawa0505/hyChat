@@ -10,6 +10,7 @@ namespace App\Controller\Api;
 
 
 use App\Controller\AbstractController;
+use App\Request\Room\CreateRequest;
 use App\Service\RoomService;
 use Hyperf\Di\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface;
@@ -27,39 +28,24 @@ class RoomController extends AbstractController
     private $roomService;
 
     /**
+     * 创建房间
+     * @param CreateRequest $request
      * @return ResponseInterface
      */
-    public function create()
+    public function create(CreateRequest $request)
     {
-        $request = $this->request->getParsedBody();
-        $rules = ['friendId' => 'required'];
-        // 表单验证
-        $validator = $this->validationFactory->make($request, $rules);
-        if ($validator->fails()) {
-            $errorMessage = $validator->errors()->first();
-            return $this->errorResponse($errorMessage);
-        }
-        $userId = getContext("userId");
-        $result = $this->roomService->createRoom($userId, $request['friendId']);
+        $result = $this->roomService->createRoom($this->getUserId(), $request->input('friendId'));
         return $this->successResponse($result);
     }
 
     /**
      * 删除房间
+     * @param CreateRequest $request
      * @return ResponseInterface
      */
-    public function delete()
+    public function delete(CreateRequest $request)
     {
-        $request = $this->request->getParsedBody();
-        $rules = ['friendId' => 'required'];
-        // 表单验证
-        $validator = $this->validationFactory->make($request, $rules);
-        if ($validator->fails()) {
-            $errorMessage = $validator->errors()->first();
-            return $this->errorResponse($errorMessage);
-        }
-        $userId = getContext("userId");
-        $result = $this->roomService->deleteRoom($userId, $request['friendId']);
+        $result = $this->roomService->deleteRoom($this->getUserId(), $request->input('friendId'));
         return $this->successResponse($result);
     }
 }

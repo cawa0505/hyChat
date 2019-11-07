@@ -11,7 +11,10 @@ return [
             App\Exception\Handler\AppExceptionHandler::class,
 
         ],
-        'ws' => [
+        'app' => [
+            WebSocketExceptionHandler::class
+        ],
+        'pc' => [
             WebSocketExceptionHandler::class
         ],
     ],

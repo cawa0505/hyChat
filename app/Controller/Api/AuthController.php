@@ -12,6 +12,7 @@ use App\Constants\ApiCode;
 use App\Controller\AbstractController;
 use App\Request\Auth\RegisterRequest;
 use App\Request\Auth\LoginRequest;
+use App\Request\Auth\RetrieveRequest;
 use App\Service\UserService;
 use Hyperf\Di\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface;
@@ -71,12 +72,22 @@ class AuthController extends AbstractController
     }
 
     /**
-     * @param RegisterRequest $request
+     * 忘记密码修改密码
+     * @param RetrieveRequest $request
      * @return ResponseInterface
      */
-    public function retrieve(RegisterRequest $request)
+    public function retrieve(RetrieveRequest $request)
     {
-        $response = $this->userService->updatePassword($request->all());
+        $phone = $request->input('phone');
+        $key = 'mobileVerifyCode:' . $phone;
+        $cacheCode = redis()->get($key);
+        if (!$cacheCode) {
+            return $this->errorResponse(ApiCode::AUTH_CODE_ERROR);
+        }
+        if ($cacheCode != $request->input('code')) {
+            return $this->errorResponse(ApiCode::AUTH_CODE_ERROR);
+        }
+        $response = $this->userService->updatePasswordByPhone($phone, $request->input('password'));
         return $this->successResponse($response);
     }
 }
