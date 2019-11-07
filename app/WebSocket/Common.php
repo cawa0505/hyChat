@@ -11,15 +11,18 @@ namespace App\WebSocket;
 
 use App\Traits\Response;
 use Swoole\WebSocket\Frame;
-use Swoole\WebSocket\Server as WebSocketServer;
 use Swoole\WebSocket\Server;
 
+/**
+ * Class Common
+ * @package App\WebSocket
+ */
 class Common
 {
     use Response;
 
     /**
-     * @var WebSocketServer
+     * @var Server
      */
     protected $server;
 
@@ -40,17 +43,34 @@ class Common
     protected $loginType;
 
     /**
-     * Common constructor.
-     * @param Server $server
-     * @param Frame $frame
-     * @param array $params
-     * @param int $loginType
+     * @param $server
      */
-    public function __construct(Server $server, Frame $frame, array $params, int $loginType)
+    public function setServer($server)
     {
         $this->server = $server;
+    }
+
+    /**
+     * @param $frame
+     */
+    public function setFrame($frame)
+    {
         $this->frame = $frame;
+    }
+
+    /**
+     * @param $params
+     */
+    public function setParams($params)
+    {
         $this->params = $params;
+    }
+
+    /**
+     * @param $loginType
+     */
+    public function setLoginType($loginType)
+    {
         $this->loginType = $loginType;
     }
 
@@ -96,38 +116,30 @@ class Common
         return isset($result['uid']) ?? 0;
     }
 
-    /**
-     * 获取所有在线用户
-     * @return array
-     */
-    public function getConnectionList(): array
-    {
-        $result = $this->server->getClientList(0);
-        if (!$result) {
-            return [];
-        }
-        return $result;
-    }
 
     /**
      * 向指定用户推送
-     * @param array $fdInfo 接收者 fd
-     * @param string $data
-     * @return bool
+     * @param array $userIds
+     * @param array|string $data
+     * @return int
      */
-    public function push($fdInfo, string $data): bool
+    public function sendToUsers(array $userIds, $data): int
     {
-        // 判断发送的fd是否为本机ip
-        if ($fdInfo['ip'] == getLocalIp()) {
-            if ($this->server->isEstablished($fdInfo['fd'])) {
-                $this->server->push($fdInfo['fd'], $data);
-                return true;
-            }
-            return false;
+        $count = 0;
+        foreach ($userIds as $userId) {
+            $fdInfo = $this->getUserFd($userId);
+            $pushData = [
+                'fd'=>$fdInfo['fd'],
+                'data'=>$data
+            ];
+            redis()->publish($fdInfo['ip'], json_encode($pushData));
+//            foreach ($fdInfo as $info) {
+//                dd($info);
+//                redis()->publish($info['ip'], $data);
+//                $count++;
+//            }
         }
-        $host = sprintf("%s:%d/socket?token=system", $fdInfo["ip"], $fdInfo['port']);
-        $client = socketClient($host);
-        return $client->push($data);
+        return $count;
     }
 
 
@@ -161,7 +173,7 @@ class Common
             if (!$userFdApp) {
                 return json_decode($userFdWeb, true);
             }
-            if ($userFdWeb) {
+            if (!$userFdWeb) {
                 return json_decode($userFdApp, true);
             }
             return array_merge(json_decode($userFdWeb, true), json_decode($userFdApp, true));

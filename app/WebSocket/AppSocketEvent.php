@@ -12,6 +12,7 @@ use App\Utility\Token;
 use Hyperf\Contract\OnCloseInterface;
 use Hyperf\Contract\OnMessageInterface;
 use Hyperf\Contract\OnOpenInterface;
+use Psr\Container\ContainerInterface;
 use ReflectionClass;
 use ReflectionException;
 use Swoole\Http\Request;
@@ -44,6 +45,14 @@ class AppSocketEvent implements OnOpenInterface, OnMessageInterface, OnCloseInte
         }
         if ($params['token'] == "system") {
             $server->push($request->fd, 'welcome to you');
+            $common = container()->get(Common::class);
+            $common->setServer($server);
+            $fdInfo = [
+                'ip' => getLocalIp(),
+                'port' => env("SOCKET_PORT", 9502),
+                'fd' => $request->fd
+            ];
+            $common->setUserFd(1, json_encode($fdInfo), 1);
             return;
         }
         $tokenData = container()->get(Token::class)->decode($params['token']);
@@ -57,8 +66,9 @@ class AppSocketEvent implements OnOpenInterface, OnMessageInterface, OnCloseInte
         // 将fd和用户id绑定
         $server->bind($request->fd, $userInfo['id']);
         //设置userId关联的fd
-        /** @var Common $userService */
+        /** @var Common $common */
         $common = container()->get(Common::class);
+        $common->setServer($server);
         $fdInfo = [
             'ip' => getLocalIp(),
             'port' => env("SOCKET_PORT", 9502),
@@ -77,7 +87,6 @@ class AppSocketEvent implements OnOpenInterface, OnMessageInterface, OnCloseInte
     public function onMessage(Server $server, Frame $frame): void
     {
         $data = $frame->data;
-        dd($data);
         if ($data == 'PING') {
             $server->push($frame->fd, 'PONG');
             return;
@@ -104,7 +113,12 @@ class AppSocketEvent implements OnOpenInterface, OnMessageInterface, OnCloseInte
                 $server->push($frame->fd, "class {$class} action {$action} not found");
                 return;
             }
-            $controller = new $class($server, $frame, $params, (int)$this->loginType);
+            /** @var Common $controller */
+            $controller = new $class();
+            $controller->setServer($server);
+            $controller->setFrame($frame);
+            $controller->setParams($params);
+            $controller->setLoginType($this->loginType);
             $controller->$action();
         } catch (ReflectionException $exception) {
             stdout()->error($exception->getMessage());
@@ -121,8 +135,9 @@ class AppSocketEvent implements OnOpenInterface, OnMessageInterface, OnCloseInte
     {
         $info = $server->connection_info($fd);
         if (isset($info['websocket_status']) && $info['websocket_status'] !== 0) {
-            /** @var Common $userService */
+            /** @var Common $common */
             $common = container()->get(Common::class);
+            $common->setServer($server);
             // 获取fd关联的uid
             $userId = $common->getFdUser($fd);
             if ($userId) {

@@ -15,8 +15,6 @@ class Index extends Common
      */
     public function index()
     {
-        dd($this->getData());
-        $fdList = $this->getConnectionList();
-        dd($fdList);
+        $this->sendToUsers([1], $this->getData());
     }
 }

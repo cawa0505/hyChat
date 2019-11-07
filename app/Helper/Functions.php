@@ -12,11 +12,9 @@ use Hyperf\Framework\Logger\StdoutLogger;
 use Hyperf\Logger\LoggerFactory;
 use Hyperf\Redis\RedisFactory;
 use Hyperf\Server\ServerFactory;
-use Hyperf\WebSocketClient\Client;
-use Hyperf\WebSocketClient\ClientFactory;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
-use Swoole\Server;
+use Swoole\WebSocket\Server;
 
 
 if (!function_exists("container")) {
@@ -138,23 +136,10 @@ if (!function_exists('getServer')) {
     }
 }
 
-if (!function_exists('socketClient')) {
-    /**
-     * @param $host
-     * @return Client
-     */
-    function socketClient($host)
-    {
-        /** @var ClientFactory $client */
-        $client = container()->get(ClientFactory::class);
-        return $client->create($host);
-    }
-}
-
 if (!function_exists("getLocalIp")) {
     function getLocalIp()
     {
-        return swoole_get_local_ip()['eth0'];
+        return swoole_get_local_ip()['eth1'];
     }
 }
 
