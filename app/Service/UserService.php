@@ -29,6 +29,8 @@ class UserService extends BaseService
      */
     public function handleLogin($request)
     {
+        // type 1app 2pc
+        $type = $request['type'];
         $account = $request['account'];
         $password = $request['password'];
         $userInfo = $this->userModel->getUserByAccount($account);
@@ -42,6 +44,7 @@ class UserService extends BaseService
             return $this->fail(ApiCode::AUTH_PASSWD_ERR);
         }
         unset($userInfo['password']);
+        $userInfo['login_type'] = $type;
         // 单点登陆 给前一个设备推送消息
         $token = container()->get(Token::class)->encode($userInfo);
         /** @var CommonServer $socketCommon */
@@ -51,7 +54,7 @@ class UserService extends BaseService
             $socketCommon->sendTo($userFd, $this->sendMessage(1, [], "已在别处登陆"));
         }
         // 保存用户信息
-        redis()->hSet("userToken", (string)$userInfo['id'], $token);
+        redis()->hSet("userToken", $userInfo['id'] . "_" . $type, $token);
         return $this->success($token);
     }
 

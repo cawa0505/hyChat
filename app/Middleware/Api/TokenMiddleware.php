@@ -71,25 +71,25 @@ class TokenMiddleware implements MiddlewareInterface
         $requestUri = $request->getUri()->getPath();
         // 忽略路由
         if (!in_array($requestUri, $this->whiteList)) {
-//            if (!$token) {
-//                return $this->response->json($this->fail(SystemCode::EMPTY_TOKEN));
-//            }
-//            // 解密token
-//            $decodeToken = $this->container->get(Token::class)->decode($token);
-//            if ($decodeToken['status'] == 0) {
-//                return $this->response->json($this->fail($decodeToken['msg']));
-//            }
-//            $user = (array)$decodeToken['result']['data'];
-//            // 单点登陆处理
-//            $userToken = redis()->hGet('userToken', (string)$user['id']);
-//            if (!$userToken) {
-//                return $this->response->json($this->fail(ApiCode::NOT_LOGIN));
-//            }
-//            if ($token != $userToken) {
-//                return $this->response->json($this->fail(ApiCode::RENEW_LOGIN));
-//            }
-//            setContext('userId', $user['id']);
-            setContext('userId', $token);
+            if (!$token) {
+                return $this->response->json($this->fail(SystemCode::EMPTY_TOKEN));
+            }
+            // 解密token
+            $decodeToken = $this->container->get(Token::class)->decode($token);
+            if ($decodeToken['status'] == 0) {
+                return $this->response->json($this->fail($decodeToken['msg']));
+            }
+            $user = (array)$decodeToken['result']['data'];
+            dd($user);
+            // 单点登陆处理
+            $userToken = redis()->hGet('userToken',$user['id'] . "_" . $user['login_type']);
+            if (!$userToken) {
+                return $this->response->json($this->fail(ApiCode::NOT_LOGIN));
+            }
+            if ($token != $userToken) {
+                return $this->response->json($this->fail(ApiCode::RENEW_LOGIN));
+            }
+            setContext('userId', $user['id']);
         }
         return $handler->handle($request);
     }
