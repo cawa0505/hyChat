@@ -26,10 +26,10 @@ class UserRequest extends FormRequest
             return [
                 "image_url" => "required|string",
                 "nick_name" => "required|string",
-                "sex" => "required|int:0,1,2",
-                "country_id" => "required|int",
-                "province_id" => "required|int",
-                "city_id" => "required|int",
+                "sex" => "required|integer:0,1,2",
+                "country_id" => "required|integer",
+                "province_id" => "required|integer",
+                "city_id" => "required|integer",
                 "ind_sign" => "required|string",
             ];
         }

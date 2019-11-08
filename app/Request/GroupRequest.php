@@ -26,6 +26,7 @@ class GroupRequest extends FormRequest
      */
     public function rules(): array
     {
+
         $path=$this->path();
         $action = getAction($path);
         switch ($action) {
@@ -46,16 +47,17 @@ class GroupRequest extends FormRequest
             case "invite":
             case "memberList":
                 return [
-                    'id' => 'required|integer',
+                    'id' => 'required',
                 ];
+                break;
             case "updateNick":
                 return [
                     'id' => 'required|integer',
                     'group_nick_name' => 'required|string',
                 ];
+                break;
             default:
                 return [];
-
         }
 
     }

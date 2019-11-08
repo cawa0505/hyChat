@@ -45,14 +45,15 @@ class AuthController extends AbstractController
      */
     public function register(AuthRequest $request)
     {
-        $phone = $request->input('phone');
+        $params=$request->all();
+        $phone = $params['phone'];
         //验证码
         $key = 'mobileVerifyCode:' . $phone;
         $cacheCode = redis()->get($key);
         if (!$cacheCode) {
             return $this->errorResponse(ApiCode::AUTH_CODE_ERROR);
         }
-        if ($cacheCode != $request->input('code')) {
+        if ($cacheCode != $params['code']) {
             return $this->errorResponse(ApiCode::AUTH_CODE_NOT_EXIST);
         }
         $response = $this->userService->handleRegister($request->all());
@@ -66,6 +67,7 @@ class AuthController extends AbstractController
     public function logout()
     {
         $result = redis()->hDel('userToken', $this->getUserId() . "_" . getContext('login_type'));
+
         return $this->successResponse([$result]);
     }
 

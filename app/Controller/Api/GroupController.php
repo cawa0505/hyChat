@@ -82,8 +82,7 @@ class GroupController extends AbstractController
      */
     public function invite(GroupRequest $request)
     {
-        $user=
-        $result=$this->groupService->joinMember($request->input("id"),$this->getUserId(),1);
+        $result=$this->groupService->joinMember($request->post("id"),$this->getUserId(),1);
 
         return $this->successResponse($result);
 
@@ -105,12 +104,13 @@ class GroupController extends AbstractController
      * 获取所有群组成员
      * @param GroupRequest $request
      * @return ResponseInterface
-     * @Cacheable(prefix="member",ttl=-1)
+     * @Cacheable(prefix="member",ttl=7200)
      */
-    public function memberList(GroupRequest $request)
+    public function memberList()
     {
-        $result=$this->groupService->getAllMember($request->input("id"));
-
+        $params=$this->request->all();
+        dd($params);
+        $result=$this->groupService->getAllMember($params["id"]);
         return $this->successResponse($result);
     }
 }
