@@ -58,7 +58,7 @@ class GroupService extends BaseService
         //构造群组成员初始化数据
         $groupMemberData = [];
         foreach ($userIds as $val) {
-            $groupMember[] = ["group_id" => $groupId, "user_id" => $val];
+            $groupMember[] = ["group_id" => $groupId, "user_id" => $val,"status"=>1];//初始化成员不需要审核状态为正常
         }
         $createGroupUser = $this->groupMember->createData($groupMemberData);
         if (!$createGroupUser) {
@@ -104,19 +104,19 @@ class GroupService extends BaseService
         if (!is_array($group)) return $this->fail(ApiCode::GROUP_NOT_EXIST);
 
         Db::beginTransaction();
+        //解散群成员
+        $resultMember = $this->groupMember->deleteMember($id);
 
-        $resultGroup = $this->groupModel->deleteGroup($id);
-
-        if (!$resultGroup) {
+        if (!$resultMember) {
 
             Db::rollBack();
 
             return $this->fail(ApiCode::OPERATION_FAIL);
         }
-        //解散群成员
-        $resultMember = $this->groupMember->deleteMember($id);
+        //删除群组
+        $resultGroup = $this->groupModel->deleteGroup($id);
 
-        if (!$resultMember) {
+        if (!$resultGroup) {
 
             Db::rollBack();
 
@@ -128,15 +128,50 @@ class GroupService extends BaseService
     }
 
     /**
-     *
+     * 加入群组
      * @param $groupId
+     * 群组ID
+     * @param $userId
+     * 用户ID
+     * @param $status
+     * 状态0申请入群1邀请入群
+     * @return array
+     */
+    public function joinMember($groupId, $userId,$status=0)
+    {
+        $result = $this->groupMember->createData(["user_id" => $userId, "group_id" => $groupId,"status"=>$status]);
+        if (!$result) {
+
+            return $this->fail(ApiCode::OPERATION_FAIL);
+        }
+        return $this->success($result);
+    }
+
+    /**
+     * 更改成员群昵称
+     * @param $param
      * @param $userId
      * @return array
      */
-    public function joinMember($groupId, $userId)
+    public function updateNick($param,$userId)
     {
-        $result = $this->groupMember->createData(["user_id" => $userId, "group_id" => $groupId]);
+        $group = $this->groupModel->getOne(["id" => $param["id"]]);
 
+        if (!is_array($group)) return $this->fail(ApiCode::GROUP_NOT_EXIST);
+
+        $data=[
+            "group_nick_name"=>$param["group_nick_name"]
+        ];
+        $where=[
+            ["user_id" => $userId, "group_id" => $param["id"]]
+        ];
+
+        $result = $this->groupMember->updateMemberNick($data,$where);
+
+        if (!$result) {
+
+            return $this->fail(ApiCode::OPERATION_FAIL);
+        }
         return $this->success($result);
     }
 }

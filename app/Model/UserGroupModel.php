@@ -60,7 +60,8 @@ class UserGroupModel extends BaseModel
 
     /**
      * 删除群组
-     * @param $id 群组ID
+     * @param $id
+     * 群组ID
      * @return int|mixed
      */
     public function deleteGroup($id)

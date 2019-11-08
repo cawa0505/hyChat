@@ -57,3 +57,7 @@ Router::post('group/update', [GroupController::class, 'update']);
 Router::post('group/delete', [GroupController::class, 'delete']);
 // 申请加入
 Router::post('group/join', [GroupController::class, 'join']);
+// 邀请入群
+Router::post('group/invite', [GroupController::class, 'invite']);
+// 编辑群昵称
+Router::post('group/updateNick', [GroupController::class, 'updateNick']);

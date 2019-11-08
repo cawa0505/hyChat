@@ -42,8 +42,14 @@ class GroupRequest extends FormRequest
                 break;
             case "delete":
             case "join":
+            case "invite":
                 return [
                     'id' => 'require|integer',
+                ];
+            case "updateNick":
+                return [
+                    'id' => 'require|integer',
+                    'group_nick_name' => 'require|string',
                 ];
             default:
                 return [];

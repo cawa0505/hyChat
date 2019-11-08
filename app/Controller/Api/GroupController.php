@@ -68,6 +68,32 @@ class GroupController extends AbstractController
     public function join(GroupRequest $request)
     {
         $result=$this->groupService->joinMember($request->input("id"),$this->getUserId());
+
+        return $this->successResponse($result);
+    }
+
+    /**
+     * 邀请入群
+     * @param GroupRequest $request
+     * @return ResponseInterface
+     */
+    public function invite(GroupRequest $request)
+    {
+        $result=$this->groupService->joinMember($request->input("id"),$this->getUserId(),1);
+
+        return $this->successResponse($result);
+
+    }
+
+    /**
+     * 编辑群昵称
+     * @param GroupRequest $request
+     * @return ResponseInterface
+     */
+    public function updateNick(GroupRequest $request)
+    {
+        $result=$this->groupService->updateNick($request->all(),$this->getUserId());
+
         return $this->successResponse($result);
     }
 }
