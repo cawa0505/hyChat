@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use App\Constants\ApiCode;
+use App\Constants\SystemCode;
 
 /**
  * Trait ResponseTrait
@@ -48,7 +49,10 @@ trait Response
     {
 
         if (is_null($message)) {
-            $message = ApiCode::getMessage($code) ?? "未知错误";
+            $message = ApiCode::getMessage($code) ??"";
+            if(!$message){
+                $message = SystemCode::getMessage($code)??"未知错误";
+            }
         }
         return [
             'code' => $code,

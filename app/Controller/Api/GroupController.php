@@ -12,6 +12,7 @@ namespace App\Controller\Api;
 use App\Controller\AbstractController;
 use App\Request\GroupRequest;
 use App\Service\GroupService;
+use Hyperf\Cache\Annotation\Cacheable;
 use Hyperf\Di\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface;
 
@@ -34,7 +35,9 @@ class GroupController extends AbstractController
      */
     public function create(GroupRequest $request)
     {
-        $result = $this->groupService->createGroup($this->getUserId(),$request->input('userIds'));
+        $params=$request->all();
+        dd($params);
+        $result = $this->groupService->createGroup($this->getUserId(),$params['userIds']);
         return $this->successResponse($result);
     }
 
@@ -79,6 +82,7 @@ class GroupController extends AbstractController
      */
     public function invite(GroupRequest $request)
     {
+        $user=
         $result=$this->groupService->joinMember($request->input("id"),$this->getUserId(),1);
 
         return $this->successResponse($result);
@@ -93,6 +97,19 @@ class GroupController extends AbstractController
     public function updateNick(GroupRequest $request)
     {
         $result=$this->groupService->updateNick($request->all(),$this->getUserId());
+
+        return $this->successResponse($result);
+    }
+
+    /**
+     * 获取所有群组成员
+     * @param GroupRequest $request
+     * @return ResponseInterface
+     * @Cacheable(prefix="member",ttl=-1)
+     */
+    public function memberList(GroupRequest $request)
+    {
+        $result=$this->groupService->getAllMember($request->input("id"));
 
         return $this->successResponse($result);
     }

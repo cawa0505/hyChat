@@ -17,15 +17,25 @@ class ApiCode extends AbstractConstants
 {
     // TODO ----------------------通用验证100-500-------------------------
     /**
-     * @HttpCode("1")
+     * @HttpCode("101")
      * @Message("操作失败")
      */
-    const OPERATION_FAIL = 1;
+    const OPERATION_FAIL = 101;
     /**
-     * @HttpCode("2")
+     * @HttpCode("102")
      * @Message("参数错误")
      */
-    const PARAMS_ERROR = 2;
+    const PARAMS_ERROR = 102;
+    /**
+     * @HttpCode("103")
+     * @Message("Token签名错误")
+     */
+    const TOKEN_SIGN_ERROR = 103;
+    /**
+     * @HttpCode("104")
+     * @Message("Token为空")
+     */
+    const TOKEN_NOT_EXIST = 104;
 
 
     // TODO ----------------------用户 1000-1500-------------------------

@@ -37,7 +37,7 @@ class SendCode
             $result = $this->requestPost("https://sms.yunpian.com/", 'v2/sms/single_send.json', $data);
             $response = json_decode($result, true);
             $key = 'mobileVerifyCode:' . $mobile;
-            redis()->set($key, $verifyCode, 60 * 5);
+            redis()->set($key, $verifyCode, 60 * 15);
             return ['code' => $response['code'], 'message' => $response['msg']];
         } catch (RequestException $exception) {
             $result = $exception->getResponse()->getBody()->getContents();
