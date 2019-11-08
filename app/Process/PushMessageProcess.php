@@ -12,8 +12,7 @@ class PushMessageProcess extends AbstractProcess
 {
     public function handle(): void
     {
-        $redis = new \Redis();
-        $redis->connect('192.168.0.163', 6379);
+        $redis = redis();
         /** @var Server $server */
         $server = server();
         while (true) {

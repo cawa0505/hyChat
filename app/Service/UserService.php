@@ -86,6 +86,7 @@ class UserService extends BaseService
         $key = 'mobileVerifyCode:' . $phone;
         redis()->del($key);
         $response = $this->userModel->getUserByAccount($account);
+        unset($response['password']);
         return $this->success($response);
     }
 
