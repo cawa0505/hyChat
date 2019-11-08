@@ -14,7 +14,9 @@ use Hyperf\Redis\RedisFactory;
 use Hyperf\Server\ServerFactory;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
-use Swoole\WebSocket\Server;
+use Swoole\Server;
+use Swoole\WebSocket\Frame;
+use Swoole\WebSocket\Server as WebSocketServer;
 
 
 if (!function_exists("container")) {
@@ -124,22 +126,53 @@ if (!function_exists('hasContext')) {
     }
 }
 
-if (!function_exists('getServer')) {
+/**
+ * server 实例 基于 server
+ */
+if (!function_exists('server')) {
     /**
      * @return Server
      */
-    function getServer()
+    function server()
     {
-        /** @var $server ServerFactory $server */
-        $server = container()->get(ServerFactory::class);
-        return $server->getServer()->getServer();
+        return container()->get(ServerFactory::class)->getServer()->getServer();
+    }
+}
+
+
+/**
+ * websocket 实例
+ */
+if (!function_exists('websocket')) {
+    /**
+     * @return WebSocketServer
+     */
+    function websocket()
+    {
+        return container()->get(WebSocketServer::class);
+    }
+}
+
+/**
+ * websocket frame 实例
+ */
+if (!function_exists('frame')) {
+    /**
+     * @return mixed
+     */
+    function frame()
+    {
+        return container()->get(Frame::class);
     }
 }
 
 if (!function_exists("getLocalIp")) {
+    /**
+     * @return mixed
+     */
     function getLocalIp()
     {
-        return swoole_get_local_ip()['eth1'];
+        return swoole_get_local_ip()['eth0'];
     }
 }
 
@@ -170,27 +203,13 @@ if (!function_exists("queue")) {
     }
 }
 
-if (!function_exists('mongoTask')) {
+if (!function_exists('mongoClient')) {
     /**
      * @return \App\Utility\Client\MongoClient
      */
-    function mongoTask()
+    function mongoClient()
     {
         return container()->get(\App\Utility\Client\MongoClient::class);
-    }
-}
-
-if (!function_exists('tableComment')) {
-
-    /**
-     * 表备注
-     * @param $table
-     * @param $comment
-     */
-    function tableComment($table, $comment)
-    {
-        $prefix = env('DB_PREFIX', '');
-        \Hyperf\DbConnection\Db::statement("ALTER TABLE `" . $prefix . $table . "` comment '" . $comment . "'");
     }
 }
 
@@ -204,5 +223,17 @@ if (!function_exists('getAction')) {
     function getAction($path)
     {
         return trim(end(explode("/", $path)), " ");
+    }
+}
+
+
+if (!function_exists('isOneArray')) {
+    function isOneArray($data)
+    {
+        $count = count($data);
+        if ($count == count($data, 1) && $count) {
+            return true;
+        }
+        return false;
     }
 }

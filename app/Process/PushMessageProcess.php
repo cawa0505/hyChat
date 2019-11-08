@@ -6,17 +6,19 @@ namespace App\Process;
 
 use Hyperf\Process\AbstractProcess;
 use Swoole\Coroutine;
+use Swoole\WebSocket\Server;
 
 class PushMessageProcess extends AbstractProcess
 {
     public function handle(): void
     {
-        $redis = redis();
-        $server = getServer();
+        $redis = new \Redis();
+        $redis->connect('192.168.0.163', 6379);
+        /** @var Server $server */
+        $server = server();
         while (true) {
             $redis->subscribe((array)getLocalIp(), function ($redis, $channel, $data) use ($server) {
                 $data = json_decode($data, true);
-                $server = getServer();
                 $fd = (int)$data['fd'];
                 if ($server->isEstablished($fd)) {
                     $server->push($fd, $data['data']);

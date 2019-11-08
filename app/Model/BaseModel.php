@@ -65,7 +65,7 @@ abstract class BaseModel extends Model implements CacheableInterface
     {
         $cacheConfig = $this->getCacheConfig($key);
         if(!$cacheConfig) return [];
-        return mongoTask()->query($cacheConfig["key"])??[];
+        return mongoClient()->query($cacheConfig["key"])??[];
     }
 
     /**
@@ -77,7 +77,7 @@ abstract class BaseModel extends Model implements CacheableInterface
     public function saveCache($key,$data)
     {
         $cacheConfig = $this->getCacheConfig($key);
-        return mongoTask()->insert($cacheConfig["key"],$data);
+        return mongoClient()->insert($cacheConfig["key"],$data);
     }
     /**
      * 获取缓存配置
@@ -101,6 +101,6 @@ abstract class BaseModel extends Model implements CacheableInterface
     public function flushCache($key)
     {
         $cacheConfig = $this->getCacheConfig($key);
-        return mongoTask()->delete($cacheConfig["key"],[]);
+        return mongoClient()->delete($cacheConfig["key"],[]);
     }
 }
