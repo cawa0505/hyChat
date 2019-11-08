@@ -37,6 +37,7 @@ class AppSocketEvent implements OnOpenInterface, OnMessageInterface, OnCloseInte
     public function onOpen(Server $server, Request $request): void
     {
         $params = $request->get;
+        dd($params);
         if (!isset($params['token']) || !$params['token']) {
             stdout()->info('token为空');
             $server->close($request->fd);
