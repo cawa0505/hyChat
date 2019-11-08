@@ -72,12 +72,13 @@ class TokenMiddleware implements MiddlewareInterface
         // 忽略路由
         if (!in_array($requestUri, $this->whiteList)) {
             if (!$token) {
-                return $this->response->json($this->fail(SystemCode::EMPTY_TOKEN));
+                return $this->response->json($this->fail(ApiCode::TOKEN_NOT_EXIST));
             }
             // 解密token
             $decodeToken = $this->container->get(Token::class)->decode($token);
+
             if ($decodeToken['status'] == 0) {
-                return $this->response->json($this->fail($decodeToken['msg']));
+                return $this->response->json($this->fail(ApiCode::TOKEN_SIGN_ERROR));
             }
             $user = (array)$decodeToken['result']['data'];
             // 单点登陆处理

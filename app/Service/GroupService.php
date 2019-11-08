@@ -58,7 +58,7 @@ class GroupService extends BaseService
         //构造群组成员初始化数据
         $groupMemberData = [];
         foreach ($userIds as $val) {
-            $groupMember[] = ["group_id" => $groupId, "user_id" => $val,"status"=>1];//初始化成员不需要审核状态为正常
+            $groupMember[] = ["group_id" => $groupId, "user_id" => $val, "status" => 1];//初始化成员不需要审核状态为正常
         }
         $createGroupUser = $this->groupMember->createData($groupMemberData);
         if (!$createGroupUser) {
@@ -137,9 +137,9 @@ class GroupService extends BaseService
      * 状态0申请入群1邀请入群
      * @return array
      */
-    public function joinMember($groupId, $userId,$status=0)
+    public function joinMember($groupId, $userId, $status = 0)
     {
-        $result = $this->groupMember->createData(["user_id" => $userId, "group_id" => $groupId,"status"=>$status]);
+        $result = $this->groupMember->createData(["user_id" => $userId, "group_id" => $groupId, "status" => $status]);
         if (!$result) {
 
             return $this->fail(ApiCode::OPERATION_FAIL);
@@ -153,20 +153,20 @@ class GroupService extends BaseService
      * @param $userId
      * @return array
      */
-    public function updateNick($param,$userId)
+    public function updateNick($param, $userId)
     {
         $group = $this->groupModel->getOne(["id" => $param["id"]]);
 
         if (!is_array($group)) return $this->fail(ApiCode::GROUP_NOT_EXIST);
 
-        $data=[
-            "group_nick_name"=>$param["group_nick_name"]
+        $data = [
+            "group_nick_name" => $param["group_nick_name"]
         ];
-        $where=[
+        $where = [
             ["user_id" => $userId, "group_id" => $param["id"]]
         ];
 
-        $result = $this->groupMember->updateMemberNick($data,$where);
+        $result = $this->groupMember->updateMemberNick($data, $where);
 
         if (!$result) {
 
@@ -174,4 +174,17 @@ class GroupService extends BaseService
         }
         return $this->success($result);
     }
+
+    /**
+     * 获取所有群组成员
+     * @param $groupId
+     * @return array
+     */
+    public function getAllMember($groupId)
+    {
+        $data = $this->groupMember->getMany(["group_id" => $groupId]);
+
+        return $this->success($data);
+    }
+
 }

@@ -8,6 +8,7 @@
 
 namespace App\Controller\Api;
 
+use App\Constants\ApiCode;
 use App\Controller\AbstractController;
 use App\Utility\RsaEncryption;
 use App\Utility\SendCode;
@@ -37,9 +38,9 @@ class CommonController extends AbstractController
     {
         $publicKey = $this->rsaEncryption->getPublicKey();
         if (!$publicKey) {
-            return $this->fail("公钥获取失败");
+            return $this->fail(ApiCode::OPERATION_FAIL);
         }
-        return $this->response->raw($publicKey);
+        return $this->response->json($this->success(htmlentities($publicKey)));
     }
 
     /**
@@ -49,7 +50,8 @@ class CommonController extends AbstractController
      */
     public function sendCode()
     {
-        $mobile = $this->request->input('mobile');
+        $params=$this->request->all();
+        $mobile = $params['mobile'];
         $result = $this->container->get(SendCode::class)->send($mobile);
         return $this->successResponse($result);
     }
