@@ -6,9 +6,9 @@ install:
 start:
 	./bin/watch run \
 	--cmd "php" --args "./bin/hyperf, start" \
-	--folder "/var/www/html/hyChat/app" \
-	--folder "/var/www/html/hyChat/config" \
-	--folder "/var/www/html/hyChat/resources" \
-	--folder "/var/www/html/hyChat/routers" \
+	--folder "/mnt/d/dnmp/www/hyChat/app" \
+	--folder "/mnt/d/dnmp/www/hyChat/config" \
+	--folder "/mnt/d/dnmp/www/hyChat/resources" \
+	--folder "/mnt/d/dnmp/www/hyChat/routers" \
 	--delay=3 \
 	--autoRestart=true
