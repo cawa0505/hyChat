@@ -11,7 +11,6 @@ namespace App\WebSocket\Controller;
 
 use App\Traits\Response;
 use App\WebSocket\Service\UserService;
-use Hyperf\Di\Annotation\Inject;
 use Swoole\Server;
 use Swoole\WebSocket\Frame;
 
