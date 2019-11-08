@@ -2,6 +2,8 @@
 
 namespace App\Model;
 
+use Hyperf\Cache\Annotation\Cacheable;
+
 /**
  * Class UserGroupMember
  * @package App\Model
@@ -18,7 +20,6 @@ class UserGroupMember extends BaseModel
      * @param $groupId
      * @return array
      */
-
     public function getGroupMember($groupId)
     {
 

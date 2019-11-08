@@ -222,7 +222,7 @@ if (!function_exists('getAction')) {
      */
     function getAction($path)
     {
-        return trim(end(explode("/", $path)), " ");
+        return trim(array_pop(explode("/", $path)), " ");
     }
 }
 

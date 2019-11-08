@@ -183,7 +183,6 @@ class GroupService extends BaseService
     public function getAllMember($groupId)
     {
         $data = $this->groupMember->getMany(["group_id" => $groupId]);
-
         return $this->success($data);
     }
 
