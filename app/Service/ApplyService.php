@@ -12,7 +12,7 @@ use App\Constants\ApiCode;
 use App\Constants\SystemCode;
 use App\Model\UserApplyModel;
 use App\Model\UserFriendModel;
-use App\WebSocket\Service\CommonServer;
+use App\WebSocket\Service\SocketServer;
 use Hyperf\Di\Annotation\Inject;
 
 /**
@@ -48,8 +48,8 @@ class ApplyService extends BaseService
         }
         // 创建申请记录
         $result = $this->userApplyModel->create($data);
-        /** @var CommonServer $socketCommon */
-        $socketCommon = container()->get(CommonServer::class);
+        /** @var SocketServer $socketCommon */
+        $socketCommon = container()->get(SocketServer::class);
         // 发送申请提醒
         $socketCommon->sendToUser($request['friendId'], $this->sendMessage(SystemCode::SUCCESS));
         return $this->success($result);
@@ -85,11 +85,8 @@ class ApplyService extends BaseService
         $friend = container()->get(UserFriendModel::class);
         $result = $friend->createFriend($applyResult['user_id'], $applyResult['apply_user_id']);
         //创建房间
-        mongoTask()->insert('user.room', ['user_id' => $userId, 'friend_id' => $applyResult['apply_user_id']]);
-        mongoTask()->insert('user.room', ['user_id' => $applyResult['apply_user_id'], 'friend_id' => $userId]);
-        /** @var CommonServer $common */
-        $common = container()->get(CommonServer::class);
-        $common->sendToSomeUser([$applyResult['apply_user_id'], $userId], "好友通过提醒");
+        mongoClient()->insert('user.room', ['user_id' => $userId, 'friend_id' => $applyResult['apply_user_id']]);
+        mongoClient()->insert('user.room', ['user_id' => $applyResult['apply_user_id'], 'friend_id' => $userId]);
         return $this->success($result);
     }
 }

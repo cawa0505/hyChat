@@ -11,7 +11,7 @@ namespace App\Service;
 use App\Constants\ApiCode;
 use App\Model\UserModel;
 use App\Utility\Token;
-use App\WebSocket\Service\CommonServer;
+use App\WebSocket\Common;
 use Hyperf\Di\Annotation\Inject;
 
 class UserService extends BaseService
@@ -47,12 +47,12 @@ class UserService extends BaseService
         $userInfo['login_type'] = $type;
         // 单点登陆 给前一个设备推送消息
         $token = container()->get(Token::class)->encode($userInfo);
-        /** @var CommonServer $socketCommon */
-        $socketCommon = container()->get(CommonServer::class);
-        $userFd = $socketCommon->getUserFd($userInfo['id']);
-        if ($userFd) {
-            $socketCommon->sendTo($userFd, $this->sendMessage(1, [], "已在别处登陆"));
-        }
+//        /** @var Common $socketCommon */
+//        $socketCommon = container()->get(Common::class);
+//        $userFd = $socketCommon->getUserFd($userInfo['id'],$type);
+//        if ($userFd) {
+//            $socketCommon->sendTo($userFd, $this->sendMessage(1, [], "已在别处登陆"));
+//        }
         // 保存用户信息
         redis()->hSet("userToken", $userInfo['id'] . "_" . $type, $token);
         return $this->success($token);

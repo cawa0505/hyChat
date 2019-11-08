@@ -56,7 +56,7 @@ class UserApplyModel extends BaseModel
     public function create($data)
     {
         $result = $this->newQuery()->insert($data);
-        mongoTask()->insert('user.apply', $data);
+        mongoClient()->insert('user.apply', $data);
         return $result;
     }
 

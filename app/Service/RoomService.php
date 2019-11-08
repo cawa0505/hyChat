@@ -22,7 +22,7 @@ class RoomService extends BaseService
      */
     public function createRoom($userId, $friendId)
     {
-        mongoTask()->insert('user.room', ['user_id' => $userId, 'friend_id' => $friendId]);
+        mongoClient()->insert('user.room', ['user_id' => $userId, 'friend_id' => $friendId]);
         $result = redis()->sAdd(sprintf("user_%d_room", $userId), $friendId);
         return $this->success([$result]);
     }
@@ -35,7 +35,7 @@ class RoomService extends BaseService
      */
     public function deleteRoom($userId, $friendId)
     {
-        mongoTask()->delete('user.room', ['user_id' => $userId, 'friend_id' => $friendId]);
+        mongoClient()->delete('user.room', ['user_id' => $userId, 'friend_id' => $friendId]);
         $result = redis()->sRem(sprintf("user_%d_room", $userId), $friendId);
         return $this->success([$result]);
     }
