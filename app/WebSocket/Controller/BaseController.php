@@ -79,6 +79,11 @@ class BaseController
         /** @var UserService $userService */
         $userService = container()->get(UserService::class);
         $fdInfo = $userService->getUserFd($userId);
+        if (!$fdInfo) {
+            $this->server->push($this->getFd(),$this->getData()['message']);
+            $count++;
+            return $count;
+        }
         if (isOneArray($fdInfo)) {
             $pushData = [
                 'fd' => $fdInfo['fd'],

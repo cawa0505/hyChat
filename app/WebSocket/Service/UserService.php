@@ -9,10 +9,13 @@
 namespace App\WebSocket\Service;
 
 
+/**
+ * 绑定用户
+ * Class UserService
+ * @package App\WebSocket\Service
+ */
 class UserService
 {
-    // TODO -------------------绑定用户-------------------------------
-
     /**
      * 设置user关联的fd
      * @param $userId int

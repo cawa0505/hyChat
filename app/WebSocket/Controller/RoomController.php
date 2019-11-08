@@ -29,6 +29,7 @@ class RoomController extends BaseController
      */
     public function create()
     {
-
+        $data = $this->getData();
+        $this->sendToUser($data['userId'], $data['message']);
     }
 }

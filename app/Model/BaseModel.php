@@ -7,6 +7,7 @@ namespace App\Model;
 use Hyperf\DbConnection\Model\Model;
 use Hyperf\ModelCache\Cacheable;
 use Hyperf\ModelCache\CacheableInterface;
+use MongoDB\Driver\Exception\Exception;
 
 /**
  * Class BaseModel
@@ -46,7 +47,7 @@ abstract class BaseModel extends Model implements CacheableInterface
             foreach ($whereParam as $key => $val) {
 
                 if (is_array($val)) {
-                    $model->where($key, $val[0],$val[1]);
+                    $model->where($key, $val[0], $val[1]);
                 } else {
                     $model->where($key, $val);
                 }
@@ -59,13 +60,13 @@ abstract class BaseModel extends Model implements CacheableInterface
      * 获取缓存
      * @param $key
      * @return mixed
-     * @throws \MongoDB\Driver\Exception\Exception
+     * @throws Exception
      */
     public function getCache($key)
     {
         $cacheConfig = $this->getCacheConfig($key);
-        if(!$cacheConfig) return [];
-        return mongoClient()->query($cacheConfig["key"])??[];
+        if (!$cacheConfig) return [];
+        return mongoClient()->query($cacheConfig["key"]) ?? [];
     }
 
     /**
@@ -74,11 +75,12 @@ abstract class BaseModel extends Model implements CacheableInterface
      * @param $data
      * @return int|null
      */
-    public function saveCache($key,$data)
+    public function saveCache($key, $data)
     {
         $cacheConfig = $this->getCacheConfig($key);
-        return mongoClient()->insert($cacheConfig["key"],$data);
+        return mongoClient()->insert($cacheConfig["key"], $data);
     }
+
     /**
      * 获取缓存配置
      * @param $key
@@ -90,9 +92,10 @@ abstract class BaseModel extends Model implements CacheableInterface
         if (isset($cacheConfig[$key])) {
             return $cacheConfig[$key];
         } else {
-            return $cacheConfig['defualt'];
+            return $cacheConfig['default'];
         }
     }
+
     /**
      * 刷新缓存
      * @param $key
@@ -101,6 +104,6 @@ abstract class BaseModel extends Model implements CacheableInterface
     public function flushCache($key)
     {
         $cacheConfig = $this->getCacheConfig($key);
-        return mongoClient()->delete($cacheConfig["key"],[]);
+        return mongoClient()->delete($cacheConfig["key"], []);
     }
 }

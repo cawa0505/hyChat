@@ -44,15 +44,6 @@ class AppSocketEvent implements OnOpenInterface, OnMessageInterface, OnCloseInte
             return;
         }
         if ($params['token'] == "system") {
-            /** @var UserService $userService */
-            $userService = container()->get(UserService::class);
-            $fdInfo = [
-                'ip' => getLocalIp(),
-                'port' => env("SOCKET_PORT", 9502),
-                'fd' => $request->fd
-            ];
-            $server->bind($request->fd, 1);
-            $userService->setUserFd(1, json_encode($fdInfo), 1);
             $server->push($request->fd, 'welcome to you');
             return;
         }
@@ -74,7 +65,6 @@ class AppSocketEvent implements OnOpenInterface, OnMessageInterface, OnCloseInte
             'port' => env("SOCKET_PORT", 9502),
             'fd' => $request->fd
         ];
-        stdout()->info(json_encode($fdInfo));
         $userService->setUserFd($userInfo['id'], json_encode($fdInfo), $this->loginType);
         $server->push($request->fd, 'welcome to you');
     }
@@ -117,6 +107,7 @@ class AppSocketEvent implements OnOpenInterface, OnMessageInterface, OnCloseInte
             $controllerObj->$action();
         } catch (ReflectionException $exception) {
             stdout()->error($exception->getMessage());
+            logger()->error($exception->getMessage());
         }
     }
 
@@ -139,7 +130,6 @@ class AppSocketEvent implements OnOpenInterface, OnMessageInterface, OnCloseInte
                 $userService = container()->get(UserService::class);
                 // 删除fd关联的userId
                 $userService->deleteUserFd($userId, $this->loginType);
-                $userService->deleteUserFd(1, 1);
             }
         }
     }

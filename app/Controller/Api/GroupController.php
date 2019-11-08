@@ -35,9 +35,8 @@ class GroupController extends AbstractController
      */
     public function create(GroupRequest $request)
     {
-        $params=$request->all();
-        dd($params);
-        $result = $this->groupService->createGroup($this->getUserId(),$params['userIds']);
+        $params = $request->all();
+        $result = $this->groupService->createGroup($this->getUserId(), $request->post("userIds"));
         return $this->successResponse($result);
     }
 
@@ -48,7 +47,7 @@ class GroupController extends AbstractController
      */
     public function update(GroupRequest $request)
     {
-        $result=$this->groupService->updateGroupInfo($request->all(),$this->getUserId());
+        $result = $this->groupService->updateGroupInfo($request->all(), $this->getUserId());
         return $this->successResponse($result);
     }
 
@@ -59,7 +58,7 @@ class GroupController extends AbstractController
      */
     public function delete(GroupRequest $request)
     {
-        $groupResult=$this->groupService->deleteGroup($request->input("id"));
+        $groupResult = $this->groupService->deleteGroup($request->post("id"));
         return $this->successResponse($groupResult);
     }
 
@@ -70,7 +69,7 @@ class GroupController extends AbstractController
      */
     public function join(GroupRequest $request)
     {
-        $result=$this->groupService->joinMember($request->input("id"),$this->getUserId());
+        $result = $this->groupService->joinMember($request->post("id"), $this->getUserId());
 
         return $this->successResponse($result);
     }
@@ -82,7 +81,7 @@ class GroupController extends AbstractController
      */
     public function invite(GroupRequest $request)
     {
-        $result=$this->groupService->joinMember($request->post("id"),$this->getUserId(),1);
+        $result = $this->groupService->joinMember($request->post("id"), $this->getUserId(), 1);
 
         return $this->successResponse($result);
 
@@ -95,7 +94,7 @@ class GroupController extends AbstractController
      */
     public function updateNick(GroupRequest $request)
     {
-        $result=$this->groupService->updateNick($request->all(),$this->getUserId());
+        $result = $this->groupService->updateNick($request->all(), $this->getUserId());
 
         return $this->successResponse($result);
     }
@@ -104,13 +103,10 @@ class GroupController extends AbstractController
      * 获取所有群组成员
      * @param GroupRequest $request
      * @return ResponseInterface
-     * @Cacheable(prefix="member",ttl=7200)
      */
-    public function memberList()
+    public function memberList(GroupRequest $request)
     {
-        $params=$this->request->all();
-        dd($params);
-        $result=$this->groupService->getAllMember($params["id"]);
+        $result = $this->groupService->getAllMember($request->post("id"));
         return $this->successResponse($result);
     }
 }
