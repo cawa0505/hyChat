@@ -12,7 +12,6 @@ return [
     'http' => [
         CorsMiddleware::class,
 //        DecryptMiddleware::class,
-//        TokenMiddleware::class,
         ValidationMiddleware::class
     ],
 ];

@@ -17,11 +17,11 @@ namespace App\WebSocket\Controller;
 class GroupController extends BaseController
 {
     /**
-     * {"controller":"Index","action":"index","content":{"userId":"1","message":"123456"}}
+     * {"controller":"Group","action":"send","content":{"groupId":"1","message":"123456"}}
      */
     public function send()
     {
         $data = $this->getData();
-        $this->sendToUser($data['userId'], $data['message']);
+        $this->sendToGroup($data['groupId'], $data['message']);
     }
 }

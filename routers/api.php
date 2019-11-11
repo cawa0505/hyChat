@@ -16,6 +16,8 @@ use Hyperf\HttpServer\Router\Router;
 
 // 登陆
 Router::post('auth/login', [AuthController::class, 'login']);
+// 扫码登陆
+Router::post('auth/scanLogin', [AuthController::class, 'scanLogin']);
 // 注册
 Router::post('auth/register', [AuthController::class, 'register']);
 // 退出

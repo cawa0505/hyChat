@@ -34,7 +34,7 @@ class RoomController extends AbstractController
      */
     public function create(RoomRequest $request)
     {
-        $result = $this->roomService->createRoom($this->getUserId(), $request->input('friendId'));
+        $result = $this->roomService->createRoom($this->getUserId(), $request->post('friendId'));
         return $this->successResponse($result);
     }
 
@@ -45,7 +45,7 @@ class RoomController extends AbstractController
      */
     public function delete(RoomRequest $request)
     {
-        $result = $this->roomService->deleteRoom($this->getUserId(), $request->input('friendId'));
+        $result = $this->roomService->deleteRoom($this->getUserId(), $request->post('friendId'));
         return $this->successResponse($result);
     }
 }

@@ -20,23 +20,23 @@ class UserService
      * 设置user关联的fd
      * @param $userId int
      * @param $fd int
-     * @param $login_type int 设配端 1 App 2 Web
+     * @param $loginMethod int 设配端 1 App 2 Web
      * @return bool|int
      */
-    public function setUserFd($userId, $fd, $login_type = 0)
+    public function setUserFd($userId, $fd, $loginMethod = 0)
     {
-        return redis()->hSet('userFd_' . $login_type, (string)$userId, $fd);
+        return redis()->hSet('userFd_' . $loginMethod, (string)$userId, $fd);
     }
 
     /**
      * 获取user的关联的fd
      * @param $userId int
-     * @param $login_type int 设配端 1 App 2 Web
+     * @param $loginMethod int 设配端 1 App 2 Web
      * @return array|mixed|string
      */
-    public function getUserFd($userId, $login_type = 0)
+    public function getUserFd($userId, $loginMethod = 0)
     {
-        if (!$login_type) {
+        if (!$loginMethod) {
             // 获取app端绑定的userId绑定的fd信息
             $userFdApp = redis()->hGet('userFd_' . 1, (string)$userId);
             // 获取web端绑定的userId绑定的fd信息
@@ -49,17 +49,17 @@ class UserService
             }
             return array_merge(json_decode($userFdWeb, true), json_decode($userFdApp, true));
         }
-        $fdInfo = redis()->hGet('userFd_' . $login_type, (string)$userId);
+        $fdInfo = redis()->hGet('userFd_' . $loginMethod, (string)$userId);
         return json_decode($fdInfo, true);
     }
 
     /**
      * @param $userId int
-     * @param $login_type int
+     * @param $loginMethod int
      * @return bool|int
      */
-    public function deleteUserFd($userId, $login_type = 0)
+    public function deleteUserFd($userId, $loginMethod = 0)
     {
-        return redis()->hDel('userFd_' . $login_type, (string)$userId);
+        return redis()->hDel('userFd_' . $loginMethod, (string)$userId);
     }
 }

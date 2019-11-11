@@ -28,7 +28,7 @@ class AppSocketEvent implements OnOpenInterface, OnMessageInterface, OnCloseInte
     /**
      * @var
      */
-    private $loginType;
+    private $loginMethod;
 
     /**
      * @param Server $server
@@ -54,18 +54,14 @@ class AppSocketEvent implements OnOpenInterface, OnMessageInterface, OnCloseInte
             return;
         }
         $userInfo = (array)$tokenData['result']['data'];
-        $this->loginType = $userInfo['login_type'];
+        $this->loginMethod = $userInfo['login_type'];
         // 将fd和用户id绑定
         $server->bind($request->fd, $userInfo['id']);
         //设置userId关联的fd
         /** @var UserService $userService */
         $userService = container()->get(UserService::class);
-        $fdInfo = [
-            'ip' => getLocalIp(),
-            'port' => env("SOCKET_PORT", 9502),
-            'fd' => $request->fd
-        ];
-        $userService->setUserFd($userInfo['id'], json_encode($fdInfo), $this->loginType);
+        $fdInfo = ['ip' => getLocalIp(), 'fd' => $request->fd];
+        $userService->setUserFd($userInfo['id'], json_encode($fdInfo), $this->loginMethod);
         $server->push($request->fd, 'welcome to you');
     }
 
@@ -103,7 +99,7 @@ class AppSocketEvent implements OnOpenInterface, OnMessageInterface, OnCloseInte
                 $server->push($frame->fd, "class {$controller} action {$action} not found");
                 return;
             }
-            $controllerObj = new $controller($server, $frame, $params, $this->loginType);
+            $controllerObj = new $controller($server, $frame, $params);
             $controllerObj->$action();
         } catch (ReflectionException $exception) {
             stdout()->error($exception->getMessage());
@@ -129,7 +125,7 @@ class AppSocketEvent implements OnOpenInterface, OnMessageInterface, OnCloseInte
                 /** @var UserService $userService */
                 $userService = container()->get(UserService::class);
                 // 删除fd关联的userId
-                $userService->deleteUserFd($userId, $this->loginType);
+                $userService->deleteUserFd($userId, $this->loginMethod);
             }
         }
     }

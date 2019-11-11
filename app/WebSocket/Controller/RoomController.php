@@ -25,9 +25,9 @@ class RoomController extends BaseController
     protected $roomService;
 
     /**
-     * {"controller":"Room","action":"create","content":{"userId":"1","message":"123456"}}
+     * {"controller":"Room","action":"send","content":{"userId":"1","message":"123456"}}
      */
-    public function create()
+    public function send()
     {
         $data = $this->getData();
         $this->sendToUser($data['userId'], $data['message']);

@@ -78,16 +78,24 @@ class AuthController extends AbstractController
      */
     public function retrieve(AuthRequest $request)
     {
-        $phone = $request->input('phone');
+        $phone = $request->post('phone');
         $key = 'mobileVerifyCode:' . $phone;
         $cacheCode = redis()->get($key);
         if (!$cacheCode) {
             return $this->errorResponse(ApiCode::AUTH_CODE_ERROR);
         }
-        if ($cacheCode != $request->input('code')) {
+        if ($cacheCode != $request->post('code')) {
             return $this->errorResponse(ApiCode::AUTH_CODE_ERROR);
         }
-        $response = $this->userService->updatePasswordByPhone($phone, $request->input('password'));
+        $response = $this->userService->updatePasswordByPhone($phone, $request->post('password'));
         return $this->successResponse($response);
+    }
+
+    /**
+     * 扫码登录
+     */
+    public function scanLogin()
+    {
+        
     }
 }

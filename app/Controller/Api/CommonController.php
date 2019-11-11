@@ -50,7 +50,7 @@ class CommonController extends AbstractController
      */
     public function sendCode()
     {
-        $params=$this->request->all();
+        $params = $this->request->all();
         $mobile = $params['mobile'];
         $result = $this->container->get(SendCode::class)->send($mobile);
         return $this->successResponse($result);
@@ -64,13 +64,13 @@ class CommonController extends AbstractController
     {
         $image = $this->request->file('file');
         $name = uniqid() . '.' . $image->getExtension();
-        $destinationPath = BASE_PATH. "/upload/file/";
+        $destinationPath = BASE_PATH . "/upload/file/";
         if (!is_dir($destinationPath)) {
             mkdir($destinationPath, 0777, true);
         }
-        $image->moveTo($destinationPath.$name);
-        $demine=$this->request->getUri()->getHost();
-        $ret_data=['url' => $demine."/upload/file/" . $name, 'path' => '/file/' . $name];
+        $image->moveTo($destinationPath . $name);
+        $demine = $this->request->getUri()->getHost();
+        $ret_data = ['url' => $demine . "/upload/file/" . $name, 'path' => '/file/' . $name];
         return $this->successResponse($ret_data);
     }
 }
