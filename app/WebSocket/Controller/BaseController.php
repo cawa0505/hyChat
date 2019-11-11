@@ -42,8 +42,6 @@ class BaseController
     }
 
     /**
-     * {"controller":"Index","action":"index","content":"123456"}
-     * {"controller":"Room","action":"index","content":{"userId":"1","message":"123456"}}
      * 获取消息
      * @return mixed
      */
@@ -59,5 +57,11 @@ class BaseController
     public function getFd()
     {
         return $this->frame->fd;
+    }
+
+    public function getUid()
+    {
+        $fdInfo = $this->server->getClientInfo($this->frame->fd);
+        return isset($fdInfo['uid']) ?? 0;
     }
 }

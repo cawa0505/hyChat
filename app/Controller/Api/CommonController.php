@@ -51,8 +51,8 @@ class CommonController extends AbstractController
     public function sendCode()
     {
         $params = $this->request->all();
-        $mobile = $params['mobile'];
-        $result = $this->container->get(SendCode::class)->send($mobile);
+        $phone = $params['phone'];
+        $result = $this->container->get(SendCode::class)->send($phone);
         return $this->successResponse($result);
     }
 

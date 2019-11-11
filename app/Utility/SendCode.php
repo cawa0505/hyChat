@@ -22,21 +22,21 @@ class SendCode
 
     /**
      * 获取短信验证码
-     * @param $mobile
+     * @param $phone
      * @return array
      */
-    public function send($mobile)
+    public function send($phone)
     {
         $verifyCode = mt_rand(100000, 999999);
         $data = [
             'apikey' => env("API_KEY",'ba93d3d8d3964daa94da3503b9afc5ac'),
             'text' => $this->sendVerifyTemplate($verifyCode),
-            'mobile' => $mobile,
+            'mobile' => $phone,
         ];
         try {
             $result = $this->requestPost("https://sms.yunpian.com/", 'v2/sms/single_send.json', $data);
             $response = json_decode($result, true);
-            $key = 'mobileVerifyCode:' . $mobile;
+            $key = 'phoneVerifyCode:' . $phone;
             redis()->set($key, $verifyCode, 60 * 15);
             return ['code' => $response['code'], 'message' => $response['msg']];
         } catch (RequestException $exception) {

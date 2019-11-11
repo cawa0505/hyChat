@@ -19,17 +19,21 @@ use Hyperf\Di\Annotation\Inject;
 class RoomController extends BaseController
 {
     /**
-     * @Inject()
-     * @var RoomService
-     */
-    protected $roomService;
-
-    /**
      * {"controller":"Room","action":"send","content":{"userId":"1","message":"123456"}}
      */
     public function send()
     {
         $data = $this->getData();
         $this->sendToUser($data['userId'], $data['message']);
+        $senderId = $this->getUid();
+        go(function () use ($senderId, $data) {
+            mongoClient()->insert('Room.message',
+                [
+                    'sender' => $senderId,
+                    'receiver' => $data['userId'],
+                    'message' => $data['message']
+                ]
+            );
+        });
     }
 }

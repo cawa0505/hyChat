@@ -83,7 +83,7 @@ class UserService extends BaseService
             return $this->fail(ApiCode::AUTH_REGISTER_ERR);
         }
         //验证
-        $key = 'mobileVerifyCode:' . $phone;
+        $key = 'phoneVerifyCode:' . $phone;
         redis()->del($key);
         $response = $this->userModel->getUserByAccount($account);
         unset($response['password']);
@@ -102,8 +102,8 @@ class UserService extends BaseService
         if (!$result) {
             return $this->fail(ApiCode::AUTH_PASS_EDIT_ERR);
         }
-//        $key = 'mobileVerifyCode:' . $phone;
-//        redis()->del($key);
+        $key = 'phoneVerifyCode:' . $phone;
+        redis()->del($key);
         return $this->success($result);
     }
 

@@ -48,7 +48,7 @@ class AuthController extends AbstractController
         $params=$request->all();
         $phone = $params['phone'];
         //验证码
-        $key = 'mobileVerifyCode:' . $phone;
+        $key = 'phoneVerifyCode:' . $phone;
         $cacheCode = redis()->get($key);
         if (!$cacheCode) {
             return $this->errorResponse(ApiCode::AUTH_CODE_ERROR);
@@ -79,7 +79,7 @@ class AuthController extends AbstractController
     public function retrieve(AuthRequest $request)
     {
         $phone = $request->post('phone');
-        $key = 'mobileVerifyCode:' . $phone;
+        $key = 'phoneVerifyCode:' . $phone;
         $cacheCode = redis()->get($key);
         if (!$cacheCode) {
             return $this->errorResponse(ApiCode::AUTH_CODE_ERROR);
