@@ -39,6 +39,14 @@ class RoomController extends AbstractController
     }
 
     /**
+     * 聊天记录
+     */
+    public function messageRecord()
+    {
+        
+    }
+    
+    /**
      * 删除房间
      * @param RoomRequest $request
      * @return ResponseInterface

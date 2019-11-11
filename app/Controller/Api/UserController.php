@@ -46,30 +46,6 @@ class UserController extends AbstractController
     }
 
     /**
-     * 我的好友
-     * @return ResponseInterface
-     */
-    public function friend()
-    {
-        /** @var FriendService $friend */
-        $friend = $this->container->get(FriendService::class);
-        $result = $friend->getUserFriend($this->getUserId());
-        return $this->successResponse($result);
-    }
-
-    /**
-     * 我的群组
-     * @return ResponseInterface
-     */
-    public function group()
-    {
-        /** @var UserGroupModel $userGroup */
-        $userGroup = $this->container->get(UserGroupModel::class);
-        $result = $userGroup->getGroupByUserId($this->getUserId());
-        return $this->successResponse($this->success($result));
-    }
-
-    /**
      * 更新用户信息
      * @param UserRequest $request
      * @return ResponseInterface

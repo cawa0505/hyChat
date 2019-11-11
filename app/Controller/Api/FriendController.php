@@ -26,12 +26,22 @@ class FriendController extends AbstractController
     private $friendService;
 
     /**
+     * 好友列表
+     * @return ResponseInterface
+     */
+    public function list()
+    {
+        $result = $this->friendService->getUserFriend($this->getUserId());
+        return $this->successResponse($result);
+    }
+
+    /**
      * 搜索用户
      * @return ResponseInterface
      */
     public function search()
     {
-        $account = $this->request->input('account');
+        $account = $this->request->post('account');
         $result = $this->friendService->searchFriend($account);
         return $this->successResponse($result);
     }
@@ -42,7 +52,7 @@ class FriendController extends AbstractController
      */
     public function delete()
     {
-        $friendId = $this->request->input('friendId');
+        $friendId = $this->request->post('friendId');
         $result = $this->friendService->deleteFriend($friendId, $this->getUserId());
         return $this->successResponse($result);
     }

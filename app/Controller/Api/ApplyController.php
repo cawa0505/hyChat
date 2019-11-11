@@ -45,7 +45,7 @@ class ApplyController extends AbstractController
     public function record()
     {
         $result = $this->applyService->getApplyByUserId($this->getUserId());
-        return $this->successResponse($this->success($result));
+        return $this->successResponse($result);
     }
 
     /**

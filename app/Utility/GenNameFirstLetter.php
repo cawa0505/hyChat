@@ -4,8 +4,11 @@
 namespace App\Utility;
 
 
+use Hyperf\Utils\Traits\StaticInstance;
+
 class GenNameFirstLetter
 {
+    use StaticInstance;
     /**
      * 截取姓名首字母
      * @param $userName

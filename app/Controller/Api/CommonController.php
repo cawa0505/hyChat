@@ -69,8 +69,8 @@ class CommonController extends AbstractController
             mkdir($destinationPath, 0777, true);
         }
         $image->moveTo($destinationPath . $name);
-        $demine = $this->request->getUri()->getHost();
-        $ret_data = ['url' => $demine . "/upload/file/" . $name, 'path' => '/file/' . $name];
+        $host = $this->request->getUri()->getHost();
+        $ret_data = ['url' => $host . "/upload/file/" . $name, 'path' => '/file/' . $name];
         return $this->successResponse($ret_data);
     }
 }

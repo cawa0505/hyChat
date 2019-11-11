@@ -10,6 +10,7 @@ namespace App\Controller\Api;
 
 
 use App\Controller\AbstractController;
+use App\Model\UserGroupModel;
 use App\Request\GroupRequest;
 use App\Service\GroupService;
 use Hyperf\Cache\Annotation\Cacheable;
@@ -30,13 +31,24 @@ class GroupController extends AbstractController
     private $groupService;
 
     /**
+     * 好友列表
+     * @return ResponseInterface
+     */
+    public function list()
+    {
+        /** @var UserGroupModel $userGroup */
+        $userGroup = $this->container->get(UserGroupModel::class);
+        $result = $userGroup->getGroupByUserId($this->getUserId());
+        return $this->successResponse($this->success($result));
+    }
+
+    /**
      * 创建群组
      * @param GroupRequest $request
      * @return ResponseInterface
      */
     public function create(GroupRequest $request)
     {
-        $params = $request->all();
         $result = $this->groupService->createGroup($this->getUserId(), $request->post("userIds"));
         return $this->successResponse($result);
     }
@@ -83,7 +95,6 @@ class GroupController extends AbstractController
     public function invite(GroupRequest $request)
     {
         $result = $this->groupService->joinMember($request->post("id"), $this->getUserId(), 1);
-
         return $this->successResponse($result);
 
     }
@@ -96,7 +107,6 @@ class GroupController extends AbstractController
     public function updateNick(GroupRequest $request)
     {
         $result = $this->groupService->updateNick($request->all(), $this->getUserId());
-
         return $this->successResponse($result);
     }
 

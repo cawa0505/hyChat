@@ -17,13 +17,13 @@ class UserFriendModel extends BaseModel
     protected $table = 'user_friend';
 
     /**
-     * 通过用户id获取所有好友id
      * @param $userId
-     * @return array|null
+     * @param array $column
+     * @return array
      */
-    public function getFriendIdsByUserId($userId)
+    public function getFriendIdsByUserId($userId, $column = ["*"])
     {
-        $result = $this->newQuery()->where('user_id', $userId)->pluck('friend_id');
+        $result = $this->newQuery()->where('user_id', $userId)->get($column);
         if ($result) {
             return $result->toArray();
         }

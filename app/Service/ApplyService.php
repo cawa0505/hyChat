@@ -48,10 +48,8 @@ class ApplyService extends BaseService
         }
         // 创建申请记录
         $result = $this->userApplyModel->create($data);
-        /** @var SocketServer $socketCommon */
-        $socketCommon = container()->get(SocketServer::class);
         // 发送申请提醒
-        $socketCommon->sendToUser($request['friendId'], $this->sendMessage(SystemCode::SUCCESS));
+        $this->sendToUser($request['friendId'], $this->sendMessage(SystemCode::SUCCESS, [], $request['message']));
         return $this->success($result);
     }
 
@@ -85,6 +83,8 @@ class ApplyService extends BaseService
         $friend = container()->get(UserFriendModel::class);
         $result = $friend->createFriend($applyResult['user_id'], $applyResult['apply_user_id']);
         //创建房间
+        $this->sendToUser($request['user_id'], $this->sendMessage(SystemCode::SUCCESS, [], $request['message']));
+        $this->sendToUser($request['apply_user_id'], $this->sendMessage(SystemCode::SUCCESS, [], $request['message']));
         mongoClient()->insert('user.room', ['user_id' => $userId, 'friend_id' => $applyResult['apply_user_id']]);
         mongoClient()->insert('user.room', ['user_id' => $applyResult['apply_user_id'], 'friend_id' => $userId]);
         return $this->success($result);

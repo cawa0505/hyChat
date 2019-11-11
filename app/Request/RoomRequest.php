@@ -27,7 +27,7 @@ class RoomRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'friendId' => 'required'
+            'friendIds' => 'required|array'
         ];
     }
 }

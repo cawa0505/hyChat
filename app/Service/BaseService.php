@@ -9,9 +9,10 @@
 namespace App\Service;
 
 
+use App\Traits\PushMessage;
 use App\Traits\Response;
 
 class BaseService
 {
-    use Response;
+    use Response,PushMessage;
 }

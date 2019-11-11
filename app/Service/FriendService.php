@@ -11,6 +11,7 @@ namespace App\Service;
 use App\Constants\ApiCode;
 use App\Model\UserFriendModel;
 use App\Model\UserModel;
+use App\Utility\GenNameFirstLetter;
 use Hyperf\Di\Annotation\Inject;
 
 /**
@@ -37,11 +38,14 @@ class FriendService extends BaseService
      */
     public function getUserFriend($userId)
     {
-        $friendIds = $this->userFriendModel->getFriendIdsByUserId($userId);
-        if (!$friendIds) {
-            return $this->success();
+        $friend = $this->userFriendModel->getFriendIdsByUserId($userId);
+        $result = [];
+        if ($friend) {
+            foreach ($friend as $item) {
+                $first_letter = GenNameFirstLetter::instance()->getFirstChar($item['friend_name']);
+                $result[$first_letter][] = $item;
+            }
         }
-        $result = $this->userModel->getUserByUserIds($friendIds, ['account', 'nick_name', 'sex', 'email', 'phone', 'image_url', 'ind_sign']);
         return $this->success($result);
     }
 
