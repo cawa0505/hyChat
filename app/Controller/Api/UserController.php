@@ -12,7 +12,6 @@ use App\Controller\AbstractController;
 use App\Model\UserGroupModel;
 use App\Model\UserModel;
 use App\Request\UserRequest;
-use App\Service\ApplyService;
 use App\Service\FriendService;
 use App\Service\UserService;
 use Hyperf\Di\Annotation\Inject;
@@ -52,7 +51,9 @@ class UserController extends AbstractController
      */
     public function friend()
     {
-        $result = $this->container->get(FriendService::class)->getUserFriend($this->getUserId());
+        /** @var FriendService $friend */
+        $friend = $this->container->get(FriendService::class);
+        $result = $friend->getUserFriend($this->getUserId());
         return $this->successResponse($result);
     }
 
@@ -62,8 +63,9 @@ class UserController extends AbstractController
      */
     public function group()
     {
-
-        $result = $this->container->get(UserGroupModel::class)->getGroupByUserId($this->getUserId());
+        /** @var UserGroupModel $userGroup */
+        $userGroup = $this->container->get(UserGroupModel::class);
+        $result = $userGroup->getGroupByUserId($this->getUserId());
         return $this->successResponse($this->success($result));
     }
 
@@ -75,6 +77,6 @@ class UserController extends AbstractController
     public function updateUserInfo(UserRequest $request)
     {
         $result = $this->userService->updateUserInfo($request->all(), $this->getUserId());
-        return $this->successResponse($this->success($result));
+        return $this->successResponse($result);
     }
 }

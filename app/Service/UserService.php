@@ -10,12 +10,13 @@ namespace App\Service;
 
 use App\Constants\ApiCode;
 use App\Model\UserModel;
+use App\Traits\PushMessage;
 use App\Utility\Token;
-use App\WebSocket\Common;
 use Hyperf\Di\Annotation\Inject;
 
 class UserService extends BaseService
 {
+    use PushMessage;
     /**
      * @Inject()
      * @var UserModel
@@ -29,6 +30,7 @@ class UserService extends BaseService
      */
     public function handleLogin($request)
     {
+        // 登录方式 1 账号密码 2 手机号验证码
         // type 1app 2pc
         $type = $request['type'];
         $account = $request['account'];
@@ -47,11 +49,11 @@ class UserService extends BaseService
         $userInfo['login_type'] = $type;
         // 单点登陆 给前一个设备推送消息
         $token = container()->get(Token::class)->encode($userInfo);
-//        /** @var Common $socketCommon */
-//        $socketCommon = container()->get(Common::class);
-//        $userFd = $socketCommon->getUserFd($userInfo['id'],$type);
+//        /** @var \App\WebSocket\Service\UserService $socketCommon */
+//        $socketCommon = container()->get(\App\WebSocket\Service\UserService::class);
+//        $userFd = $socketCommon->getUserFd($userInfo['id'], $type);
 //        if ($userFd) {
-//            $socketCommon->sendTo($userFd, $this->sendMessage(1, [], "已在别处登陆"));
+//            $this->sendToUser($userInfo['id'], $this->sendMessage(1, [], "已在别处登陆"));
 //        }
         // 保存用户信息
         redis()->hSet("userToken", $userInfo['id'] . "_" . $type, $token);

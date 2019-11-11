@@ -14,6 +14,7 @@ use App\Request\GroupRequest;
 use App\Service\GroupService;
 use Hyperf\Cache\Annotation\Cacheable;
 use Hyperf\Di\Annotation\Inject;
+use MongoDB\Driver\Exception\Exception;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -107,6 +108,17 @@ class GroupController extends AbstractController
     public function memberList(GroupRequest $request)
     {
         $result = $this->groupService->getAllMember($request->post("id"));
+        return $this->successResponse($result);
+    }
+
+    /**
+     * 获取群聊纪录
+     * @throws Exception
+     */
+    public function messageRecord()
+    {
+        $request = $this->request->all();
+        $result = $this->groupService->getMessageRecord($request);
         return $this->successResponse($result);
     }
 }

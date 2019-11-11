@@ -65,3 +65,5 @@ Router::post('group/invite', [GroupController::class, 'invite']);
 Router::post('group/updateNick', [GroupController::class, 'updateNick']);
 // 获取所有群组成员
 Router::post('group/memberList', [GroupController::class, 'memberList']);
+// 获取所有群组成员
+Router::post('group/messageRecord', [GroupController::class, 'messageRecord']);

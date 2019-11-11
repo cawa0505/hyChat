@@ -27,11 +27,12 @@ class RoomController extends BaseController
         $this->sendToUser($data['userId'], $data['message']);
         $senderId = $this->getUid();
         go(function () use ($senderId, $data) {
-            mongoClient()->insert('Room.message',
+            mongoClient()->insert('room.message',
                 [
                     'sender' => $senderId,
                     'receiver' => $data['userId'],
-                    'message' => $data['message']
+                    'message' => $data['message'],
+                    'create_time' => time()
                 ]
             );
         });

@@ -8,6 +8,7 @@
 
 namespace App\Service;
 
+use App\Constants\ApiCode;
 use App\Model\UserFriendModel;
 use App\Model\UserModel;
 use Hyperf\Di\Annotation\Inject;
@@ -38,9 +39,9 @@ class FriendService extends BaseService
     {
         $friendIds = $this->userFriendModel->getFriendIdsByUserId($userId);
         if (!$friendIds) {
-            return $this->fail("好友为空");
+            return $this->success();
         }
-        $result = $this->userModel->getUserByUserIds($friendIds);
+        $result = $this->userModel->getUserByUserIds($friendIds, ['account', 'nick_name', 'sex', 'email', 'phone', 'image_url', 'ind_sign']);
         return $this->success($result);
     }
 

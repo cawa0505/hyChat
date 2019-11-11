@@ -17,7 +17,7 @@ trait Response
      * @param int $code
      * @return array
      */
-    public function success($data, $code = 200)
+    public function success($data=[], $code = 200)
     {
 
         if (is_string($data)) {

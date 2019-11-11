@@ -25,11 +25,12 @@ class GroupController extends BaseController
         $this->sendToGroup($data['groupId'], $data['message']);
         $senderId = $this->getUid();
         go(function () use ($senderId, $data) {
-            mongoClient()->insert('Group.message',
+            mongoClient()->insert('group.message',
                 [
                     'group' => $data['groupId'],
                     'sender' => $senderId,
-                    'message' => $data['message']
+                    'message' => $data['message'],
+                    'create_time'=>time()
                 ]
             );
         });

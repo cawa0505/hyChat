@@ -15,6 +15,7 @@ use App\Model\UserGroupModel;
 use App\Utility\Random;
 use Hyperf\DbConnection\Db;
 use Hyperf\Di\Annotation\Inject;
+use MongoDB\Driver\Exception\Exception;
 
 /**
  * Class GroupService
@@ -77,16 +78,15 @@ class GroupService extends BaseService
      */
     public function updateGroupInfo($param, $user_id)
     {
-        if (!isset($param["id"])) return $this->fail(ApiCode::GROUP_NOT_EXIST);
-
+        if (!isset($param["id"])) {
+            return $this->fail(ApiCode::GROUP_NOT_EXIST);
+        }
         $group = $this->groupModel->getOne(["id" => $param["id"]]);
-
-        if (is_array($group)) return $this->fail(ApiCode::GROUP_NOT_EXIST);
-
+        if (is_array($group)) {
+            return $this->fail(ApiCode::GROUP_NOT_EXIST);
+        }
         $result = $this->groupModel->updateGroupInfo($param, $user_id);
-
         if (!$result) {
-
             return $this->fail(ApiCode::OPERATION_FAIL);
         }
         return $this->success($result);
@@ -100,41 +100,31 @@ class GroupService extends BaseService
     public function deleteGroup($id)
     {
         $group = $this->groupModel->getOne(["id" => $id]);
-
-        if (!is_array($group)) return $this->fail(ApiCode::GROUP_NOT_EXIST);
-
+        if (!is_array($group)) {
+            return $this->fail(ApiCode::GROUP_NOT_EXIST);
+        }
         Db::beginTransaction();
         //解散群成员
         $resultMember = $this->groupMember->deleteMember($id);
-
         if (!$resultMember) {
-
             Db::rollBack();
-
             return $this->fail(ApiCode::OPERATION_FAIL);
         }
         //删除群组
         $resultGroup = $this->groupModel->deleteGroup($id);
-
         if (!$resultGroup) {
-
             Db::rollBack();
-
             return $this->fail(ApiCode::OPERATION_FAIL);
         }
-
         return $this->success([]);
 
     }
 
     /**
      * 加入群组
-     * @param $groupId
-     * 群组ID
-     * @param $userId
-     * 用户ID
-     * @param $status
-     * 状态0申请入群1邀请入群
+     * @param $groupId int 群组ID
+     * @param $userId int 用户ID
+     * @param $status int 状态0申请入群1邀请入群
      * @return array
      */
     public function joinMember($groupId, $userId, $status = 0)
@@ -156,20 +146,15 @@ class GroupService extends BaseService
     public function updateNick($param, $userId)
     {
         $group = $this->groupModel->getOne(["id" => $param["id"]]);
-
-        if (!is_array($group)) return $this->fail(ApiCode::GROUP_NOT_EXIST);
-
-        $data = [
-            "group_nick_name" => $param["group_nick_name"]
-        ];
+        if (!is_array($group)) {
+            return $this->fail(ApiCode::GROUP_NOT_EXIST);
+        }
+        $data = ["group_nick_name" => $param["group_nick_name"]];
         $where = [
             ["user_id" => $userId, "group_id" => $param["id"]]
         ];
-
         $result = $this->groupMember->updateMemberNick($data, $where);
-
         if (!$result) {
-
             return $this->fail(ApiCode::OPERATION_FAIL);
         }
         return $this->success($result);
@@ -186,4 +171,25 @@ class GroupService extends BaseService
         return $this->success($data);
     }
 
+    /**
+     * 获取消息
+     * @param $request
+     * @return array
+     * @throws Exception
+     */
+    public function getMessageRecord($request)
+    {
+        $group = $request['groupId'];
+        $limit = 10;
+        $page = isset($request['page']) ? $request['page'] : 1;
+        $skip = ($page - 1) * $limit;
+        $options = [
+            'projection' => ['_id' => 0],
+            'sort' => ['create_time' => -1],
+            'skip' => $skip,
+            'limit' => $limit
+        ];
+        $result = mongoClient()->query('group.message', ['group' => $group], $options);
+        return $this->success($result);
+    }
 }
