@@ -36,11 +36,12 @@ class UserApplyModel extends BaseModel
     /**
      * 通过用户id获取申请信息
      * @param $userId
+     * @param array $columns
      * @return array|null
      */
-    public function getApplyByUserId($userId)
+    public function getApplyByUserId($userId, $columns = ['*'])
     {
-        $result = $this->newQuery()->where("user_id", $userId)->get();
+        $result = $this->newQuery()->where("user_id", $userId)->get($columns);
         if ($result) {
             return $result->toArray();
         }

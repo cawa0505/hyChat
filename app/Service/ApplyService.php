@@ -12,7 +12,7 @@ use App\Constants\ApiCode;
 use App\Constants\SystemCode;
 use App\Model\UserApplyModel;
 use App\Model\UserFriendModel;
-use App\WebSocket\Service\SocketServer;
+use App\Model\UserModel;
 use Hyperf\Di\Annotation\Inject;
 
 /**
@@ -60,7 +60,22 @@ class ApplyService extends BaseService
      */
     public function getApplyByUserId($userId)
     {
-        $result = $this->userApplyModel->getApplyByUserId($userId);
+        $applyResult = $this->userApplyModel->getApplyByUserId($userId, ['status', 'apply_user_id', 'message']);
+        if (!$applyResult) {
+            return $this->success();
+        }
+        $applyUserId = array_column($applyResult, 'apply_user_id');
+        $applyUserIdInfo = container()->get(UserModel::class)->getUserByUserIds($applyUserId, ['id', 'nick_name', 'image_url']);
+        $result = [];
+        foreach ($applyResult as $key => $item) {
+            foreach ($applyUserIdInfo as $k => $v) {
+                if ($item['apply_user_id'] == $v['id']) {
+                    unset($v['id']);
+                    unset($item['apply_user_id']);
+                    $result[] = array_merge($item, $v);
+                }
+            }
+        }
         return $this->success($result);
     }
 

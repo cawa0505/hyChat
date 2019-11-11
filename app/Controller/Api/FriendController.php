@@ -9,6 +9,7 @@
 namespace App\Controller\Api;
 
 use App\Controller\AbstractController;
+use App\Model\UserModel;
 use App\Service\FriendService;
 use Hyperf\Di\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface;
@@ -32,6 +33,16 @@ class FriendController extends AbstractController
     public function list()
     {
         $result = $this->friendService->getUserFriend($this->getUserId());
+        return $this->successResponse($result);
+    }
+
+    /**
+     * 好友资料
+     * @return ResponseInterface
+     */
+    public function info()
+    {
+        $result = $this->friendService->getFriendInfo($this->request->post('friendId'));
         return $this->successResponse($result);
     }
 

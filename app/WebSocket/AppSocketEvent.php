@@ -13,6 +13,7 @@ use App\WebSocket\Service\UserService;
 use Hyperf\Contract\OnCloseInterface;
 use Hyperf\Contract\OnMessageInterface;
 use Hyperf\Contract\OnOpenInterface;
+use PHPQRCode\QRcode;
 use ReflectionClass;
 use ReflectionException;
 use Swoole\Http\Request;
@@ -37,10 +38,15 @@ class AppSocketEvent implements OnOpenInterface, OnMessageInterface, OnCloseInte
     public function onOpen(Server $server, Request $request): void
     {
         $params = $request->get;
-        dd($params);
         if (!isset($params['token']) || !$params['token']) {
-            stdout()->info('token为空');
-            $server->close($request->fd);
+            $text = "Test";
+            //二维码导出的储存地址
+            $outfile = "uploads/222.png";
+            //二维码的大小
+                    $size = 6;
+            //调用方法成功后,会在相应文件夹下生成二维码文件
+            $data =  QRcode::png($text, $outfile, $size);
+            dd($data);
             return;
         }
         if ($params['token'] == "system") {

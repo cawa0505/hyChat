@@ -39,11 +39,17 @@ class FriendService extends BaseService
     public function getUserFriend($userId)
     {
         $friend = $this->userFriendModel->getFriendIdsByUserId($userId);
+        if (!$friend) {
+            return $this->success();
+        }
+        $friendIds = array_column($friend, 'friend_id');
+        $friendInfo = $this->userModel->getUserByUserIds($friendIds, ['id', 'image_url']);
         $result = [];
-        if ($friend) {
-            foreach ($friend as $item) {
-                $first_letter = GenNameFirstLetter::instance()->getFirstChar($item['friend_name']);
-                $result[$first_letter][] = $item;
+        foreach ($friend as $key => $item) {
+            foreach ($friendInfo as $k => $v) {
+                if ($item['friend_id'] == $v['id']) {
+                    $result[] = array_merge($item, $v);
+                }
             }
         }
         return $this->success($result);
@@ -58,6 +64,30 @@ class FriendService extends BaseService
     {
         $result = $this->userModel->searchUserByAccount($account);
         return $this->success($result);
+    }
+
+    /**
+     * 获取好友资料
+     * @param $friendId
+     * @return array
+     */
+    public function getFriendInfo($friendId)
+    {
+        $userFriend = $this->userFriendModel->getFriendIdByUserId($friendId, ['friend_name']);
+        if (!$userFriend) {
+            return $this->success();
+        }
+        $result = $this->userModel->getUserByUserId($friendId, ['account', 'nick_name', 'sex', 'phone', 'image_url', 'ind_sign']);
+        $result['friend_name'] = $userFriend['friend_name'];
+        return $this->success($result);
+    }
+
+    /**
+     * 修改好友备注
+     */
+    public function updateFriendName()
+    {
+
     }
 
     /**

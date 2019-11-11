@@ -43,7 +43,9 @@ class RoomController extends AbstractController
      */
     public function messageRecord()
     {
-        
+        $request = $this->request->all();
+        $result = $this->roomService->getMessageRecord($request);
+        return $this->successResponse($result);
     }
     
     /**

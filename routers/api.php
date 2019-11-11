@@ -39,6 +39,8 @@ Router::post('apply/record', [ApplyController::class, 'record']);
 Router::post('apply/review', [ApplyController::class, 'review']);
 // 好友列表
 Router::post('friend/list', [FriendController::class, 'list']);
+// 好友资料
+Router::post('friend/info', [FriendController::class, 'info']);
 // 搜索用户
 Router::post('friend/search', [FriendController::class, 'search']);
 // 删除用户

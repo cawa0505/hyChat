@@ -31,6 +31,21 @@ class UserFriendModel extends BaseModel
     }
 
     /**
+     * @param $userId
+     * @param array $column
+     * @return array
+     */
+    public function getFriendIdByUserId($userId, $column = ["*"])
+    {
+        $result = $this->newQuery()->where('user_id', $userId)->first($column);
+        if ($result) {
+            return $result->toArray();
+        }
+
+        return [];
+    }
+
+    /**
      * 添加好友
      * @param $friendId
      * @param $userId
