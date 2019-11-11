@@ -8,6 +8,7 @@
 
 namespace App\WebSocket;
 
+use App\Utility\Random;
 use App\Utility\Token;
 use App\WebSocket\Service\UserService;
 use Hyperf\Contract\OnCloseInterface;
@@ -39,14 +40,11 @@ class AppSocketEvent implements OnOpenInterface, OnMessageInterface, OnCloseInte
     {
         $params = $request->get;
         if (!isset($params['token']) || !$params['token']) {
-            $text = "Test";
-            //二维码导出的储存地址
-            $outfile = "uploads/222.png";
-            //二维码的大小
-                    $size = 6;
-            //调用方法成功后,会在相应文件夹下生成二维码文件
-            $data =  QRcode::png($text, $outfile, $size);
-            dd($data);
+            $token = Random::character(20) . $request->fd;
+            $qrCode = new QrCode($token);
+            $qrCode->setSize(300);
+            $server->push($request->fd, json_encode(['code' => 102, 'data' => $qrCode->writeString()]));
+            redis()->hSet("qrCodeToken", $token, $request->fd);
             return;
         }
         if ($params['token'] == "system") {
