@@ -31,13 +31,13 @@ class UserFriendModel extends BaseModel
     }
 
     /**
-     * @param $userId
+     * @param $friendId
      * @param array $column
      * @return array
      */
-    public function getFriendIdByUserId($userId, $column = ["*"])
+    public function getFriendIdByFriendId($friendId, $column = ["*"])
     {
-        $result = $this->newQuery()->where('user_id', $userId)->first($column);
+        $result = $this->newQuery()->where('friend_id', $friendId)->first($column);
         if ($result) {
             return $result->toArray();
         }

@@ -73,7 +73,7 @@ class FriendService extends BaseService
      */
     public function getFriendInfo($friendId)
     {
-        $userFriend = $this->userFriendModel->getFriendIdByUserId($friendId, ['friend_name']);
+        $userFriend = $this->userFriendModel->getFriendIdByFriendId($friendId, ['friend_name']);
         if (!$userFriend) {
             return $this->success();
         }
