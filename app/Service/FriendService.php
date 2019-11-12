@@ -74,20 +74,21 @@ class FriendService extends BaseService
     public function getFriendInfo($friendId)
     {
         $userFriend = $this->userFriendModel->getFriendIdByFriendId($friendId, ['friend_name']);
-        if (!$userFriend) {
-            return $this->success();
-        }
         $result = $this->userModel->getUserByUserId($friendId, ['account', 'nick_name', 'sex', 'phone', 'image_url', 'ind_sign']);
-        $result['friend_name'] = $userFriend['friend_name'];
+        $result['friend_name'] = isset($userFriend['friend_name']) ? $userFriend['friend_name'] : '';
         return $this->success($result);
     }
 
     /**
      * 修改好友备注
+     * @param $request
+     * @return array
      */
-    public function updateFriendName()
+    public function updateFriendName($request)
     {
-
+        $data = ['friend_name' => $request['friend_name']];
+        $result = $this->userFriendModel->updateFriendName($request['friendId'], $data);
+        return $this->success($result);
     }
 
     /**

@@ -60,18 +60,17 @@ class ApplyService extends BaseService
      */
     public function getApplyByUserId($userId)
     {
-        $applyResult = $this->userApplyModel->getApplyByUserId($userId, ['status', 'apply_user_id', 'message']);
+        $applyResult = $this->userApplyModel->getApplyByUserId($userId, ['apply_user_id as friend_id', 'message', 'status']);
         if (!$applyResult) {
             return $this->success();
         }
-        $applyUserId = array_column($applyResult, 'apply_user_id');
+        $applyUserId = array_column($applyResult, 'friend_id');
         $applyUserIdInfo = container()->get(UserModel::class)->getUserByUserIds($applyUserId, ['id', 'nick_name', 'image_url']);
         $result = [];
         foreach ($applyResult as $key => $item) {
             foreach ($applyUserIdInfo as $k => $v) {
-                if ($item['apply_user_id'] == $v['id']) {
+                if ($item['friend_id'] == $v['id']) {
                     unset($v['id']);
-                    unset($item['apply_user_id']);
                     $result[] = array_merge($item, $v);
                 }
             }
