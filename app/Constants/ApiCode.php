@@ -116,4 +116,10 @@ class ApiCode extends AbstractConstants
     const GROUP_CREATE_FAIL = 2302;
 
 
+    // TODO ----------------------审核 2500-2550-------------------------
+    /**
+     * @HttpCode("2500")
+     * @Message("审核记录不存在")
+     */
+    const APPLY_RECORDS_NOT_FOUND = 2500;
 }

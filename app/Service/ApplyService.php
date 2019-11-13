@@ -60,7 +60,7 @@ class ApplyService extends BaseService
      */
     public function getApplyByUserId($userId)
     {
-        $applyResult = $this->userApplyModel->getApplyByUserId($userId, ['apply_user_id as friend_id', 'message', 'status']);
+        $applyResult = $this->userApplyModel->getApplyByUserId($userId, ['id as apply_id', 'apply_user_id as friend_id', 'message', 'status']);
         if (!$applyResult) {
             return $this->success();
         }
@@ -93,6 +93,9 @@ class ApplyService extends BaseService
         /** @var UserApplyModel $userApply */
         $userApply = container()->get(UserApplyModel::class);
         $applyResult = $userApply->getApplyById($request['applyId']);
+        if (!$applyResult) {
+            return $this->fail(ApiCode::APPLY_RECORDS_NOT_FOUND);
+        }
         /** @var UserFriendModel $friend */
         $friend = container()->get(UserFriendModel::class);
         $result = $friend->createFriend($applyResult['user_id'], $applyResult['apply_user_id']);
