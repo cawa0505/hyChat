@@ -13,6 +13,7 @@ use App\Controller\AbstractController;
 use App\Request\RoomRequest;
 use App\Service\RoomService;
 use Hyperf\Di\Annotation\Inject;
+use MongoDB\Driver\Exception\Exception;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -40,6 +41,8 @@ class RoomController extends AbstractController
 
     /**
      * 聊天记录
+     * @return ResponseInterface
+     * @throws Exception
      */
     public function messageRecord()
     {
