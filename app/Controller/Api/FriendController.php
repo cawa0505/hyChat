@@ -58,6 +58,17 @@ class FriendController extends AbstractController
     }
 
     /**
+     * 修改备注
+     * @return ResponseInterface
+     */
+    public function update()
+    {
+        $request = $this->request->all();
+        $result = $this->friendService->updateFriendName($request);
+        return $this->successResponse($result);
+    }
+
+    /**
      * 删除好友
      * @return ResponseInterface
      */

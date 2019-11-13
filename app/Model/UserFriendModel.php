@@ -17,6 +17,7 @@ class UserFriendModel extends BaseModel
     protected $table = 'user_friend';
 
     /**
+     * 通过用户id获取所有好友id
      * @param $userId
      * @param array $column
      * @return array
@@ -31,6 +32,7 @@ class UserFriendModel extends BaseModel
     }
 
     /**
+     * 通过好友id获取信息
      * @param $friendId
      * @param array $column
      * @return array
@@ -54,6 +56,17 @@ class UserFriendModel extends BaseModel
     public function createFriend($friendId, $userId)
     {
         return $this->newQuery()->insert(['friend_id' => $friendId, 'user_id' => $userId]);
+    }
+
+    /**
+     * 通过好友id膝盖信息
+     * @param $friendId
+     * @param $data
+     * @return int
+     */
+    public function updateFriendName($friendId, $data)
+    {
+        return $this->newQuery()->where('friend_id', $friendId)->update($data);
     }
 
     /**
