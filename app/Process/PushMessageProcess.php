@@ -20,7 +20,7 @@ class PushMessageProcess extends AbstractProcess
                 $data = json_decode($data, true);
                 $fd = (int)$data['fd'];
                 if ($server->isEstablished($fd)) {
-                    $server->push($fd, $data['data']);
+                    $server->push($fd,json_encode( $data['data']));
                 }
             });
             Coroutine::sleep(0.5);

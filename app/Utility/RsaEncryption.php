@@ -57,9 +57,9 @@ class RsaEncryption
         $crypto = '';
 
         foreach (str_split(json_encode($data), 117) as $chunk) {
-            openssl_private_encrypt($chunk, $encryptData, $this->private);
-            $crypto .= $encryptData;
-        }
+        openssl_private_encrypt($chunk, $encryptData, $this->private);
+        $crypto .= $encryptData;
+    }
         //加密后的内容通常含有特殊字符，需要编码转换下，在网络间通过url传输时要注意base64编码是否是url安全的
         $encrypted = $this->urlSafe_b64encode($crypto);
         return $encrypted;

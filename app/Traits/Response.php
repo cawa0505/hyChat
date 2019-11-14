@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use App\Constants\ApiCode;
+use App\Constants\MessageCode;
 use App\Constants\SystemCode;
 
 /**
@@ -61,20 +62,17 @@ trait Response
     }
 
     /**
-     * 组装向前端推送消息
+     * 推送消息
      * @param $code int 类型
      * @param $data array 数据
-     * @param $message string 消息提示
      * @return string
      */
-    public function sendMessage($code, $data = [], $message = ''): string
+    public function sendMessage($code,array $data = []): string
     {
         $data = [
             'code' => $code,
-            'result' => [
-                'data' => $data,
-                'message' => $message,
-            ]
+            'message' => MessageCode::getMessage($code),
+            'data' => $data
         ];
         return json_encode($data);
     }

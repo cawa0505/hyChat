@@ -48,14 +48,12 @@ class UserFriendModel extends BaseModel
     }
 
     /**
-     * 添加好友
-     * @param $friendId
-     * @param $userId
+     * @param $data
      * @return bool
      */
-    public function createFriend($friendId, $userId)
+    public function createFriend($data)
     {
-        return $this->newQuery()->insert(['friend_id' => $friendId, 'user_id' => $userId]);
+        return $this->newQuery()->insert($data);
     }
 
     /**

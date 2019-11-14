@@ -20,7 +20,6 @@ trait PushMessage
         /** @var UserService $userService */
         $userService = container()->get(UserService::class);
         $fdInfo = $userService->getUserFd($userId);
-        dd($fdInfo);
         if (!$fdInfo) return $count;
         if (isOneArray($fdInfo)) {
             $pushData = [

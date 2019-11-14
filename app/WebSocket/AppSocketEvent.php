@@ -11,7 +11,6 @@ namespace App\WebSocket;
 use App\Utility\Random;
 use App\Utility\Token;
 use App\WebSocket\Service\UserService;
-use Endroid\QrCode\QrCode;
 use Hyperf\Contract\OnCloseInterface;
 use Hyperf\Contract\OnMessageInterface;
 use Hyperf\Contract\OnOpenInterface;

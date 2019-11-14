@@ -26,6 +26,7 @@ class ApplyRequest extends FormRequest
      */
     public function rules(): array
     {
+
         $action = getAction($this->path());
         if ($action == "create") {
             return [

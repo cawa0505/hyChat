@@ -9,10 +9,12 @@
 namespace App\Service;
 
 use App\Constants\ApiCode;
+use App\Constants\MessageCode;
 use App\Constants\SystemCode;
 use App\Model\UserApplyModel;
 use App\Model\UserFriendModel;
 use App\Model\UserModel;
+use Hyperf\DbConnection\Db;
 use Hyperf\Di\Annotation\Inject;
 
 /**
@@ -49,8 +51,8 @@ class ApplyService extends BaseService
         // 创建申请记录
         $result = $this->userApplyModel->create($data);
         // 发送申请提醒
-        $this->sendToUser($request['friendId'], $this->sendMessage(SystemCode::SUCCESS, [], $request['message']));
-        return $this->success($result);
+        $this->sendToUser($request['friendId'], $this->sendMessage(MessageCode::ADD_APPLY));
+        return $this->success([$result]);
     }
 
     /**
@@ -60,7 +62,7 @@ class ApplyService extends BaseService
      */
     public function getApplyByUserId($userId)
     {
-        $applyResult = $this->userApplyModel->getApplyByUserId($userId, ['id as apply_id', 'apply_user_id as friend_id', 'message', 'status']);
+        $applyResult = $this->userApplyModel->getApplyByUserId($userId, ['id as apply_id', 'friend_id', 'message', 'status']);
         if (!$applyResult) {
             return $this->success();
         }
@@ -86,24 +88,40 @@ class ApplyService extends BaseService
      */
     public function reviewApply($request, $userId)
     {
-        // TODO status 1 通过 2 拒绝
-        if ($request['status'] == 2) {
-            echo "拒绝";
-        }
         /** @var UserApplyModel $userApply */
         $userApply = container()->get(UserApplyModel::class);
         $applyResult = $userApply->getApplyById($request['applyId']);
         if (!$applyResult) {
             return $this->fail(ApiCode::APPLY_RECORDS_NOT_FOUND);
         }
+        // TODO status 1 通过 2 拒绝
+        if ($request['status'] != 1) {
+            $this->sendToUser($applyResult['friend_id'],MessageCode::ADD_REPLY);
+            return $this->success();
+        }
+        Db::beginTransaction();
         /** @var UserFriendModel $friend */
         $friend = container()->get(UserFriendModel::class);
-        $result = $friend->createFriend($applyResult['user_id'], $applyResult['apply_user_id']);
+        $createData = [
+            'user_id' => $applyResult['user_id'],
+            'friend_id' => $applyResult['friend_id']
+        ];
+        $result = $friend->createFriend($createData);
+        if (!$result) {
+            Db::rollBack();
+            return $this->fail(1);
+        }
+        $updateResult = $userApply->updateData($applyResult['id'], ['status' => 1,'update_time'=>time()]);
+        if (!$updateResult) {
+            Db::rollBack();
+            return $this->fail(2);
+        }
+        Db::commit();
         //创建房间
-        $this->sendToUser($request['user_id'], $this->sendMessage(SystemCode::SUCCESS, [], $request['message']));
-        $this->sendToUser($request['apply_user_id'], $this->sendMessage(SystemCode::SUCCESS, [], $request['message']));
-        mongoClient()->insert('user.room', ['user_id' => $userId, 'friend_id' => $applyResult['apply_user_id']]);
-        mongoClient()->insert('user.room', ['user_id' => $applyResult['apply_user_id'], 'friend_id' => $userId]);
-        return $this->success($result);
+        $this->sendToUser($applyResult['friend_id'], $this->sendMessage(MessageCode::ADD_AGREE));
+        $this->sendToUser($applyResult['user_id'], $this->sendMessage(MessageCode::ADD_AGREE));
+        mongoClient()->insert('user.room', ['user_id' => $userId, 'friend_id' => $applyResult['friend_id']]);
+        mongoClient()->insert('user.room', ['user_id' => $applyResult['friend_id'], 'friend_id' => $userId]);
+        return $this->success([$result]);
     }
 }

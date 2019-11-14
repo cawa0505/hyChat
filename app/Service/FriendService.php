@@ -43,10 +43,13 @@ class FriendService extends BaseService
             return $this->success();
         }
         $friendIds = array_column($friend, 'friend_id');
-        $friendInfo = $this->userModel->getUserByUserIds($friendIds, ['id', 'image_url']);
+        $friendInfo = $this->userModel->getUserByUserIds($friendIds, ['id', 'nick_name', 'image_url']);
         $result = [];
         foreach ($friend as $key => $item) {
             foreach ($friendInfo as $k => $v) {
+                if (!$item['friend_name']) {
+                    unset($item['friend_name']);
+                }
                 if ($item['friend_id'] == $v['id']) {
                     $result[] = array_merge($item, $v);
                 }
