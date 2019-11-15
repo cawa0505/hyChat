@@ -11,9 +11,8 @@ namespace App\Controller\Api;
 
 use App\Controller\AbstractController;
 use App\Model\UserGroupModel;
-use App\Request\GroupRequest;
-use App\Service\GroupService;
-use Hyperf\Cache\Annotation\Cacheable;
+use App\Request\Api\GroupRequest;
+use App\Service\Api\GroupService;
 use Hyperf\Di\Annotation\Inject;
 use MongoDB\Driver\Exception\Exception;
 use Psr\Http\Message\ResponseInterface;

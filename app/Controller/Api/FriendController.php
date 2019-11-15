@@ -9,8 +9,7 @@
 namespace App\Controller\Api;
 
 use App\Controller\AbstractController;
-use App\Model\UserModel;
-use App\Service\FriendService;
+use App\Service\Api\FriendService;
 use Hyperf\Di\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface;
 

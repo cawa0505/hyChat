@@ -9,11 +9,9 @@
 namespace App\Controller\Api;
 
 use App\Controller\AbstractController;
-use App\Model\UserGroupModel;
 use App\Model\UserModel;
-use App\Request\UserRequest;
-use App\Service\FriendService;
-use App\Service\UserService;
+use App\Request\Api\UserRequest;
+use App\Service\Api\UserService;
 use Hyperf\Di\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface;
 

@@ -10,8 +10,8 @@ namespace App\Controller\Api;
 
 
 use App\Controller\AbstractController;
-use App\Request\ApplyRequest;
-use App\Service\ApplyService;
+use App\Request\Api\ApplyRequest;
+use App\Service\Api\ApplyService;
 use Hyperf\Di\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface;
 

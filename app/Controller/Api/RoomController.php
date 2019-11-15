@@ -10,8 +10,8 @@ namespace App\Controller\Api;
 
 
 use App\Controller\AbstractController;
-use App\Request\RoomRequest;
-use App\Service\RoomService;
+use App\Request\Api\RoomRequest;
+use App\Service\Api\RoomService;
 use Hyperf\Di\Annotation\Inject;
 use MongoDB\Driver\Exception\Exception;
 use Psr\Http\Message\ResponseInterface;

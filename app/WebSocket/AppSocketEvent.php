@@ -8,7 +8,6 @@
 
 namespace App\WebSocket;
 
-use App\Utility\Random;
 use App\Utility\Token;
 use App\WebSocket\Service\UserService;
 use Hyperf\Contract\OnCloseInterface;
@@ -37,18 +36,13 @@ class AppSocketEvent implements OnOpenInterface, OnMessageInterface, OnCloseInte
      */
     public function onOpen(Server $server, Request $request): void
     {
-        $params = $request->get;
-        if (!isset($params['token']) || !$params['token']) {
-            $token = Random::character(20) . $request->fd;
-            $server->push($request->fd, json_encode(['code' => 102, 'data' => $token]));
-            redis()->hSet("qrCodeToken", $token, $request->fd);
+        $params = $request->header;
+        if (!isset($params['sec-websocket-protocol']) || !$params['sec-websocket-protocol']) {
+            $server->push($request->fd, "参数错误");
+            $server->close($request->fd);
             return;
         }
-        if ($params['token'] == "system") {
-            $server->push($request->fd, 'welcome to you');
-            return;
-        }
-        $tokenData = container()->get(Token::class)->decode($params['token']);
+        $tokenData = container()->get(Token::class)->decode($params['sec-websocket-protocol']);
         if ($tokenData['status'] == 0) {
             $server->push($request->fd, $tokenData['msg']);
             $server->close($request->fd);

@@ -10,8 +10,8 @@ namespace App\Controller\Api;
 
 use App\Constants\ApiCode;
 use App\Controller\AbstractController;
-use App\Request\AuthRequest;
-use App\Service\UserService;
+use App\Request\Api\AuthRequest;
+use App\Service\Api\UserService;
 use Hyperf\Di\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface;
 
@@ -45,7 +45,7 @@ class AuthController extends AbstractController
      */
     public function register(AuthRequest $request)
     {
-        $params=$request->all();
+        $params = $request->all();
         $phone = $params['phone'];
         //验证码
         $key = 'phoneVerifyCode:' . $phone;
@@ -68,7 +68,7 @@ class AuthController extends AbstractController
     {
         $result = redis()->hDel('userToken', $this->getUserId() . "_" . getContext('login_type'));
 
-        return $this->successResponse([$result]);
+        return $this->successResponse($this->success($result));
     }
 
     /**
@@ -96,6 +96,6 @@ class AuthController extends AbstractController
      */
     public function scanLogin()
     {
-        
+
     }
 }

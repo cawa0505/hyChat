@@ -6,7 +6,7 @@
  * Time: 17:57
  */
 
-namespace App\Request;
+namespace App\Request\Api;
 
 
 use Hyperf\Validation\Request\FormRequest;

@@ -41,7 +41,7 @@ class UserApplyModel extends BaseModel
      */
     public function getApplyByUserId($userId, $columns = ['*'])
     {
-        $result = $this->newQuery()->where("user_id", $userId)->get($columns);
+        $result = $this->newQuery()->where("friend_id", $userId)->get($columns);
         if ($result) {
             return $result->toArray();
         }
