@@ -4,7 +4,7 @@
 namespace App\Traits;
 
 
-use App\Service\GroupService;
+use App\Service\Api\GroupService;
 use App\WebSocket\Service\UserService;
 
 trait PushMessage

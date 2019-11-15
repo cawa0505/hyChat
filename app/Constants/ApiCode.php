@@ -103,6 +103,26 @@ class ApiCode extends AbstractConstants
      * @Message("不能添加自己为好友")
      */
     const CANT_ADD_SELF = 2000;
+
+    /**
+     * @HttpCode("2001")
+     * @Message("好友已存在")
+     */
+    const FRIEND_EXITS = 2001;
+
+    /**
+     * @HttpCode("2003")
+     * @Message("创建好友关系失败")
+     */
+    const CREATE_FRIEND_ERROR = 2003;
+
+    /**
+     * @HttpCode("2004")
+     * @Message("审核失败")
+     */
+    const APPLY_ERROR = 2004;
+
+
     // TODO ----------------------群组 2300-2400-------------------------
     /**
      * @HttpCode("2301")
@@ -122,4 +142,17 @@ class ApiCode extends AbstractConstants
      * @Message("审核记录不存在")
      */
     const APPLY_RECORDS_NOT_FOUND = 2500;
+
+    // TODO ----------------------好友 2551-2560-------------------------
+    /**
+     * @HttpCode("2551")
+     * @Message("删除好友申请记录失败")
+     */
+    const DELETE_FRIEND_APPLY_ERROR = 2551;
+
+    /**
+     * @HttpCode("2552")
+     * @Message("删除好友关系失败")
+     */
+    const DELETE_FRIEND_ERROR = 2552;
 }

@@ -68,7 +68,7 @@ class UserApplyModel extends BaseModel
      */
     public function updateData($applyId, $data)
     {
-        $result = $this->newQuery()->where('id',$applyId)->update($data);
+        $result = $this->newQuery()->where('id', $applyId)->update($data);
         return $result;
     }
 

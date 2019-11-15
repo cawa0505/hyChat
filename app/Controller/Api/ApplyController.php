@@ -13,6 +13,7 @@ use App\Controller\AbstractController;
 use App\Request\Api\ApplyRequest;
 use App\Service\Api\ApplyService;
 use Hyperf\Di\Annotation\Inject;
+use MongoDB\Driver\Exception\Exception;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -52,6 +53,7 @@ class ApplyController extends AbstractController
      * 审核好友申请
      * @param ApplyRequest $request
      * @return ResponseInterface
+     * @throws Exception
      */
     public function review(ApplyRequest $request)
     {

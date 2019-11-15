@@ -36,13 +36,13 @@ class AppSocketEvent implements OnOpenInterface, OnMessageInterface, OnCloseInte
      */
     public function onOpen(Server $server, Request $request): void
     {
-        $params = $request->header;
-        if (!isset($params['sec-websocket-protocol']) || !$params['sec-websocket-protocol']) {
-            $server->push($request->fd, "参数错误");
+        $params = $request->get;
+        if (!isset($params['token']) || !$params['token']) {
+            $server->push($request->fd, "token不能为空");
             $server->close($request->fd);
             return;
         }
-        $tokenData = container()->get(Token::class)->decode($params['sec-websocket-protocol']);
+        $tokenData = container()->get(Token::class)->decode($params['token']);
         if ($tokenData['status'] == 0) {
             $server->push($request->fd, $tokenData['msg']);
             $server->close($request->fd);

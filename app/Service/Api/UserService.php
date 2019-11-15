@@ -54,7 +54,7 @@ class UserService extends BaseService
         $token = container()->get(Token::class)->encode($userInfo);
 
         $userToken = redis()->hGet("userToken", $userInfo['id'] . "_" . $type);
-        if($userToken){
+        if ($userToken) {
             /** @var \App\WebSocket\Service\UserService $socketCommon */
             $socketCommon = container()->get(\App\WebSocket\Service\UserService::class);
             $userFd = $socketCommon->getUserFd($userInfo['id'], $type);
@@ -82,8 +82,10 @@ class UserService extends BaseService
         if ($user) {
             return $this->fail(ApiCode::AUTH_USER_EXIST);
         }
+        $url = sprintf("http://192.168.0.163/images/%d.jpg", rand(1, 6));
         $data = [
             'nick_name' => Random::character(10),
+            'image_url' => $url,
             'account' => $account,
             'phone' => $phone,
             'password' => makePasswordHash($password),

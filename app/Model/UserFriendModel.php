@@ -24,7 +24,7 @@ class UserFriendModel extends BaseModel
      */
     public function getFriendIdsByUserId($userId, $column = ["*"])
     {
-        $result = $this->newQuery()->where('user_id', $userId)->get($column);
+        $result = $this->newQuery()->where('user_id', $userId)->where('status', 1)->get($column);
         if ($result) {
             return $result->toArray();
         }
@@ -39,7 +39,7 @@ class UserFriendModel extends BaseModel
      */
     public function getFriendIdByFriendId($friendId, $column = ["*"])
     {
-        $result = $this->newQuery()->where('friend_id', $friendId)->first($column);
+        $result = $this->newQuery()->where('friend_id', $friendId)->where('status', 1)->first($column);
         if ($result) {
             return $result->toArray();
         }
@@ -75,6 +75,6 @@ class UserFriendModel extends BaseModel
      */
     public function deleteFriend($friendId, $userId)
     {
-        return $this->newQuery()->where('friend_id', $friendId)->where('user_id', $userId)->update(['status' => 1]);
+        return $this->newQuery()->where('friend_id', $friendId)->where('user_id', $userId)->delete();
     }
 }

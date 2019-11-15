@@ -8,8 +8,8 @@
 
 namespace App\WebSocket\Controller;
 
-use App\Service\RoomService;
-use Hyperf\Di\Annotation\Inject;
+use App\Constants\MessageCode;
+use App\Model\UserFriendModel;
 
 /**
  * 单人|私聊房间
@@ -20,11 +20,21 @@ class RoomController extends BaseController
 {
     /**
      * {"controller":"Room","action":"send","content":{"userId":"1","message":"123456"}}
+     * @return bool
      */
     public function send()
     {
         $data = $this->getData();
-        $this->sendToUser($data['userId'], $data['message']);
+        $userId = $data['userId'];
+        $message = $data['message'];
+        /** @var  $userFriend UserFriendModel */
+        $userFriend = container()->get(UserFriendModel::class);
+        $result = $userFriend->getFriendIdByFriendId($userId);
+        if (!$result) {
+            $this->server->push($this->getFd(), $this->sendMessage(MessageCode::NO_OTHER_FRIEND, [], "你不是对方好友,无法发送信息"));
+            return false;
+        }
+        $this->sendToUser($userId, $message);
         $senderId = $this->getUid();
         go(function () use ($senderId, $data) {
             mongoClient()->insert('room.message',
@@ -36,5 +46,6 @@ class RoomController extends BaseController
                 ]
             );
         });
+        return true;
     }
 }

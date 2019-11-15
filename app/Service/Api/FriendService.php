@@ -8,9 +8,12 @@
 
 namespace App\Service\Api;
 
+use App\Constants\ApiCode;
+use App\Model\UserApplyModel;
 use App\Model\UserFriendModel;
 use App\Model\UserModel;
 use App\Service\BaseService;
+use Hyperf\DbConnection\Db;
 use Hyperf\Di\Annotation\Inject;
 
 /**
@@ -30,6 +33,12 @@ class FriendService extends BaseService
      * @var UserFriendModel
      */
     private $userFriendModel;
+
+    /**
+     * @Inject()
+     * @var UserApplyModel
+     */
+    private $userApplyModel;
 
     /**
      * @param $userId
@@ -60,11 +69,26 @@ class FriendService extends BaseService
 
     /**
      * @param $account
+     * @param $userId
      * @return array
      */
-    public function searchFriend($account)
+    public function searchFriend($account, $userId)
     {
         $result = $this->userModel->searchUserByAccount($account);
+        // 获取我的好友
+        $userFriend = $this->userFriendModel->getFriendIdsByUserId($userId, ['friend_id']);
+        $friendIds = array_column($userFriend, "friend_id");
+        foreach ($result as $key => $item) {
+            $result[$key]['is_friend'] = 0;
+            // 判断搜索的用户是否在自己好友列表中
+            if (in_array($item['id'], $friendIds)) {
+                $result[$key]['is_friend'] = 1;
+            }
+            // 判断是否为自己
+            if ($item['id'] == $userId) {
+                $result[$key]['is_friend'] = 1;
+            }
+        }
         return $this->success($result);
     }
 
@@ -101,7 +125,20 @@ class FriendService extends BaseService
      */
     public function deleteFriend($friendId, $userId)
     {
+        Db::beginTransaction();
+        // 删除好友申请记录
+        $applyResult = $this->userApplyModel->newQuery()->where('friend_id', $userId)->delete();
+        if (!$applyResult) {
+            Db::rollBack();
+            return $this->fail(ApiCode::DELETE_FRIEND_APPLY_ERROR);
+        }
+        // 删除好友关系
         $result = $this->userFriendModel->deleteFriend($friendId, $userId);
+        if (!$result) {
+            Db::rollBack();
+            return $this->fail(ApiCode::DELETE_FRIEND_ERROR);
+        }
+        Db::commit();
         return $this->success($result);
     }
 }

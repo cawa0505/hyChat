@@ -62,6 +62,12 @@ class MessageCode extends AbstractConstants
      */
     const ROOM_CHAT = 124;
 
+    /**
+     * @HttpCode("125")
+     * @Message("不是对方好友")
+     */
+    const NO_OTHER_FRIEND = 125;
+
     // TODO ---------------------------群组消息(141-160)----------------------------------
 
     /**

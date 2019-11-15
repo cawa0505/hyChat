@@ -18,7 +18,7 @@ trait Response
      * @param int $code
      * @return array
      */
-    public function success($data=[], $code = 200)
+    public function success($data = [], $code = 200)
     {
 
         if (is_string($data) || is_int($data)) {
@@ -50,9 +50,9 @@ trait Response
     {
 
         if (is_null($message)) {
-            $message = ApiCode::getMessage($code) ??"";
-            if(!$message){
-                $message = SystemCode::getMessage($code)??"未知错误";
+            $message = ApiCode::getMessage($code) ?? "";
+            if (!$message) {
+                $message = SystemCode::getMessage($code) ?? "未知错误";
             }
         }
         return [
@@ -63,17 +63,17 @@ trait Response
 
     /**
      * 推送消息
-     * @param $code int 类型
-     * @param $data array 数据
-     * @return string
+     * @param $code
+     * @param array $data
+     * @param string $message
+     * @return array
      */
-    public function sendMessage($code,array $data = []): string
+    public function sendMessage($code, array $data = [], $message = ''): array
     {
-        $data = [
+        return [
             'code' => $code,
-            'message' => MessageCode::getMessage($code),
+            'message' => $message ? $message : MessageCode::getMessage($code),
             'data' => $data
         ];
-        return json_encode($data);
     }
 }
