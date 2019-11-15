@@ -62,7 +62,7 @@ class ApplyService extends BaseService
             $data['message'] = $request['message'];
         }
         // 创建申请记录
-        $result = $this->userApplyModel->create($data);
+        $result = $this->userApplyModel->createUserApply($data);
         $userInfo = $this->userModel->getUserByUserId($userId, ['nick_name']);
         // 发送申请提醒
         $this->sendToUser(
@@ -142,7 +142,7 @@ class ApplyService extends BaseService
             return $this->fail(ApiCode::CREATE_FRIEND_ERROR);
         }
         // 修改审核记录为已审核
-        $updateResult = $this->userApplyModel->updateData($applyResult['id'], ['status' => 1, 'update_time' => time()]);
+        $updateResult = $this->userApplyModel->updateUserApply($applyResult['id'], ['status' => 1, 'update_time' => time()]);
         if (!$updateResult) {
             Db::rollBack();
             return $this->fail(ApiCode::APPLY_ERROR);

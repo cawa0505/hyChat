@@ -41,12 +41,12 @@ class UserApplyModel extends BaseModel
      */
     public function getApplyByUserId($userId, $columns = ['*'])
     {
-        $result = $this->newQuery()->where("friend_id", $userId)->get($columns);
+        $result = $this->newQuery()->where("friend_id", $userId)->where('status', 0)->groupBy(['user_id'])->get($columns);
         if ($result) {
             return $result->toArray();
         }
 
-        return null;
+        return [];
     }
 
     /**
@@ -54,7 +54,7 @@ class UserApplyModel extends BaseModel
      * @param $data
      * @return bool
      */
-    public function create($data)
+    public function createUserApply($data)
     {
         $result = $this->newQuery()->insert($data);
         mongoClient()->insert('user.apply', $data);
@@ -66,9 +66,10 @@ class UserApplyModel extends BaseModel
      * @param array $data
      * @return bool|int
      */
-    public function updateData($applyId, $data)
+    public function updateUserApply($applyId, $data)
     {
         $result = $this->newQuery()->where('id', $applyId)->update($data);
+        mongoClient()->update('user.apply', ['id' => $applyId], $data);
         return $result;
     }
 
