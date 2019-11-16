@@ -65,8 +65,7 @@ class ApplyService extends BaseService
         $result = $this->userApplyModel->createUserApply($data);
         $userInfo = $this->userModel->getUserByUserId($userId, ['nick_name']);
         // 发送申请提醒
-        $this->sendToUser(
-            $request['friendId'],
+        $this->sendToUser($request['friendId'],
             $this->sendMessage(MessageCode::ADD_APPLY, [], sprintf("{$userInfo['nick_name']},请求添加你为好友"))
         );
         return $this->success($result);
@@ -117,8 +116,7 @@ class ApplyService extends BaseService
             mongoClient()->insert('user.apply', ['user_id' => $userId, 'friend_id' => $applyResult['friend_id']]);
             $userInfo = $this->userModel->getUserByUserId($userId, ['nick_name']);
             // 给发送人推送消息
-            $this->sendToUser(
-                $request['friendId'],
+            $this->sendToUser($request['friendId'],
                 $this->sendMessage(MessageCode::ADD_APPLY, [], sprintf("{$userInfo['nick_name']},请求添加你为好友"))
             );
             return $this->success();

@@ -16,11 +16,11 @@ class PushMessageProcess extends AbstractProcess
         /** @var Server $server */
         $server = server();
         while (true) {
-            $redis->subscribe((array)getLocalIp(), function ($redis, $channel, $data) use ($server) {
+            $redis->subscribe([getLocalIp()], function ($redis, $channel, $data) use ($server) {
                 $pushData = json_decode($data, true);
                 $fd = (int)$pushData['fd'];
                 if ($server->isEstablished($fd)) {
-                    $server->push($fd,json_encode($pushData['data']));
+                    $server->push($fd, json_encode($pushData['data']));
                 }
             });
             Coroutine::sleep(0.5);
