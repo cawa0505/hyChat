@@ -9,6 +9,7 @@
 namespace App\WebSocket\Controller;
 
 
+use App\Constants\MessageCode;
 use App\Traits\PushMessage;
 use App\Traits\Response;
 use App\WebSocket\Service\UserService;
@@ -62,6 +63,16 @@ class BaseController
     public function getUid()
     {
         $fdInfo = $this->server->getClientInfo($this->frame->fd);
-        return isset($fdInfo['uid']) ?? 0;
+        return isset($fdInfo['uid']) ?? null;
+    }
+
+    /**
+     * @param $code
+     * @param array $data
+     * @param string $message
+     */
+    public function push($code, $data = [], $message = "")
+    {
+        $this->server->push($this->frame->fd, json_encode($this->sendMessage($code, $data, $message)));
     }
 }

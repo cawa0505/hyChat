@@ -19,7 +19,7 @@ use App\Model\UserFriendModel;
 class RoomController extends BaseController
 {
     /**
-     * {"controller":"Room","action":"send","content":{"userId":"1","message":"123456"}}
+     * {"controller":"Room","action":"send","content":{"userId":"1001","message":"123456"}}
      * @return bool
      */
     public function send()
@@ -31,7 +31,7 @@ class RoomController extends BaseController
         $userFriend = container()->get(UserFriendModel::class);
         $result = $userFriend->getFriendIdByFriendId($userId);
         if (!$result) {
-            $this->server->push($this->getFd(), $this->sendMessage(MessageCode::NO_OTHER_FRIEND, [], "你不是对方好友,无法发送信息"));
+            $this->push(MessageCode::NO_OTHER_FRIEND, [], "你不是对方好友,无法发送信息");
             return false;
         }
         $this->sendToUser($userId, $message);

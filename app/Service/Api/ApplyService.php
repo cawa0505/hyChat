@@ -79,8 +79,7 @@ class ApplyService extends BaseService
         }
         $userInfo = $this->userModel->getUserByUserId($userId, ['nick_name']);
         // 发送申请提醒
-        $this->sendToUser(
-            $request['friendId'],
+        $this->sendToUser($request['friendId'],
             $this->sendMessage(MessageCode::ADD_APPLY, [], sprintf("{$userInfo['nick_name']},请求添加你为好友"))
         );
         Db::commit();
@@ -141,8 +140,7 @@ class ApplyService extends BaseService
             $this->userFriendModel->updateFriend(["friend_id"=> $applyResult['friend_id'],'user_id' => $userId],["status"=>$request['status']]);
             $userInfo = $this->userModel->getUserByUserId($userId, ['nick_name']);
             // 给发送人推送消息
-            $this->sendToUser(
-                $request['friendId'],
+            $this->sendToUser($request['friendId'],
                 $this->sendMessage(MessageCode::ADD_APPLY, [], sprintf("{$userInfo['nick_name']},请求添加你为好友"))
             );
             Db::commit();
