@@ -62,13 +62,28 @@ class ApplyService extends BaseService
             $data['message'] = $request['message'];
         }
         // 创建申请记录
+        Db::beginTransaction();
         $result = $this->userApplyModel->createUserApply($data);
+        if(!$result){
+            Db::rollBack();
+            return $this->fail(ApiCode::OPERATION_FAIL);
+        }
+        //创建单方关系申请
+        $userFriend=$this->userFriendModel->getOne(['user_id' => $userId, 'friend_id' => $request['friendId']]);
+        if(!$userFriend) {
+            $resultOneRelation=$this->userFriendModel->createFriend(['user_id' => $userId, 'friend_id' => $request['friendId']]);
+            if (!$resultOneRelation){
+                Db::rollBack();
+                return $this->fail(ApiCode::OPERATION_FAIL);
+            }
+        }
         $userInfo = $this->userModel->getUserByUserId($userId, ['nick_name']);
         // 发送申请提醒
         $this->sendToUser(
             $request['friendId'],
             $this->sendMessage(MessageCode::ADD_APPLY, [], sprintf("{$userInfo['nick_name']},请求添加你为好友"))
         );
+        Db::commit();
         return $this->success($result);
     }
 
@@ -108,19 +123,29 @@ class ApplyService extends BaseService
     {
         // 获取审核信息
         $applyResult = $this->userApplyModel->getApplyById($request['applyId']);
+        dd($applyResult->toArray());
         if (!$applyResult) {
             return $this->fail(ApiCode::APPLY_RECORDS_NOT_FOUND);
         }
         // TODO status 1 通过 2 拒绝
+        Db::beginTransaction();
         if ($request['status'] == 2) {
             // 记录回复信息
             mongoClient()->insert('user.apply', ['user_id' => $userId, 'friend_id' => $applyResult['friend_id']]);
+            //获取好友申请
+            $relationData=$this->userFriendModel->getOne(["friend_id"=> $applyResult['friend_id'],'user_id' => $userId]);
+            if (!$relationData){
+                Db::rollBack();
+                return $this->fail(ApiCode::OPERATION_FAIL);
+            }
+            $this->userFriendModel->updateFriend(["friend_id"=> $applyResult['friend_id'],'user_id' => $userId],["status"=>$request['status']]);
             $userInfo = $this->userModel->getUserByUserId($userId, ['nick_name']);
             // 给发送人推送消息
             $this->sendToUser(
                 $request['friendId'],
                 $this->sendMessage(MessageCode::ADD_APPLY, [], sprintf("{$userInfo['nick_name']},请求添加你为好友"))
             );
+            Db::commit();
             return $this->success();
         }
         $createData = [
@@ -128,15 +153,14 @@ class ApplyService extends BaseService
             'friend_id' => $applyResult['friend_id']
         ];
         // 查看关系是否存在
-        $friendResult = $this->userFriendModel->getMany($createData);
-        if ($friendResult) {
-            Db::rollBack();
+        $friendResult = $this->userFriendModel->getOne($createData);
+
+        if (!$friendResult) {
             return $this->fail(ApiCode::FRIEND_EXITS);
         }
-        Db::beginTransaction();
         // 创建双方关系
-        $createFriend = $this->userFriendModel->createFriend(['user_id' => $applyResult['user_id'], 'friend_id' => $applyResult['friend_id']]);
-        $result = $this->userFriendModel->createFriend(['user_id' => $applyResult['friend_id'], 'friend_id' => $applyResult['user_id']]);
+        $createFriend = $this->userFriendModel->updateFriendName(["friend_id"=> $applyResult['friend_id'],'user_id' => $userId],["status"=>$request['status']]);
+        $result = $this->userFriendModel->createFriend(['user_id' => $applyResult['friend_id'], 'friend_id' => $applyResult['user_id'],"status"=>1]);
         if (!$result || !$createFriend) {
             Db::rollBack();
             return $this->fail(ApiCode::CREATE_FRIEND_ERROR);

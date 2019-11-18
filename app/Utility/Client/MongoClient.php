@@ -51,10 +51,20 @@ class MongoClient
     public function insert(string $namespace, array $document)
     {
         $writeConcern = new WriteConcern(WriteConcern::MAJORITY, 1000);
+
         $bulk = new BulkWrite();
+        if (!isOneArray($document)) {
+            foreach ($document as &$val) {
+                $val["create_time"] = time();
+            }
+        } else {
+            $document["create_time"] = time();
+        }
+
         $bulk->insert($document);
 
         $result = $this->manager()->executeBulkWrite($namespace, $bulk, $writeConcern);
+
         return $result->getUpsertedCount();
     }
 
@@ -63,12 +73,20 @@ class MongoClient
      * @Task()
      * @param string $namespace 表名
      * @param array $filter 查询条件
-     * @param array $options 附加条件
+     * @param string $sort 排序
+     * @param int $skip offset
+     * @param int $limit
      * @return array
      * @throws Exception
      */
-    public function query(string $namespace, array $filter = [], array $options = [])
+    public function query(string $namespace, array $filter = [], $sort = "-1", $skip = 0, $limit = 10)
     {
+        $options = [
+            'projection' => ['_id' => 0],
+            'sort' => ['create_time' => $sort],
+            'skip' => $skip,
+            'limit' => $limit
+        ];
         $query = new Query($filter, $options);
         $result = $this->manager()->executeQuery($namespace, $query);
         return $result->toArray();

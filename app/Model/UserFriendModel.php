@@ -68,6 +68,17 @@ class UserFriendModel extends BaseModel
     }
 
     /**
+     * 通过where条件编辑单条数据
+     * @param $where
+     * @param $data
+     * @return int
+     */
+    public function updateFriend($where, $data)
+    {
+        return $this->newQuery()->where($where)->update($data);
+    }
+
+    /**
      * 删除好友
      * @param $friendId
      * @param $userId
@@ -75,6 +86,7 @@ class UserFriendModel extends BaseModel
      */
     public function deleteFriend($friendId, $userId)
     {
+
         return $this->newQuery()->where('friend_id', $friendId)->where('user_id', $userId)->delete();
     }
 }

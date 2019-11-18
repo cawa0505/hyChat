@@ -55,7 +55,7 @@ class FriendService extends BaseService
         $result = [];
         foreach ($friend as $key => $item) {
             foreach ($friendInfo as $k => $v) {
-                if (!$item['friend_name']) {
+                if (!isset($item['friend_name'])) {
                     unset($item['friend_name']);
                 }
                 if ($item['friend_id'] == $v['id']) {
@@ -68,6 +68,7 @@ class FriendService extends BaseService
 
 
     /**
+     * 搜索用户
      * @param $account
      * @param $userId
      * @return array
@@ -127,7 +128,13 @@ class FriendService extends BaseService
     {
         Db::beginTransaction();
         // 删除好友申请记录
-        $applyResult = $this->userApplyModel->newQuery()->where('friend_id', $userId)->delete();
+        $applyResult = $this->userApplyModel->deleteFriendApply([
+            ['friend_id',"=", $userId],
+            ["user_id","=",$friendId]
+        ],[
+            ['friend_id',"=", $friendId],
+            ["user_id","=",$userId]
+        ]);
         if (!$applyResult) {
             Db::rollBack();
             return $this->fail(ApiCode::DELETE_FRIEND_APPLY_ERROR);

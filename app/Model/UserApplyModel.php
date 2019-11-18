@@ -73,4 +73,15 @@ class UserApplyModel extends BaseModel
         return $result;
     }
 
+    /**
+     * 删除好友
+     * @param $whereOne
+     * @param $whereTwo
+     * @return int|mixed
+     */
+    public function deleteFriendApply($whereOne,$whereTwo)
+    {
+       return $this->newQuery()->where($whereOne)->orWhere($whereTwo)->delete();
+    }
+
 }

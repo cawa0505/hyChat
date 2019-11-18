@@ -10,6 +10,7 @@ namespace App\Controller\Api;
 
 use App\Constants\ApiCode;
 use App\Controller\AbstractController;
+use App\Model\SysConfig;
 use App\Utility\RsaEncryption;
 use App\Utility\SendCode;
 use Hyperf\Di\Annotation\Inject;
@@ -28,7 +29,13 @@ class CommonController extends AbstractController
      * @Inject()
      * @var RsaEncryption
      */
+
     private $rsaEncryption;
+    /**
+     * @Inject()
+     * @var SysConfig
+     */
+    private $sysConfig;
 
     /*
      * @RequestMapping(path="getPublicKey", methods="post")
@@ -40,6 +47,8 @@ class CommonController extends AbstractController
         if (!$publicKey) {
             return $this->fail(ApiCode::OPERATION_FAIL);
         }
+        dd(config("apiCacheKey"));
+        $this->sysConfig->getConfig();
         return $this->response->json($this->success(htmlentities($publicKey)));
     }
 

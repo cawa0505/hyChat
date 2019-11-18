@@ -83,7 +83,7 @@ class GroupService extends BaseService
             return $this->fail(ApiCode::GROUP_NOT_EXIST);
         }
         $group = $this->groupModel->getOne(["id" => $param["id"]]);
-        if (is_array($group)) {
+        if (!$group) {
             return $this->fail(ApiCode::GROUP_NOT_EXIST);
         }
         $result = $this->groupModel->updateGroupInfo($param, $user_id);
@@ -101,7 +101,7 @@ class GroupService extends BaseService
     public function deleteGroup($id)
     {
         $group = $this->groupModel->getOne(["id" => $id]);
-        if (!is_array($group)) {
+        if (!$group) {
             return $this->fail(ApiCode::GROUP_NOT_EXIST);
         }
         Db::beginTransaction();
@@ -147,7 +147,7 @@ class GroupService extends BaseService
     public function updateNick($param, $userId)
     {
         $group = $this->groupModel->getOne(["id" => $param["id"]]);
-        if (!is_array($group)) {
+        if (!$group) {
             return $this->fail(ApiCode::GROUP_NOT_EXIST);
         }
         $data = ["group_nick_name" => $param["group_nick_name"]];
@@ -192,5 +192,32 @@ class GroupService extends BaseService
         ];
         $result = mongoClient()->query('group.message', ['group' => $group], $options);
         return $this->success($result);
+    }
+
+    /**
+     * 任命管理员
+     * @param $param
+     * @param $userId
+     * @return array
+     */
+    public function appointAdmin($param,$userId)
+    {
+        //获取群信息
+        $groupOwner = $this->groupModel->getOne(["id"=>$param["groupId"]]);
+        if (empty($groupOwner)){
+            return $this->fail(ApiCode::GROUP_NOT_EXIST);
+        }
+        //是不是群主
+        if($groupOwner["user_id"] != $userId){
+            return $this->fail(ApiCode::GROUP_APPOINT_NOT_ERROR);
+        }
+        //是不是群成员
+        $memberInfo=$this->groupMember->getOne(["user_id"=>$param["userId"],"group_id"=>$param["groupId"]]);
+        if(empty($memberInfo)) return $this->fail(ApiCode::GROUP_MEMBER_NOT_EXIST);
+        //任命管理
+        $where[]=["id","=",$memberInfo["id"]];
+        $data=[];
+        $this->groupMember->updateField($where,$data);
+        $this->success([]);
     }
 }

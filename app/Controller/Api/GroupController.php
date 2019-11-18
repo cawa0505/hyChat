@@ -130,4 +130,16 @@ class GroupController extends AbstractController
         $result = $this->groupService->getMessageRecord($request);
         return $this->successResponse($result);
     }
+
+    /**
+     * 任命管理员
+     * @param GroupRequest $request
+     * @return ResponseInterface
+     */
+    public function appointAdmin(GroupRequest $request)
+    {
+        $request = $this->request->all();
+        $result=$this->groupService->appointAdmin($request,$this->getUserId());
+        return $this->successResponse($result);
+    }
 }

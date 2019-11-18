@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Model;
 
+use Hyperf\Database\Model\Builder;
 use Hyperf\DbConnection\Model\Model;
 use Hyperf\ModelCache\Cacheable;
 use Hyperf\ModelCache\CacheableInterface;
@@ -26,11 +27,27 @@ abstract class BaseModel extends Model implements CacheableInterface
     /**
      * 获取单条数据
      * @param $where
-     * @return array|null
+     * @return array|Builder|\Hyperf\Database\Model\Model|object|null
      */
     public function getOne($where)
     {
-        return $this->newQuery()->where($where)->first()->toArray();
+        $model = $this->newQuery();
+        if (is_array($where)) {
+            foreach ($where as $key => $val) {
+
+                if (is_array($val)) {
+                    $model->where($key, $val[0], $val[1]);
+                } else {
+                    $model->where($key, $val);
+                }
+
+            }
+            if(!$model->first()){
+                return [];
+            }
+            return $model->first()->toArray();
+        }
+        return [];
     }
 
     /**
@@ -52,9 +69,43 @@ abstract class BaseModel extends Model implements CacheableInterface
                     $model->where($key, $val);
                 }
             }
+            return $model->get()->toArray();
         }
-        return $model->get()->toArray();
+        return [];
+
     }
+
+    /**
+     * todo 插入一条或者多条数据
+     * @param $data
+     * @return bool
+     */
+    public function createField($data)
+    {
+        return $this->newQuery()->insert($data);
+    }
+
+    /**
+     * @todo 根据where条件更新数据
+     * @param $where
+     * @param $data
+     * @return int
+     */
+    public function updateField($where,$data)
+    {
+        return $this->newQuery()->where($where)->update($data);
+    }
+
+    /**
+     * todo 根据where条件删除数据
+     * @param $where
+     * @return int|mixed
+     */
+    public function deleteField($where)
+    {
+      return  $this->newQuery()->where($where)->delete();
+    }
+
 
     /**
      * 获取缓存
@@ -64,9 +115,9 @@ abstract class BaseModel extends Model implements CacheableInterface
      */
     public function getCache($key)
     {
-        $cacheConfig = $this->getCacheConfig($key);
+        $cacheConfig = self::getCacheConfig($key);
         if (!$cacheConfig) return [];
-        return mongoClient()->query($cacheConfig["key"]) ?? [];
+        return mongoClient()->query($cacheConfig["key"]);
     }
 
     /**
@@ -77,18 +128,18 @@ abstract class BaseModel extends Model implements CacheableInterface
      */
     public function saveCache($key, $data)
     {
-        $cacheConfig = $this->getCacheConfig($key);
+        $cacheConfig = self::getCacheConfig($key);
         return mongoClient()->insert($cacheConfig["key"], $data);
     }
 
     /**
-     * 获取缓存配置
+     * 缓存配置键
      * @param $key
      * @return mixed
      */
-    private function getCacheConfig($key)
+    static function getCacheConfig($key)
     {
-        $cacheConfig = config('api.cache_key');
+        $cacheConfig = config('apiCacheKey');
         if (isset($cacheConfig[$key])) {
             return $cacheConfig[$key];
         } else {
@@ -97,7 +148,7 @@ abstract class BaseModel extends Model implements CacheableInterface
     }
 
     /**
-     * 刷新缓存
+     * 删除缓存
      * @param $key
      * @return bool
      */

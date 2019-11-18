@@ -32,7 +32,7 @@ class GroupRequest extends FormRequest
         switch ($action) {
             case "create":
                 return [
-                    'userIds' => 'required|array|integer'
+                    'userIds' => 'required|array'
                 ];
                 break;
             case "update":
@@ -54,6 +54,12 @@ class GroupRequest extends FormRequest
                 return [
                     'id' => 'required|integer',
                     'group_nick_name' => 'required|string',
+                ];
+                break;
+            case "appointAdmin":
+                return [
+                    'groupId' => 'required|integer',
+                    'userId' => 'required|integer',
                 ];
                 break;
             default:

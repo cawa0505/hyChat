@@ -134,6 +134,16 @@ class ApiCode extends AbstractConstants
      * @Message("群组创建失败")
      */
     const GROUP_CREATE_FAIL = 2302;
+    /**
+     * @HttpCode("2303")
+     * @Message("只有群主才能任命管理员")
+     */
+    const GROUP_APPOINT_NOT_ERROR = 2303;
+    /**
+     * @HttpCode("2304")
+     * @Message("非群组成员")
+     */
+    const GROUP_MEMBER_NOT_EXIST = 2304;
 
 
     // TODO ----------------------审核 2500-2550-------------------------
