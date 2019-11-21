@@ -28,21 +28,21 @@ class SysConfig extends BaseModel
      * @return array|mixed|null
      * @throws Exception
      */
-    public function getConfig($key=null)
+    public function getConfig($key = null)
     {
         $data = $this->getCache("systemConfig");
-        if (empty($data)){
-            $data=$this->newQuery()->get()->toArray();
-            if ($data){
-                foreach ($data as $val){
-                    $this->saveCache("systemConfig",$val);
+        if (empty($data)) {
+            $data = $this->newQuery()->get()->toArray();
+            if ($data) {
+                foreach ($data as $val) {
+                    $this->saveCache("systemConfig", $val);
                 }
             }
         }
-        if(empty($key)){
+        if (empty($key)) {
             return $data;
         }
-        return isset($data[$key])?$data[$key]:null;
+        return isset($data[$key]) ? $data[$key] : null;
     }
 
     protected function createItem()

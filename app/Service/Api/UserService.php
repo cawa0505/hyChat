@@ -128,7 +128,9 @@ class UserService extends BaseService
      */
     public function updateUserInfo($params, $user_id)
     {
-        $user = $this->userModel->getUserByUserIds($user_id);
+
+        $user = $this->userModel->getUserByUserIds([$user_id]);
+
         if (!$user) {
             return $this->fail(ApiCode::AUTH_USER_NOT_EXIST);
         }

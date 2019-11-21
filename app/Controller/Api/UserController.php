@@ -8,6 +8,7 @@
 
 namespace App\Controller\Api;
 
+use App\Constants\ApiCode;
 use App\Controller\AbstractController;
 use App\Model\UserModel;
 use App\Request\Api\UserRequest;
@@ -50,7 +51,12 @@ class UserController extends AbstractController
      */
     public function updateUserInfo(UserRequest $request)
     {
-        $result = $this->userService->updateUserInfo($request->all(), $this->getUserId());
+        $param = $request->post();
+
+        if (count($param) < 1) return $this->errorResponse($this->fail(ApiCode::PARAMS_NOT_EXIST));
+
+        $result = $this->userService->updateUserInfo($param, $this->getUserId());
+
         return $this->successResponse($result);
     }
 }

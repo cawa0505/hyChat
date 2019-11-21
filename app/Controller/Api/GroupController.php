@@ -30,7 +30,7 @@ class GroupController extends AbstractController
     private $groupService;
 
     /**
-     * 好友列表
+     * 群组列表
      * @return ResponseInterface
      */
     public function list()

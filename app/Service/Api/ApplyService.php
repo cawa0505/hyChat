@@ -68,6 +68,7 @@ class ApplyService extends BaseService
             Db::rollBack();
             return $this->fail(ApiCode::OPERATION_FAIL);
         }
+
         //创建单方关系申请
         $userFriend=$this->userFriendModel->getOne(['user_id' => $userId, 'friend_id' => $request['friendId']]);
         if(!$userFriend) {
@@ -97,10 +98,17 @@ class ApplyService extends BaseService
         if (!$applyResult) {
             return $this->success();
         }
+        // 获取我的好友
+        $userFriend = $this->userFriendModel->getFriendIdsByUserId($userId, ['friend_id']);
+        $friendIds = array_column($userFriend, 'friend_id');
+        //申请列表用户ID
         $applyUserId = array_column($applyResult, 'user_id');
         $applyUserIdInfo = $this->userModel->getUserByUserIds($applyUserId, ['id', 'nick_name', 'image_url']);
         $result = [];
         foreach ($applyResult as $key => $item) {
+            if (in_array($item['user_id'],$friendIds)){
+                $item["status"]=1;
+            }
             foreach ($applyUserIdInfo as $k => $v) {
                 if ($item['user_id'] == $v['id']) {
                     unset($v['id']);
@@ -122,7 +130,7 @@ class ApplyService extends BaseService
     {
         // 获取审核信息
         $applyResult = $this->userApplyModel->getApplyById($request['applyId']);
-        dd($applyResult->toArray());
+
         if (!$applyResult) {
             return $this->fail(ApiCode::APPLY_RECORDS_NOT_FOUND);
         }

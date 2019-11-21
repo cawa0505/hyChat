@@ -229,6 +229,11 @@ if (!function_exists('getAction')) {
 
 
 if (!function_exists('isOneArray')) {
+    /**
+     * 检测一维数组
+     * @param $data
+     * @return bool
+     */
     function isOneArray($data)
     {
         $count = count($data);
@@ -236,5 +241,16 @@ if (!function_exists('isOneArray')) {
             return true;
         }
         return false;
+    }
+}
+if (!function_exists("sysConfig")){
+    /**
+     * 获取配置
+     * @param $key
+     * @param int $default
+     * @return int
+     */
+    function sysConfig($key,$default=0){
+       return container()->get(\App\Model\SysConfig::class)->getConfig($key)??$default;
     }
 }

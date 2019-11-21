@@ -111,7 +111,8 @@ class UserModel extends BaseModel
      */
     public function updateUserInfo($data, $userId)
     {
-        return $this->newQuery()->where("user_id", $userId)->update($data);
+
+        return $this->newQuery()->where("id", $userId)->update($data);
     }
 
 }

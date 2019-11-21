@@ -24,13 +24,13 @@ class UserRequest extends FormRequest
         $action = getAction($this->path());
         if ($action == "updateUserInfo") {
             return [
-                "image_url" => "required|string",
-                "nick_name" => "required|string",
-                "sex" => "required|integer:0,1,2",
-                "country_id" => "required|integer",
-                "province_id" => "required|integer",
-                "city_id" => "required|integer",
-                "ind_sign" => "required|string",
+                "image_url" => "string",
+                "nick_name" => "string",
+                "sex" => "integer:0,1,2",
+                "country_id" => "integer",
+                "province_id" => "integer",
+                "city_id" => "integer",
+                "ind_sign" => "string",
             ];
         }
         return [];

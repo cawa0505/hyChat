@@ -36,6 +36,11 @@ class ApiCode extends AbstractConstants
      * @Message("Token为空")
      */
     const TOKEN_NOT_EXIST = 104;
+    /**
+     * @HttpCode("105")
+     * @Message("参数不能为空")
+     */
+    const PARAMS_NOT_EXIST = 105;
 
 
     // TODO ----------------------用户 1000-1500-------------------------

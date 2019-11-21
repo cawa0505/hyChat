@@ -9,6 +9,9 @@
 namespace App\Model;
 
 
+use Hyperf\Database\Model\Relations\HasMany;
+use Hyperf\Utils\Collection;
+
 /**
  * 用户群组
  * Class UserGroupModel
@@ -21,6 +24,14 @@ class UserGroupModel extends BaseModel
      */
     protected $table = 'user_group';
 
+    /**
+     * 群成员
+     * @return HasMany
+     */
+    public function GroupMember()
+    {
+        return $this->hasMany(UserGroupMember::class, 'group_id', 'id');
+    }
 
     /**
      * todo 通过用户id获取群组
@@ -31,6 +42,10 @@ class UserGroupModel extends BaseModel
     public function getGroupByUserId($userId, $columns = ['*'])
     {
         $group = $this->newQuery()->where('user_id', $userId)->get($columns);
+
+        foreach ($group as &$item) {
+            $item->memberList= $item->GroupMember()->pluck("user_id");
+        };
         if ($group) {
             return $group->toArray();
         }
@@ -53,9 +68,9 @@ class UserGroupModel extends BaseModel
      * @param $userId
      * @return int
      */
-    public function updateGroupInfo($param,$userId)
+    public function updateGroupInfo($param, $userId)
     {
-        return $this->newQuery()->where("user_id",$userId)->update($param);
+        return $this->newQuery()->where("user_id", $userId)->update($param);
     }
 
     /**
@@ -66,6 +81,6 @@ class UserGroupModel extends BaseModel
      */
     public function deleteGroup($id)
     {
-       return $this->newQuery()->where("id",$id)->delete();
+        return $this->newQuery()->where("id", $id)->delete();
     }
 }

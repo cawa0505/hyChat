@@ -73,13 +73,13 @@ class MongoClient
      * @Task()
      * @param string $namespace 表名
      * @param array $filter 查询条件
-     * @param string $sort 排序
+     * @param int $sort 排序
      * @param int $skip offset
      * @param int $limit
      * @return array
      * @throws Exception
      */
-    public function query(string $namespace, array $filter = [], $sort = "-1", $skip = 0, $limit = 10)
+    public function query(string $namespace, array $filter = [], $sort = -1, $skip = 0, $limit = 10)
     {
         $options = [
             'projection' => ['_id' => 0],
@@ -89,7 +89,7 @@ class MongoClient
         ];
         $query = new Query($filter, $options);
         $result = $this->manager()->executeQuery($namespace, $query);
-        return $result->toArray();
+        return array_values($result->toArray());
     }
 
     /**

@@ -115,7 +115,7 @@ abstract class BaseModel extends Model implements CacheableInterface
      */
     public function getCache($key)
     {
-        $cacheConfig = self::getCacheConfig($key);
+        $cacheConfig = self::getCacheKey($key);
         if (!$cacheConfig) return [];
         return mongoClient()->query($cacheConfig["key"]);
     }
@@ -128,7 +128,7 @@ abstract class BaseModel extends Model implements CacheableInterface
      */
     public function saveCache($key, $data)
     {
-        $cacheConfig = self::getCacheConfig($key);
+        $cacheConfig = self::getCacheKey($key);
         return mongoClient()->insert($cacheConfig["key"], $data);
     }
 
@@ -137,7 +137,7 @@ abstract class BaseModel extends Model implements CacheableInterface
      * @param $key
      * @return mixed
      */
-    static function getCacheConfig($key)
+    static function getCacheKey($key)
     {
         $cacheConfig = config('apiCacheKey');
         if (isset($cacheConfig[$key])) {
@@ -154,7 +154,7 @@ abstract class BaseModel extends Model implements CacheableInterface
      */
     public function flushCache($key)
     {
-        $cacheConfig = $this->getCacheConfig($key);
+        $cacheConfig =self::getCacheKey($key);
         return mongoClient()->delete($cacheConfig["key"], []);
     }
 }

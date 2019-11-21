@@ -62,6 +62,7 @@ class UserApplyModel extends BaseModel
     }
 
     /**
+     *
      * @param array $applyId
      * @param array $data
      * @return bool|int

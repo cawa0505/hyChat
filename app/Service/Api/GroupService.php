@@ -45,7 +45,8 @@ class GroupService extends BaseService
     public function createGroup($createUserId, $userIds)
     {
         //生成群组名称
-        $groupName = Random::character(10);
+//        $groupName = Random::character(10);
+        $groupName="群聊";
         Db::beginTransaction();
         //获取创建群组ID
         $groupId = $this->groupModel->createGroup(['user_id' => $createUserId, 'group_name' => $groupName]);
@@ -60,8 +61,9 @@ class GroupService extends BaseService
         //构造群组成员初始化数据
         $groupMemberData = [];
         foreach ($userIds as $val) {
-            $groupMember[] = ["group_id" => $groupId, "user_id" => $val, "status" => 1];//初始化成员不需要审核状态为正常
+            $groupMemberData[] = ["group_id" => $groupId, "user_id" => $val, "status" => 1];//初始化成员不需要审核状态为正常
         }
+        dd($groupMemberData);
         $createGroupUser = $this->groupMember->createData($groupMemberData);
         if (!$createGroupUser) {
             Db::rollBack();
@@ -200,24 +202,38 @@ class GroupService extends BaseService
      * @param $userId
      * @return array
      */
-    public function appointAdmin($param,$userId)
+    public function appointAdmin($param, $userId)
     {
         //获取群信息
-        $groupOwner = $this->groupModel->getOne(["id"=>$param["groupId"]]);
-        if (empty($groupOwner)){
+        $groupOwner = $this->groupModel->getOne(["id" => $param["groupId"]]);
+        if (empty($groupOwner)) {
             return $this->fail(ApiCode::GROUP_NOT_EXIST);
         }
         //是不是群主
-        if($groupOwner["user_id"] != $userId){
+        if ($groupOwner["user_id"] != $userId) {
             return $this->fail(ApiCode::GROUP_APPOINT_NOT_ERROR);
         }
         //是不是群成员
-        $memberInfo=$this->groupMember->getOne(["user_id"=>$param["userId"],"group_id"=>$param["groupId"]]);
-        if(empty($memberInfo)) return $this->fail(ApiCode::GROUP_MEMBER_NOT_EXIST);
+        $memberInfo = $this->groupMember->getOne(["user_id" => $param["userId"], "group_id" => $param["groupId"]]);
+        if (empty($memberInfo)) return $this->fail(ApiCode::GROUP_MEMBER_NOT_EXIST);
         //任命管理
-        $where[]=["id","=",$memberInfo["id"]];
-        $data=[];
-        $this->groupMember->updateField($where,$data);
-        $this->success([]);
+        Db::beginTransaction();
+        $where[] = ["id", "=", $memberInfo["id"]];
+        $data = ["is_admin" => 1];
+        $resultISAdmin = $this->groupMember->updateField($where, $data);
+        if (!$resultISAdmin) {
+            Db::rollBack();
+            return $this->fail(ApiCode::OPERATION_FAIL);
+        }
+        //更新管理员人数
+        $where[] = ["id", "=", $param["groupId"]];
+        $data = ["administrator_num" => $groupOwner["administrator_num"]];
+        $resultAdminNum = $this->groupModel->updateField($where, $data);
+        if (!$resultAdminNum) {
+            Db::rollBack();
+            return $this->fail(ApiCode::OPERATION_FAIL);
+        }
+        Db::commit();
+        return $this->success([]);
     }
 }

@@ -47,8 +47,6 @@ class CommonController extends AbstractController
         if (!$publicKey) {
             return $this->fail(ApiCode::OPERATION_FAIL);
         }
-        dd(config("apiCacheKey"));
-        $this->sysConfig->getConfig();
         return $this->response->json($this->success(htmlentities($publicKey)));
     }
 
