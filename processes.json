@@ -1,0 +1,8 @@
+{
+  "name": "chat",
+  "args": "start",
+  "script": "bin/hyperf",
+  "exec_interpreter": "php",
+  "exec_mode": "fork",
+  "max_memory_restart": "100M"
+}
