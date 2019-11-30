@@ -9,7 +9,6 @@
 namespace App\Utility\Client;
 
 
-use Hyperf\Server\Exception\ServerException;
 use Hyperf\Task\Annotation\Task;
 use Hyperf\Utils\Traits\StaticInstance;
 use MongoDB\Driver\BulkWrite;
@@ -30,7 +29,7 @@ class MongoModel
      * 数据库名
      * @var
      */
-    protected $database;
+    private $database;
 
     /**
      * 表名
@@ -94,25 +93,79 @@ class MongoModel
     }
 
     /**
-     * 查询条件
-     * @param $column
+     * TODO 查询条件
+     * @param $key
+     * @param $operator
      * @param $value
      * @return $this
      */
-    public function where($column, $value)
+    public function where($key, $operator, $value)
     {
-        if ($this->buildWhere) {
-            array_merge($this->buildWhere, [$column => $value]);
+        $filter = [];
+        switch ($operator) {
+            case '=':
+                $filter = [$key => $value];
+                break;
+            case '>':
+                $filter = [$key => ['$gt' => $value]];
+                break;
+            case '>=':
+                $filter = [$key => ['$gte' => $value]];
+                break;
+            case '<':
+                $filter = [$key => ['$lt' => $value]];
+                break;
+            case '<=':
+                $filter = [$key => ['$lte' => $value]];
+                break;
+            case '!=':
+                $filter = [$key => ['$ne' => $value]];
+                break;
+            default:
+                break;
         }
-        $this->buildWhere = [$column => $value];
-        if (!$this->buildWhere) {
-            throw new ServerException("The condition is empty");
+        if ($this->buildWhere) {
+            array_merge($this->buildWhere, $filter);
+        } else {
+            $this->buildWhere[] = $filter;
         }
         return $this;
     }
 
     /**
-     * 添加数据
+     * @param $column
+     * @param array $value
+     * @return $this
+     */
+    public function whereIn($column, array $value)
+    {
+        $where = [$column => ['$in' => $value]];
+        if ($this->buildWhere) {
+            array_merge($this->buildWhere, $where);
+        } else {
+            $this->buildWhere[] = $where;
+        }
+        return $this;
+    }
+
+    /**
+     * @param $column
+     * @param $value
+     * @return $this
+     */
+    public function whereOr($column, $value)
+    {
+        $where = [$column => ['$or' => $value]];
+        if ($this->buildWhere) {
+            array_merge($this->buildWhere, $where);
+        } else {
+            $this->buildWhere[] = $where;
+        }
+        return $this;
+    }
+
+    /**
+     * TODO 添加数据
      * @Task()
      * @param array $data 数据
      * @return int|null
@@ -140,7 +193,7 @@ class MongoModel
     }
 
     /**
-     * 查询数据
+     * TODO 查询数据
      * @Task()
      * @param array $filter 查询条件
      * @param int $sort 排序
@@ -163,7 +216,7 @@ class MongoModel
     }
 
     /**
-     * 查询单条
+     * TODO 查询单条
      * @Task()
      * @return array
      * @throws Exception
@@ -171,7 +224,7 @@ class MongoModel
     public function getOne()
     {
         $options = [
-            'sort' => ['_id' => -1],
+            'sort' => ['create_time' => -1],
             'limit' => 1
         ];
         $query = new Query($this->buildWhere, $options);
@@ -181,44 +234,51 @@ class MongoModel
 
 
     /**
+     * TODO 查询全部
      * @Task()
      * @return array
      * @throws Exception
      */
     public function getAll()
     {
-        $options = [];
+        $options = [
+            'projection' => ['_id' => 0],
+            'sort' => ['create_time' => 1],
+        ];
         $query = new Query($this->buildWhere, $options);
         $result = $this->manager()->executeQuery($this->database . '.' . $this->table, $query);
         return array_values($result->toArray());
     }
 
     /**
-     * 修改数据
+     * TODO 修改数据
      * @Task()
      * @param array $data 更改后数据
-     * @param array $options 附加条件
+     * 如果条件不成立，则新增数据，如果要设置条件不成立不增加可以设置'upsert' => false
+     * multi默认为true,表示满足条件全部修改，false表示只修改满足条件的第一条
      * @return int|null
      */
-    public function update(array $data, array $options = [])
+    public function update(array $data)
     {
         $writeConcern = new WriteConcern(WriteConcern::MAJORITY, 1000);
         $bulk = new BulkWrite();
+        $options = ['multi' => true, 'upsert' => false];
         $bulk->update($this->buildWhere, $data, $options);
         $result = $this->manager()->executeBulkWrite($this->database . '.' . $this->table, $bulk, $writeConcern);
         return $result->getModifiedCount();
     }
 
     /**
-     * 删除数据
+     * TODO 删除数据
      * @Task()
-     * @param array $options 附加条件
      * @return int|null
      */
-    public function delete(array $options = [])
+    public function delete()
     {
         $writeConcern = new WriteConcern(WriteConcern::MAJORITY, 1000);
         $bulk = new BulkWrite();
+        // limit 为 1 时，删除第一条匹配数据  limit 为 0 时，删除所有匹配数据，默认删除所有
+        $options = ['limit' => 0];
         $bulk->delete($this->buildWhere, $options);
         $result = $this->manager()->executeBulkWrite($this->database . '.' . $this->table, $bulk, $writeConcern);
         return $result->getDeletedCount();

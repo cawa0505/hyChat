@@ -56,6 +56,6 @@ trait SystemCache
     public function flushCache($key)
     {
         $cacheConfig = $this->getCacheKey($key);
-        return mongoModel()->table($cacheConfig["key"])->delete([]);
+        return mongoModel()->table($cacheConfig["key"])->delete();
     }
 }
