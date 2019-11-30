@@ -178,22 +178,11 @@ class GroupService extends BaseService
      * 获取消息
      * @param $request
      * @return array
-     * @throws Exception
      */
     public function getMessageRecord($request)
     {
         $group = $request['groupId'];
-        $limit = 10;
-        $page = isset($request['page']) ? $request['page'] : 1;
-        $skip = ($page - 1) * $limit;
-        $options = [
-            'projection' => ['_id' => 0],
-            'sort' => ['create_time' => -1],
-            'skip' => $skip,
-            'limit' => $limit
-        ];
-        $result = mongoClient()->query('group.message', ['group' => $group], $options);
-        return $this->success($result);
+        return $this->success();
     }
 
     /**

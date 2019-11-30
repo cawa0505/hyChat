@@ -137,8 +137,6 @@ class ApplyService extends BaseService
         // TODO status 1 通过 2 拒绝
         Db::beginTransaction();
         if ($request['status'] == 2) {
-            // 记录回复信息
-            mongoClient()->insert('user.apply', ['user_id' => $userId, 'friend_id' => $applyResult['friend_id']]);
             //获取好友申请
             $relationData=$this->userFriendModel->getOne(["friend_id"=> $applyResult['friend_id'],'user_id' => $userId]);
             if (!$relationData){
@@ -178,12 +176,6 @@ class ApplyService extends BaseService
             return $this->fail(ApiCode::APPLY_ERROR);
         }
         Db::commit();
-        //创建房间
-        $messageData = mongoClient()->query('user.room', ['user_id' => $userId, 'friend_id' => $applyResult['friend_id']]);
-        $this->sendToUser($applyResult['friend_id'], $this->sendMessage(MessageCode::ADD_AGREE, $messageData));
-        $this->sendToUser($applyResult['user_id'], $this->sendMessage(MessageCode::ADD_AGREE, $messageData));
-        mongoClient()->insert('user.room', ['user_id' => $userId, 'friend_id' => $applyResult['friend_id']]);
-        mongoClient()->insert('user.room', ['user_id' => $applyResult['friend_id'], 'friend_id' => $userId]);
         return $this->success($result);
     }
 }

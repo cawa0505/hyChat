@@ -57,7 +57,6 @@ class UserApplyModel extends BaseModel
     public function createUserApply($data)
     {
         $result = $this->newQuery()->insert($data);
-        mongoClient()->insert('user.apply', $data);
         return $result;
     }
 
@@ -70,7 +69,6 @@ class UserApplyModel extends BaseModel
     public function updateUserApply($applyId, $data)
     {
         $result = $this->newQuery()->where('id', $applyId)->update($data);
-        mongoClient()->update('user.apply', ['id' => $applyId], $data);
         return $result;
     }
 

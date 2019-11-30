@@ -4,12 +4,12 @@ return [
     "groupMember"=>
         [
             "name"=>"群组成员",
-            "key"=>"group.member"
+            "key"=>"group_member"
         ],
     "systemConfig"=>
         [
             "name"=>"系统配置",
-            "key"=>"user.config"
+            "key"=>"config"
         ],
     "default"=>[]
 ];

@@ -8,6 +8,7 @@
 
 declare(strict_types=1);
 
+use App\Utility\Client\MongoModel;
 use Hyperf\Framework\Logger\StdoutLogger;
 use Hyperf\Logger\LoggerFactory;
 use Hyperf\Redis\RedisFactory;
@@ -203,13 +204,13 @@ if (!function_exists("queue")) {
     }
 }
 
-if (!function_exists('mongoClient')) {
+if (!function_exists('mongoModel')) {
     /**
-     * @return \App\Utility\Client\MongoClient
+     * @return MongoModel
      */
-    function mongoClient()
+    function mongoModel()
     {
-        return container()->get(\App\Utility\Client\MongoClient::class);
+        return container()->get(MongoModel::class);
     }
 }
 

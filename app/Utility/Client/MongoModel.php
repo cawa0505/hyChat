@@ -84,6 +84,34 @@ class MongoModel
     }
 
     /**
+     * @param string $table
+     * @return $this
+     */
+    public function table(string $table)
+    {
+        $this->table = $table;
+        return $this;
+    }
+
+    /**
+     * 查询条件
+     * @param $column
+     * @param $value
+     * @return $this
+     */
+    public function where($column, $value)
+    {
+        if ($this->buildWhere) {
+            array_merge($this->buildWhere, [$column => $value]);
+        }
+        $this->buildWhere = [$column => $value];
+        if (!$this->buildWhere) {
+            throw new ServerException("The condition is empty");
+        }
+        return $this;
+    }
+
+    /**
      * 添加数据
      * @Task()
      * @param array $data 数据
@@ -96,11 +124,13 @@ class MongoModel
         if (!isOneArray($data)) {
             foreach ($data as &$val) {
                 if ($this->timestamps) {
+                    $val["status"] = 1;
                     $val["create_time"] = time();
                 }
             }
         } else {
             if ($this->timestamps) {
+                $data["status"] = 1;
                 $data["create_time"] = time();
             }
         }
@@ -149,23 +179,6 @@ class MongoModel
         return array_values($result->toArray());
     }
 
-    /**
-     * 查询条件
-     * @param $column
-     * @param $value
-     * @return $this
-     */
-    public function where($column, $value)
-    {
-        if ($this->buildWhere) {
-            array_merge($this->buildWhere, [$column => $value]);
-        }
-        $this->buildWhere = [$column => $value];
-        if (!$this->buildWhere) {
-            throw new ServerException("The condition is empty");
-        }
-        return $this;
-    }
 
     /**
      * @Task()
