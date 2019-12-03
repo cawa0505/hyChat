@@ -7,7 +7,6 @@
  */
 
 use App\Controller\Admin\AuthController;
-use App\Controller\IndexController;
 use Hyperf\HttpServer\Router\Router;
 
 // 登陆
