@@ -21,20 +21,20 @@ trait Response
     public function success($data = [], $code = 200)
     {
 
-        if (is_string($data) || is_int($data)) {
-            $count = 1;
-        } else {
-            $count = count($data);
-            if ($count == count($data, 1) && $count) {
-                $count = 1;
-            }
-        }
+//        if (is_string($data) || is_int($data)) {
+//            $count = 1;
+//        } else {
+//            $count = count($data);
+//            if ($count == count($data, 1) && $count) {
+//                $count = 1;
+//            }
+//        }
 
         return [
             'code' => $code,
             'result' =>
                 [
-                    'count' => $count,
+//                    'count' => $count,
                     'data' => $data
                 ]
         ];

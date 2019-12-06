@@ -10,6 +10,7 @@ namespace App\Model;
 
 
 use Hyperf\Database\Model\Relations\HasMany;
+use Hyperf\Di\Annotation\Inject;
 use Hyperf\Utils\Collection;
 
 /**
@@ -23,6 +24,11 @@ class UserGroupModel extends BaseModel
      * @var string
      */
     protected $table = 'user_group';
+    /**
+     * @Inject()
+     * @var UserModel
+     */
+    protected $user;
 
     /**
      * 群成员
@@ -43,8 +49,18 @@ class UserGroupModel extends BaseModel
     {
         $group = $this->newQuery()->where('user_id', $userId)->get($columns);
 
-        foreach ($group as &$item) {
-            $item->memberList= $item->GroupMember()->pluck("user_id");
+        foreach ($group as $key=> $item) {
+            $group[$key] ->memberList=$item->GroupMember->pluck("user_id")->toArray();
+            $count=count($item->memberList);
+            if ($count > 9){
+                $num=array_slice($item->memberList,0,9);
+            }elseif($count > 0 && $count <= 9){
+                $num=array_slice($item->memberList,0,$count);
+            }else{
+                $num=[];
+            }
+            var_dump($num);
+            $item->avatarArr=$this->user->newQuery()->whereIn("id",$num)->pluck("image_url");
         };
         if ($group) {
             return $group->toArray();

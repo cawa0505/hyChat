@@ -37,7 +37,7 @@ class CommonController extends AbstractController
      */
     private $sysConfig;
 
-    /*
+    /**
      * @RequestMapping(path="getPublicKey", methods="post")
      * 获取公钥
      */
@@ -65,19 +65,20 @@ class CommonController extends AbstractController
 
     /**
      * 上传文件
+     * @RequestMapping(path="upload", methods="post")
      * @return ResponseInterface
      */
     public function upload()
     {
         $image = $this->request->file('file');
         $name = uniqid() . '.' . $image->getExtension();
-        $destinationPath = BASE_PATH . "/upload/file/";
+        $destinationPath = BASE_PATH . "/public/upload/file/";
         if (!is_dir($destinationPath)) {
             mkdir($destinationPath, 0777, true);
         }
         $image->moveTo($destinationPath . $name);
-        $host = $this->request->getUri()->getHost();
+        $host = "http://192.168.0.106:9501";
         $ret_data = ['url' => $host . "/upload/file/" . $name, 'path' => '/file/' . $name];
-        return $this->successResponse($ret_data);
+        return $this->successResponse($this->success($ret_data));
     }
 }

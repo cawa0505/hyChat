@@ -60,10 +60,14 @@ class GroupService extends BaseService
         }
         //构造群组成员初始化数据
         $groupMemberData = [];
+        //添加自己
+        $userIds[]=$createUserId;
+
         foreach ($userIds as $val) {
+
             $groupMemberData[] = ["group_id" => $groupId, "user_id" => $val, "status" => 1];//初始化成员不需要审核状态为正常
+
         }
-        dd($groupMemberData);
         $createGroupUser = $this->groupMember->createData($groupMemberData);
         if (!$createGroupUser) {
             Db::rollBack();
@@ -170,7 +174,7 @@ class GroupService extends BaseService
      */
     public function getAllMember($groupId)
     {
-        $data = $this->groupMember->getMany(["group_id" => $groupId]);
+        $data = $this->groupMember->getAllMember($groupId);
         return $this->success($data);
     }
 

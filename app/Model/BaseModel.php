@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace App\Model;
 
+use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Database\Model\Builder;
 use Hyperf\DbConnection\Model\Model;
 use Hyperf\ModelCache\Cacheable;
 use Hyperf\ModelCache\CacheableInterface;
+use Hyperf\Paginator\Paginator;
 use MongoDB\Driver\Exception\Exception;
+use phpDocumentor\Reflection\Types\This;
 
 /**
  * Class BaseModel
@@ -84,6 +87,15 @@ abstract class BaseModel extends Model implements CacheableInterface
     {
         return $this->newQuery()->insert($data);
     }
+    /**
+     * todo 插入一条并获取ID
+     * @param $data
+     * @return bool
+     */
+    public function createGetId($data)
+    {
+        return $this->newQuery()->insertGetId($data);
+    }
 
     /**
      * @todo 根据where条件更新数据
@@ -156,5 +168,23 @@ abstract class BaseModel extends Model implements CacheableInterface
     {
         $cacheConfig =self::getCacheKey($key);
         return mongoClient()->delete($cacheConfig["key"], []);
+    }
+
+    /**
+     * 获取分页
+     * @param $query
+     * @param int $size
+     * @param $currentPage
+     * @return mixed
+     */
+    public function getPage($query, $size = 10)
+    {
+        $data= $query->paginate($size);
+        $_data["currentPage"]=$data->currentPage();
+        $_data["total"]=$data->total();
+        $_data["last_page"]=$data->lastPage();
+        $_data["perPage"]=$data->perPage();
+        $_data["data"]=$data->items();
+        return $_data;
     }
 }

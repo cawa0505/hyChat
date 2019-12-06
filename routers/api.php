@@ -8,6 +8,7 @@
 
 use App\Controller\Api\ApplyController;
 use App\Controller\Api\AuthController;
+use App\Controller\Api\FriendArticleController;
 use App\Controller\Api\FriendController;
 use App\Controller\Api\GroupController;
 use App\Controller\Api\RoomController;
@@ -73,3 +74,7 @@ Router::post('group/updateNick', [GroupController::class, 'updateNick']);
 Router::post('group/memberList', [GroupController::class, 'memberList']);
 // 获取所有群组成员
 Router::post('group/messageRecord', [GroupController::class, 'messageRecord']);
+
+
+//朋友圈列表
+Router::post("article/list",[FriendArticleController::class,"articleList"]);
