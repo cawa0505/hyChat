@@ -16,7 +16,7 @@ class PermissionModel extends BaseModel
     /**
      * @var string
      */
-    protected $table = "admin_role_permission";
+    protected $table = "permission";
 
     public function getPermissionByRoleId($roleId)
     {

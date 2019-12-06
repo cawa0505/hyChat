@@ -8,11 +8,10 @@
 
 namespace App\Utility\Client;
 
-
-use Hyperf\Task\Annotation\Task;
+use Hyperf\Pool\Channel;
 use Hyperf\Utils\Traits\StaticInstance;
+use MongoDB\BSON\ObjectId;
 use MongoDB\Driver\BulkWrite;
-use MongoDB\Driver\Exception\Exception;
 use MongoDB\Driver\Manager;
 use MongoDB\Driver\Query;
 use MongoDB\Driver\WriteConcern;
@@ -26,6 +25,27 @@ class MongoModel
     use StaticInstance;
 
     /**
+        $test = mongoModel()->table("admin")->delete();
+        dd($test);
+
+        for ($i = 1; $i < 10; $i++) {
+        TestModel::instance()->insert(['username' => 'test' . $i]);
+        }
+        $result = mongoModel()->table("admin")->where('username', "test6")->update(['username' => "admin"]);
+        var_dump($result);
+
+        $result3 = mongoModel()->table("admin")->where('username', "test5")->delete();
+        var_dump($result3);
+
+        $result1 = mongoModel()->table("admin")->where('username', "admin")->getOne();
+        var_dump($result1);
+
+        $result2 = mongoModel()->table("admin")->find("5dea0f5246f4e5135d68d282");
+        var_dump($result2);
+     */
+
+
+    /**
      * 数据库名
      * @var
      */
@@ -36,18 +56,6 @@ class MongoModel
      * @var
      */
     protected $table;
-
-    /**
-     * 主键 _id
-     * @var string
-     */
-    protected $primaryKey = '_id';
-
-    /**
-     * 主键类型
-     * @var string
-     */
-    protected $keyType = 'string';
 
     /**
      * 自动添加时间
@@ -93,41 +101,41 @@ class MongoModel
     }
 
     /**
-     * TODO 查询条件
+     *  TODO 查询条件
      * @param $key
-     * @param $operator
      * @param $value
+     * @param string $operator
      * @return $this
      */
-    public function where($key, $operator, $value)
+    public function where($key, $value, $operator = "=")
     {
-        $filter = [];
         switch ($operator) {
             case '=':
-                $filter = [$key => $value];
+                $where = [$key => $value];
                 break;
             case '>':
-                $filter = [$key => ['$gt' => $value]];
+                $where = [$key => ['$gt' => $value]];
                 break;
             case '>=':
-                $filter = [$key => ['$gte' => $value]];
+                $where = [$key => ['$gte' => $value]];
                 break;
             case '<':
-                $filter = [$key => ['$lt' => $value]];
+                $where = [$key => ['$lt' => $value]];
                 break;
             case '<=':
-                $filter = [$key => ['$lte' => $value]];
+                $where = [$key => ['$lte' => $value]];
                 break;
             case '!=':
-                $filter = [$key => ['$ne' => $value]];
+                $where = [$key => ['$ne' => $value]];
                 break;
             default:
+                $where = [];
                 break;
         }
         if ($this->buildWhere) {
-            array_merge($this->buildWhere, $filter);
+            $this->buildWhere = array_merge($this->buildWhere, $where);
         } else {
-            $this->buildWhere[] = $filter;
+            $this->buildWhere = $where;
         }
         return $this;
     }
@@ -141,10 +149,11 @@ class MongoModel
     {
         $where = [$column => ['$in' => $value]];
         if ($this->buildWhere) {
-            array_merge($this->buildWhere, $where);
+            $this->buildWhere = array_merge($this->buildWhere, $where);
         } else {
-            $this->buildWhere[] = $where;
+            $this->buildWhere = $where;
         }
+
         return $this;
     }
 
@@ -157,16 +166,15 @@ class MongoModel
     {
         $where = [$column => ['$or' => $value]];
         if ($this->buildWhere) {
-            array_merge($this->buildWhere, $where);
+            $this->buildWhere = array_merge($this->buildWhere, $where);
         } else {
-            $this->buildWhere[] = $where;
+            $this->buildWhere = $where;
         }
         return $this;
     }
 
     /**
      * TODO 添加数据
-     * @Task()
      * @param array $data 数据
      * @return int|null
      */
@@ -188,19 +196,21 @@ class MongoModel
             }
         }
         $bulk->insert($data);
-        $result = $this->manager()->executeBulkWrite($this->database . '.' . $this->table, $bulk, $writeConcern);
-        return $result->getUpsertedCount();
+        $channel = new \Swoole\Coroutine\Channel();
+        go(function () use ($channel, $bulk, $writeConcern) {
+            $result = $this->manager()->executeBulkWrite($this->database . '.' . $this->table, $bulk, $writeConcern);
+            $channel->push($result->getInsertedCount());
+        });
+        return $channel->pop();
     }
 
     /**
      * TODO 查询数据
-     * @Task()
      * @param array $filter 查询条件
      * @param int $sort 排序
      * @param int $skip offset
      * @param int $limit
      * @return array
-     * @throws Exception
      */
     public function query(array $filter = [], $sort = -1, $skip = 0, $limit = 10)
     {
@@ -211,15 +221,17 @@ class MongoModel
             'limit' => $limit
         ];
         $query = new Query($filter, $options);
-        $result = $this->manager()->executeQuery($this->database . '.' . $this->table, $query);
-        return array_values($result->toArray());
+        $channel = new \Swoole\Coroutine\Channel();
+        go(function () use ($channel, $query) {
+            $result = $this->manager()->executeQuery($this->database . '.' . $this->table, $query);
+            $channel->push($result->toArray());
+        });
+        return $channel->pop();
     }
 
     /**
      * TODO 查询单条
-     * @Task()
      * @return array
-     * @throws Exception
      */
     public function getOne()
     {
@@ -228,31 +240,51 @@ class MongoModel
             'limit' => 1
         ];
         $query = new Query($this->buildWhere, $options);
-        $result = $this->manager()->executeQuery($this->database . '.' . $this->table, $query);
-        return array_values($result->toArray());
+        $channel = new Channel(1);
+        go(function () use ($channel, $query) {
+            $result = $this->manager()->executeQuery($this->database . '.' . $this->table, $query);
+            $channel->push($result->toArray());
+        });
+        $result = $channel->pop(0.1);
+        return $this->parseId($result);
+    }
+
+
+    /**
+     * @param $id
+     * @return mixed
+     */
+    public function find($id)
+    {
+        $query = new Query(["_id" => new \MongoDB\BSON\ObjectID($id)]);
+        $channel = new \Swoole\Coroutine\Channel();
+        go(function () use ($channel, $query) {
+            $result = $this->manager()->executeQuery($this->database . '.' . $this->table, $query);
+            $channel->push($result->toArray());
+        });
+        $result = $channel->pop();
+        return $this->parseId($result);
     }
 
 
     /**
      * TODO 查询全部
-     * @Task()
      * @return array
-     * @throws Exception
      */
     public function getAll()
     {
-        $options = [
-            'projection' => ['_id' => 0],
-            'sort' => ['create_time' => 1],
-        ];
+        $options = ['sort' => ['create_time' => 1]];
         $query = new Query($this->buildWhere, $options);
-        $result = $this->manager()->executeQuery($this->database . '.' . $this->table, $query);
-        return array_values($result->toArray());
+        $channel = new \Swoole\Coroutine\Channel();
+        go(function () use ($channel, $query) {
+            $result = $this->manager()->executeQuery($this->database . '.' . $this->table, $query);
+            $channel->push($result->toArray());
+        });
+        return $this->parseId($channel->pop());
     }
 
     /**
      * TODO 修改数据
-     * @Task()
      * @param array $data 更改后数据
      * 如果条件不成立，则新增数据，如果要设置条件不成立不增加可以设置'upsert' => false
      * multi默认为true,表示满足条件全部修改，false表示只修改满足条件的第一条
@@ -262,15 +294,18 @@ class MongoModel
     {
         $writeConcern = new WriteConcern(WriteConcern::MAJORITY, 1000);
         $bulk = new BulkWrite();
-        $options = ['multi' => true, 'upsert' => false];
-        $bulk->update($this->buildWhere, $data, $options);
-        $result = $this->manager()->executeBulkWrite($this->database . '.' . $this->table, $bulk, $writeConcern);
-        return $result->getModifiedCount();
+        $options = ['multi' => false, 'upsert' => false];
+        $bulk->update($this->buildWhere, ['$set' => $data], $options);
+        $channel = new \Swoole\Coroutine\Channel();
+        go(function () use ($channel, $bulk, $writeConcern) {
+            $result = $this->manager()->executeBulkWrite($this->database . '.' . $this->table, $bulk, $writeConcern);
+            $channel->push($result->getModifiedCount());
+        });
+        return $channel->pop();
     }
 
     /**
      * TODO 删除数据
-     * @Task()
      * @return int|null
      */
     public function delete()
@@ -280,7 +315,29 @@ class MongoModel
         // limit 为 1 时，删除第一条匹配数据  limit 为 0 时，删除所有匹配数据，默认删除所有
         $options = ['limit' => 0];
         $bulk->delete($this->buildWhere, $options);
-        $result = $this->manager()->executeBulkWrite($this->database . '.' . $this->table, $bulk, $writeConcern);
-        return $result->getDeletedCount();
+        $channel = new \Swoole\Coroutine\Channel();
+        go(function () use ($channel, $bulk, $writeConcern) {
+            $result = $this->manager()->executeBulkWrite($this->database . '.' . $this->table, $bulk, $writeConcern);
+            $channel->push($result->getDeletedCount());
+        });
+        return $channel->pop();
+    }
+
+    /**
+     * 解析数据组中的'_id'字段
+     * @param $arr
+     * @return mixed
+     */
+    private function parseId($arr)
+    {
+        if (!empty($arr)) {
+            foreach ($arr as $key => &$item) {
+                if ($item->_id instanceof ObjectID) {
+                    $item->_id = $item->_id->__toString();
+                }
+                $item = (array)$item;
+            }
+        }
+        return $arr;
     }
 }
