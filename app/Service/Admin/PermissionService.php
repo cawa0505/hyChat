@@ -44,9 +44,9 @@ class PermissionService extends BaseService
             return $this->fail(AdminCode::ALREADY_EXISTS);
         }
         $saveData = [
-            'Permission_name' => $request['Permission_name'],
-            'Permission_desc' => $request['Permission_desc'],
-            'status' => $request['status']
+            'name' => $request['name'],
+            'url' => $request['url'],
+            'parent_id' => $request['parent_id']
         ];
         $result = $this->PermissionModel->newQuery()->insert($saveData);
         if (!$result) {
@@ -67,9 +67,10 @@ class PermissionService extends BaseService
             return $this->fail(AdminCode::ALREADY_EXISTS);
         }
         $saveData = [
-            'Permission_name' => $request['Permission_name'],
-            'Permission_desc' => $request['Permission_desc'],
-            'status' => $request['status']
+            'id' => $request['id'],
+            'name' => $request['name'],
+            'url' => $request['url'],
+            'parent_id' => $request['parent_id']
         ];
         $result = $this->PermissionModel->newQuery()->where("id", $request['id'])->update($saveData);
         if (!$result) {
