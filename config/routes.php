@@ -15,6 +15,11 @@ Router::addGroup('/api/', function () {
     require_once BASE_PATH . "/routers/api.php";
 }, ['middleware' => [JWtMiddleware::class]]);
 
+// TODO Api相关路由分组
+Router::addGroup('/admin/', function () {
+    require_once BASE_PATH . "/routers/admin.php";
+});
+
 // TODO Ws服务
 Router::addServer('socket', function () {
     Router::get('/socket', 'App\WebSocket\AppSocketEvent');

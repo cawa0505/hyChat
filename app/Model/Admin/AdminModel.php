@@ -28,6 +28,19 @@ class AdminModel extends BaseModel
     }
 
     /**
+     * @param $id
+     * @return array
+     */
+    public function getAdminById($id)
+    {
+        $result = $this->newQuery()->where('id', $id)->first();
+        if ($result) {
+            return $result->toArray();
+        }
+        return [];
+    }
+
+    /**
      * @param $username
      * @return array
      */

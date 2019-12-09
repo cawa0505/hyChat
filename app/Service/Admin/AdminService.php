@@ -62,4 +62,61 @@ class AdminService extends BaseService
         $result = $this->adminModel->getAdminList($page, $limit);
         return $this->success($result);
     }
+
+    /**
+     * @param $request
+     * @return array
+     */
+    public function createAdmin($request)
+    {
+        $adminResult = $this->adminModel->getAdminByUserName($request['username']);
+        if ($adminResult) {
+            return $this->fail();
+        }
+        $saveData = [
+            'username' => $request['username'],
+            'password' => makePasswordHash($request['password']),
+            'mobile' => $request['mobile']
+        ];
+        $result = $this->adminModel->newQuery()->insert($saveData);
+        if (!$result) {
+            return $this->fail();
+        }
+        return $this->success($result);
+    }
+
+    /**
+     * @param $request
+     * @return array
+     */
+    public function updateAdmin($request)
+    {
+        $adminResult = $this->adminModel->getAdminByUserName($request['username']);
+        if ($adminResult && $request['id'] != $adminResult['id']) {
+            return $this->fail();
+        }
+        $saveData = [
+            'username' => $request['username'],
+            'password' => makePasswordHash($request['password']),
+            'mobile' => $request['mobile']
+        ];
+        $result = $this->adminModel->newQuery()->insertGetId($saveData);
+        if (!$result) {
+            return $this->fail();
+        }
+        return $this->success($result);
+    }
+
+    /**
+     * @param $request
+     * @return array
+     */
+    public function deleteAdmin($request)
+    {
+        $adminResult = $this->adminModel->getAdminById($request['id']);
+        if (!$adminResult) {
+            return $this->fail();
+        }
+        return $this->success($adminResult);
+    }
 }
