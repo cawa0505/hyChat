@@ -45,4 +45,5 @@ class AdminCode extends AbstractConstants
      * @Message("操作成功")
      */
     const SUCCESS = 200;
+
 }
