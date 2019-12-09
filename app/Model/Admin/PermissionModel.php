@@ -18,10 +18,46 @@ class PermissionModel extends BaseModel
      */
     protected $table = "permission";
 
-    public function getPermissionByRoleId($roleId)
+    /**
+     * @param $page
+     * @param $limit
+     * @param array $columns
+     * @return array
+     */
+    public function getPermissionList($page, $limit, $columns = ['*'])
     {
-        $result = $this->newQuery()->where('id', $roleId)->first();
-        if($result){
+        $result = $this->newQuery()->forPage($page, $limit)->get($columns);
+        if ($result) {
+            $data = [
+                'count' => $this->newQuery()->count(),
+                'data' => $result->toArray(),
+            ];
+            return $data;
+        }
+        return [];
+    }
+
+    /**
+     * @param $id
+     * @return array
+     */
+    public function getPermissionById($id)
+    {
+        $result = $this->newQuery()->where('id', $id)->first();
+        if ($result) {
+            return $result->toArray();
+        }
+        return [];
+    }
+
+    /**
+     * @param $name
+     * @return array
+     */
+    public function getPermissionByName($name)
+    {
+        $result = $this->newQuery()->where('name', $name)->first();
+        if ($result) {
             return $result->toArray();
         }
         return [];
