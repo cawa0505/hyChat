@@ -6,6 +6,8 @@
  * Time: 13:24
  */
 
+declare(strict_types=1);
+
 namespace App\Service\Api;
 
 use App\Constants\ApiCode;

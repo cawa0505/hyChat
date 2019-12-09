@@ -5,6 +5,7 @@
  * Date: 2019/10/9
  * Time: 13:34
  */
+declare(strict_types=1);
 
 namespace App\Model;
 
@@ -44,7 +45,7 @@ class UserGroupModel extends BaseModel
         $group = $this->newQuery()->where('user_id', $userId)->get($columns);
 
         foreach ($group as &$item) {
-            $item->memberList= $item->GroupMember()->pluck("user_id");
+            $item->memberList = $item->GroupMember()->pluck("user_id");
         };
         if ($group) {
             return $group->toArray();

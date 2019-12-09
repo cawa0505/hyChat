@@ -6,6 +6,8 @@
  * Time: 10:04
  */
 
+declare(strict_types=1);
+
 namespace App\WebSocket\Controller;
 
 

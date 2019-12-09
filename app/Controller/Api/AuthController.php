@@ -5,6 +5,7 @@
  * Date: 2019/10/8
  * Time: 10:03
  */
+declare(strict_types=1);
 
 namespace App\Controller\Api;
 

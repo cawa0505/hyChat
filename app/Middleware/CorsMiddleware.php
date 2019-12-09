@@ -5,6 +5,7 @@
  * Date: 2019/10/8
  * Time: 13:59
  */
+declare(strict_types=1);
 
 namespace App\Middleware;
 

@@ -5,6 +5,7 @@
  * Date: 2019/10/9
  * Time: 18:04
  */
+declare(strict_types=1);
 
 namespace App\Controller\Api;
 
@@ -50,7 +51,7 @@ class RoomController extends AbstractController
         $result = $this->roomService->getMessageRecord($request);
         return $this->successResponse($result);
     }
-    
+
     /**
      * 删除房间
      * @param RoomRequest $request

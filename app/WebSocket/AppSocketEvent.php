@@ -6,6 +6,8 @@
  * Time: 10:34
  */
 
+declare(strict_types=1);
+
 namespace App\WebSocket;
 
 use App\Utility\Token;

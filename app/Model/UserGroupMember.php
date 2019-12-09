@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Model;
 
-use Hyperf\Cache\Annotation\Cacheable;
 
 /**
  * Class UserGroupMember
@@ -23,7 +24,7 @@ class UserGroupMember extends BaseModel
     public function getGroupMember($groupId)
     {
 
-        return $this->newQuery()->where("group_id",$groupId)->get()->toArray();
+        return $this->newQuery()->where("group_id", $groupId)->get()->toArray();
 
     }
 
@@ -44,7 +45,7 @@ class UserGroupMember extends BaseModel
      */
     public function deleteMember($groupId)
     {
-        return $this->newQuery()->where("group_id",$groupId)->delete();
+        return $this->newQuery()->where("group_id", $groupId)->delete();
     }
 
     /**
@@ -53,7 +54,7 @@ class UserGroupMember extends BaseModel
      * @param $where
      * @return int
      */
-    public function updateMemberNick($data,$where)
+    public function updateMemberNick($data, $where)
     {
         return $this->newQuery()->where($where)->update($data);
     }

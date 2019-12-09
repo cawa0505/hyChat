@@ -5,6 +5,7 @@
  * Date: 2019/11/5
  * Time: 13:44
  */
+declare(strict_types=1);
 
 namespace App\Middleware\Api;
 

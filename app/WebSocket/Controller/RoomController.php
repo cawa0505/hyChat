@@ -6,6 +6,8 @@
  * Time: 17:43
  */
 
+declare(strict_types=1);
+
 namespace App\WebSocket\Controller;
 
 use App\Constants\MessageCode;

@@ -6,6 +6,8 @@
  * Time: 16:11
  */
 
+declare(strict_types=1);
+
 namespace App\Utility;
 
 /**

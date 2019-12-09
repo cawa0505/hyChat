@@ -6,6 +6,8 @@
  * Time: 10:24
  */
 
+declare(strict_types=1);
+
 namespace App\Utility;
 
 use Exception;

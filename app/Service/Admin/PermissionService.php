@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service\Admin;
 
 use App\Constants\AdminCode;
@@ -17,10 +19,10 @@ class PermissionService extends BaseService
      * @Inject()
      * @var PermissionModel
      */
-    private $PermissionModel;
+    private $permissionModel;
 
     /**
-     * 角色列表
+     * 权限列表
      * @param $request
      * @return array
      */
@@ -28,19 +30,19 @@ class PermissionService extends BaseService
     {
         $page = isset($request['page']) ? $request['page'] : 1;
         $limit = isset($request['limit']) ? $request['page'] : 10;
-        $result = $this->PermissionModel->getPermissionList($page, $limit);
+        $result = $this->permissionModel->getPermissionList($page, $limit);
         return $this->success($result);
     }
 
     /**
-     * 创建角色
+     * 创建权限
      * @param $request
      * @return array
      */
     public function createPermission($request)
     {
-        $PermissionResult = $this->PermissionModel->getPermissionByName($request['name']);
-        if ($PermissionResult) {
+        $permissionResult = $this->permissionModel->getPermissionByName($request['name']);
+        if ($permissionResult) {
             return $this->fail(AdminCode::ALREADY_EXISTS);
         }
         $saveData = [
@@ -48,7 +50,7 @@ class PermissionService extends BaseService
             'url' => $request['url'],
             'parent_id' => $request['parent_id']
         ];
-        $result = $this->PermissionModel->newQuery()->insert($saveData);
+        $result = $this->permissionModel->newQuery()->insert($saveData);
         if (!$result) {
             return $this->fail(AdminCode::CREATE_ERROR);
         }
@@ -56,14 +58,14 @@ class PermissionService extends BaseService
     }
 
     /**
-     * 更新角色信息
+     * 更新权限信息
      * @param $request
      * @return array
      */
     public function updatePermission($request)
     {
-        $PermissionResult = $this->PermissionModel->getPermissionByName($request['name']);
-        if ($PermissionResult && $request['id'] != $PermissionResult['id']) {
+        $permissionResult = $this->permissionModel->getPermissionByName($request['name']);
+        if ($permissionResult && $request['id'] != $permissionResult['id']) {
             return $this->fail(AdminCode::ALREADY_EXISTS);
         }
         $saveData = [
@@ -72,7 +74,7 @@ class PermissionService extends BaseService
             'url' => $request['url'],
             'parent_id' => $request['parent_id']
         ];
-        $result = $this->PermissionModel->newQuery()->where("id", $request['id'])->update($saveData);
+        $result = $this->permissionModel->newQuery()->where("id", $request['id'])->update($saveData);
         if (!$result) {
             return $this->fail(AdminCode::UPDATE_ERROR);
         }
@@ -80,17 +82,17 @@ class PermissionService extends BaseService
     }
 
     /**
-     * 删除角色
+     * 删除权限
      * @param $request
      * @return array
      */
     public function deletePermission($request)
     {
-        $PermissionResult = $this->PermissionModel->getPermissionById($request['id']);
-        if (!$PermissionResult) {
+        $permissionResult = $this->permissionModel->getPermissionById($request['id']);
+        if (!$permissionResult) {
             return $this->fail(AdminCode::DELETE_ERROR);
         }
-        return $this->success($PermissionResult);
+        return $this->success($permissionResult);
     }
 
 }

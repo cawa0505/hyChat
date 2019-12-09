@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 namespace App\Traits;
 
@@ -11,8 +12,7 @@ trait SystemCache
     /**
      * Todo 获取缓存
      * @param $key
-     * @return mixed
-     * @throws Exception
+     * @return array
      */
     public function getCache($key)
     {

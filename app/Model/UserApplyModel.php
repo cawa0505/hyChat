@@ -5,6 +5,7 @@
  * Date: 2019/10/9
  * Time: 13:38
  */
+declare(strict_types=1);
 
 namespace App\Model;
 
@@ -78,9 +79,9 @@ class UserApplyModel extends BaseModel
      * @param $whereTwo
      * @return int|mixed
      */
-    public function deleteFriendApply($whereOne,$whereTwo)
+    public function deleteFriendApply($whereOne, $whereTwo)
     {
-       return $this->newQuery()->where($whereOne)->orWhere($whereTwo)->delete();
+        return $this->newQuery()->where($whereOne)->orWhere($whereTwo)->delete();
     }
 
 }

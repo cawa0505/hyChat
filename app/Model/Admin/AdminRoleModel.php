@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 namespace App\Model\Admin;
 
@@ -21,7 +22,7 @@ class AdminRoleModel extends BaseModel
     public function getRoleIdsByAdminId($adminId)
     {
         $result = $this->newQuery()->where('admin_id', $adminId)->first();
-        if($result){
+        if ($result) {
             return $result->toArray();
         }
         return [];

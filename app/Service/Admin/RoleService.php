@@ -1,8 +1,8 @@
 <?php
 
+declare(strict_types=1);
 
 namespace App\Service\Admin;
-
 
 use App\Constants\AdminCode;
 use App\Model\Admin\RoleModel;

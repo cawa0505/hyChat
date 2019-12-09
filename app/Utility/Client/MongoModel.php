@@ -6,6 +6,8 @@
  * Time: 11:29
  */
 
+declare(strict_types=1);
+
 namespace App\Utility\Client;
 
 use Hyperf\Pool\Channel;
