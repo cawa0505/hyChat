@@ -18,14 +18,23 @@ class AdminModel extends BaseModel
      */
     protected $table = "admin";
 
+    public function getAdminList($page = 1, $limit = 10)
+    {
+        $result = $this->newQuery()->forPage($page, $limit)->get();
+        if ($result) {
+            return $result->toArray();
+        }
+        return [];
+    }
+
     /**
      * @param $username
      * @return array
      */
-    public function getUserByUserName($username)
+    public function getAdminByUserName($username)
     {
         $result = $this->newQuery()->where('username', $username)->first();
-        if($result){
+        if ($result) {
             return $result->toArray();
         }
         return [];

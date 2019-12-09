@@ -30,7 +30,7 @@ class AdminService extends BaseService
      */
     public function handleLogin($request)
     {
-        $result = $this->adminModel->getUserByUserName($request['username']);
+        $result = $this->adminModel->getAdminByUserName($request['username']);
         if (!$result) {
             return $this->fail(AdminCode::USER_NOT_FOUND);
         }
@@ -49,5 +49,17 @@ class AdminService extends BaseService
         $token = container()->get(Token::class)->encode($result);
         redis()->set('admin_token_' . $result['id'], $token, 60 * 60);
         return $this->success($token);
+    }
+
+    /**
+     * @param $request
+     * @return array
+     */
+    public function getAdminList($request)
+    {
+        $page = isset($request['page']) ?? 1;
+        $limit = isset($request['limit']) ?? 10;
+        $result = $this->adminModel->getAdminList($page, $limit);
+        return $this->success($result);
     }
 }

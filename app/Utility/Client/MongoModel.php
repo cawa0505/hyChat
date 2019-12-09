@@ -215,7 +215,6 @@ class MongoModel
     public function query(array $filter = [], $sort = -1, $skip = 0, $limit = 10)
     {
         $options = [
-            'projection' => ['_id' => 0],
             'sort' => ['create_time' => $sort],
             'skip' => $skip,
             'limit' => $limit
@@ -226,7 +225,7 @@ class MongoModel
             $result = $this->manager()->executeQuery($this->database . '.' . $this->table, $query);
             $channel->push($result->toArray());
         });
-        return $channel->pop();
+        return $this->parseId($channel->pop());
     }
 
     /**
@@ -240,12 +239,12 @@ class MongoModel
             'limit' => 1
         ];
         $query = new Query($this->buildWhere, $options);
-        $channel = new Channel(1);
+        $channel = new \Swoole\Coroutine\Channel();
         go(function () use ($channel, $query) {
             $result = $this->manager()->executeQuery($this->database . '.' . $this->table, $query);
             $channel->push($result->toArray());
         });
-        $result = $channel->pop(0.1);
+        $result = $channel->pop();
         return $this->parseId($result);
     }
 
