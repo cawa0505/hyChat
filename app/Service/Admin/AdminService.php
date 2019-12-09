@@ -57,9 +57,9 @@ class AdminService extends BaseService
      */
     public function getAdminList($request)
     {
-        $page = isset($request['page']) ?? 1;
-        $limit = isset($request['limit']) ?? 10;
-        $result = $this->adminModel->getAdminList($page, $limit);
+        $page = isset($request['page']) ? $request['page'] : 1;
+        $limit = isset($request['limit']) ? $request['page'] : 10;
+        $result = $this->adminModel->getAdminList($page, $limit, ['id', 'username', 'mobile', 'status', 'last_login_ip', 'last_login_time', 'create_time', 'update_time']);
         return $this->success($result);
     }
 
@@ -71,7 +71,7 @@ class AdminService extends BaseService
     {
         $adminResult = $this->adminModel->getAdminByUserName($request['username']);
         if ($adminResult) {
-            return $this->fail();
+            return $this->fail(AdminCode::ALREADY_EXISTS);
         }
         $saveData = [
             'username' => $request['username'],
@@ -80,7 +80,7 @@ class AdminService extends BaseService
         ];
         $result = $this->adminModel->newQuery()->insert($saveData);
         if (!$result) {
-            return $this->fail();
+            return $this->fail(AdminCode::CREATE_ERROR);
         }
         return $this->success($result);
     }
@@ -93,16 +93,16 @@ class AdminService extends BaseService
     {
         $adminResult = $this->adminModel->getAdminByUserName($request['username']);
         if ($adminResult && $request['id'] != $adminResult['id']) {
-            return $this->fail();
+            return $this->fail(AdminCode::ALREADY_EXISTS);
         }
         $saveData = [
             'username' => $request['username'],
             'password' => makePasswordHash($request['password']),
             'mobile' => $request['mobile']
         ];
-        $result = $this->adminModel->newQuery()->insertGetId($saveData);
+        $result = $this->adminModel->newQuery()->where("id", $request['id'])->update($saveData);
         if (!$result) {
-            return $this->fail();
+            return $this->fail(AdminCode::UPDATE_ERROR);
         }
         return $this->success($result);
     }
@@ -115,7 +115,7 @@ class AdminService extends BaseService
     {
         $adminResult = $this->adminModel->getAdminById($request['id']);
         if (!$adminResult) {
-            return $this->fail();
+            return $this->fail(AdminCode::DELETE_ERROR);
         }
         return $this->success($adminResult);
     }

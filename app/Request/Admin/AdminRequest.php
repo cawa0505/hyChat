@@ -25,24 +25,23 @@ class AdminRequest extends FormRequest
         switch ($action) {
             case "login":
                 $role = [
-                    'username' => 'required',
-                    'password' => 'required',
+                    'username' => 'required|min:5|alpha_num',
+                    'password' => 'required|min:5|alpha_dash',
                 ];
                 break;
             case "create":
                 $role = [
-                    'username' => 'required|min:8|alpha_num',
-                    'password' => 'required|min:8|alpha_dash',
-                    'phone' => 'required',
-                    'role' => 'required',
+                    'username' => 'required|min:5|alpha_num',
+                    'password' => 'required|min:5|alpha_dash',
+                    'mobile' => 'required'
                 ];
                 break;
             case "update":
                 $role = [
                     'id' => 'required',
-                    'username' => 'required|min:8|alpha_num',
-                    'password' => 'required|min:8|alpha_dash',
-                    'phone' => 'required',
+                    'username' => 'required|min:5|alpha_num',
+                    'password' => 'required|min:5|alpha_dash',
+                    'mobile' => 'required',
                     'role' => 'required',
                 ];
                 break;

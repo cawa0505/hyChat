@@ -33,9 +33,9 @@ class AuthRequest extends FormRequest
         $action = getAction($this->path());
         if ($action == "login") {
             return [
-                'type' => 'required|integer',
                 'account' => 'required|min:8|alpha_num',
                 'password' => 'required|min:8|alpha_dash',
+                'type' => 'required',
             ];
         }
         if ($action == "register") {

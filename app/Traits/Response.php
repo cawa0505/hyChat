@@ -2,9 +2,9 @@
 
 namespace App\Traits;
 
+use App\Constants\AdminCode;
 use App\Constants\ApiCode;
 use App\Constants\MessageCode;
-use App\Constants\SystemCode;
 
 /**
  * Trait ResponseTrait
@@ -34,12 +34,17 @@ trait Response
      */
     public function fail(int $code = 100, $message = null)
     {
-
-        if (is_null($message)) {
+        if (!is_null($message)) {
+            return [
+                'code' => $code,
+                'message' => $message
+            ];
+        }
+        $callClass = get_called_class();
+        if (strpos($callClass, 'Admin') !== false) {
+            $message = AdminCode::getMessage($code) ?? "";
+        } else {
             $message = ApiCode::getMessage($code) ?? "";
-            if (!$message) {
-                $message = SystemCode::getMessage($code) ?? "未知错误";
-            }
         }
         return [
             'code' => $code,

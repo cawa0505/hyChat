@@ -18,11 +18,21 @@ class AdminModel extends BaseModel
      */
     protected $table = "admin";
 
-    public function getAdminList($page = 1, $limit = 10)
+    /**
+     * @param $page
+     * @param $limit
+     * @param array $columns
+     * @return array
+     */
+    public function getAdminList($page, $limit, $columns = ['*'])
     {
-        $result = $this->newQuery()->forPage($page, $limit)->get();
+        $result = $this->newQuery()->forPage($page, $limit)->get($columns);
         if ($result) {
-            return $result->toArray();
+            $data = [
+                'count' => $this->newQuery()->count(),
+                'data' => $result->toArray(),
+            ];
+            return $data;
         }
         return [];
     }

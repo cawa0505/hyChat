@@ -48,14 +48,14 @@ class AuthController extends AbstractController
         $params = $request->all();
         $phone = $params['phone'];
         //验证码
-        $key = 'phoneVerifyCode:' . $phone;
-        $cacheCode = redis()->get($key);
-        if (!$cacheCode) {
-            return $this->errorResponse(ApiCode::AUTH_CODE_ERROR);
-        }
-        if ($cacheCode != $params['code']) {
-            return $this->errorResponse(ApiCode::AUTH_CODE_NOT_EXIST);
-        }
+//        $key = 'phoneVerifyCode:' . $phone;
+//        $cacheCode = redis()->get($key);
+//        if (!$cacheCode) {
+//            return $this->errorResponse(ApiCode::AUTH_CODE_ERROR);
+//        }
+//        if ($cacheCode != $params['code']) {
+//            return $this->errorResponse(ApiCode::AUTH_CODE_NOT_EXIST);
+//        }
         $response = $this->userService->handleRegister($request->all());
         return $this->successResponse($response);
     }
