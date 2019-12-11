@@ -86,6 +86,7 @@ class AppSocketEvent implements OnOpenInterface, OnMessageInterface, OnCloseInte
             $content = $data['content'];
             $params = is_array($content) ? $content : ['content' => $content];
         }
+        $server->push($frame->fd, json_encode(['sendTime' => $params['sendTime'], 'status' => 'success']));
         try {
             if (!class_exists($controller)) {
                 $server->push($frame->fd, "controller {$controller} not found");

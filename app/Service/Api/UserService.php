@@ -61,7 +61,7 @@ class UserService extends BaseService
             $socketCommon = container()->get(\App\WebSocket\Service\UserService::class);
             $userFd = $socketCommon->getUserFd($userInfo['id'], $type);
             if ($userFd) {
-                $this->sendToUser($userInfo['id'], $this->sendMessage(MessageCode::LOGOUT));
+                $this->sendToUser($this->sendMessage(MessageCode::LOGOUT),$userInfo['id']);
             }
         }
 

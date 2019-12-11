@@ -24,6 +24,6 @@ class GroupController extends BaseController
     public function send()
     {
         $data = $this->getData();
-        $this->sendToGroup($data['groupId'], $data['message']);
+        $this->sendToGroup($this->getUid(),$data['groupId'], $data['message']);
     }
 }

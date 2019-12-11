@@ -65,7 +65,7 @@ class BaseController
     public function getUid()
     {
         $fdInfo = $this->server->getClientInfo($this->frame->fd);
-        return isset($fdInfo['uid']) ?? null;
+        return isset($fdInfo['uid']) ?? 0;
     }
 
     /**

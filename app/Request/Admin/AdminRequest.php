@@ -34,7 +34,8 @@ class AdminRequest extends FormRequest
                 $role = [
                     'username' => 'required|min:5|alpha_num',
                     'password' => 'required|min:5|alpha_dash',
-                    'mobile' => 'required'
+                    'mobile' => 'required',
+                    'role' => 'required'
                 ];
                 break;
             case "update":
@@ -54,7 +55,6 @@ class AdminRequest extends FormRequest
             default:
                 $role = [];
                 break;
-
         }
 
         return $role;
