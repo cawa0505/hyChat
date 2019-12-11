@@ -9,7 +9,8 @@ use App\Model\UserMessageModel;
 use App\Traits\PushMessage;
 use Hyperf\Process\AbstractProcess;
 use Swoole\Coroutine;
-use Swoole\WebSocket\Server as WebSocketServer;
+use Swoole\Server as WebSocketServer;
+use Swoole\WebSocket\Server;
 
 class PushMessageProcess extends AbstractProcess
 {
@@ -17,7 +18,7 @@ class PushMessageProcess extends AbstractProcess
 
     public function handle(): void
     {
-        /** @var WebSocketServer $server */
+        /** @var Server $server */
         $server = $this->container->get(WebSocketServer::class);
         while (true) {
             redis()->subscribe([getLocalIp()], function ($redis, $channel, $data) use ($server) {
