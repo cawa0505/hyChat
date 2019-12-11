@@ -28,7 +28,8 @@ trait PushMessage
         $pushData = [
             'senderId' => $senderId,
             'userId' => $userId,
-            'content' => $data
+            'content' => $data,
+            'type' => 'user'
         ];
         return $this->push($fdInfo, $pushData);
     }
@@ -73,7 +74,8 @@ trait PushMessage
             $pushData = [
                 'senderId' => $senderId,
                 'groupId' => $groupId,
-                'content' => $data
+                'content' => $data,
+                'type' => 'group'
             ];
             if ($this->push($fdInfo, $pushData)) {
                 $count++;

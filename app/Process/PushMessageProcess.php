@@ -25,11 +25,12 @@ class PushMessageProcess extends AbstractProcess
                 $fd = (int)$pushData['fd'];
                 $senderId = $pushData['senderId'];
                 $content = $pushData['content'];
+                $type = $pushData['type'];
                 // 判断fd是否在线
                 if ($server->isEstablished($fd)) {
                     $server->push($fd, json_encode($content));
                 } else {
-                    if (isset($pushData['userId'])) {
+                    if ($type == "user") {
                         $data = [
                             'senderId' => $senderId,
                             'userId' => $pushData['userId'],
@@ -37,7 +38,7 @@ class PushMessageProcess extends AbstractProcess
                         ];
                         UserMessageModel::instance()->insert($data);
                     }
-                    if (isset($pushData['groupId'])) {
+                    if ($type == "group") {
                         $data = [
                             'senderId' => $senderId,
                             'groupId' => $pushData['groupId'],
