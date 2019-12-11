@@ -1,7 +1,25 @@
 {
-  "name": "chat",
+  "name": "hyperf",
   "args": "start",
   "script": "bin/hyperf",
+  "watch": [
+    "app",
+    "bin",
+    "config",
+    "routes"
+  ],
+  "ignore_watch": [
+    "node_modules",
+    "logs",
+    "public"
+  ],
+  "out_file": "./runtime/logs/app/access.log",
+  "error_file": "./runtime/logs/app/error.log",
+  "merge_logs": true,
+  "log_date_format": "YYYY-MM-DD HH:mm:ss",
+  "watch_options": {
+    "followSymlinks": true
+  },
   "exec_interpreter": "php",
   "exec_mode": "fork",
   "max_memory_restart": "100M"

@@ -51,3 +51,4 @@ class PushMessageProcess extends AbstractProcess
             Coroutine::sleep(0.5);
         }
     }
+}
