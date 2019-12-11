@@ -10,6 +10,7 @@ use App\Model\Admin\AdminRoleModel;
 use App\Model\Admin\PermissionModel;
 use App\Service\BaseService;
 use App\Utility\Token;
+use Hyperf\DbConnection\Db;
 use Hyperf\Di\Annotation\Inject;
 
 /**
@@ -23,6 +24,12 @@ class AdminService extends BaseService
      * @var AdminModel
      */
     private $adminModel;
+
+    /**
+     * @Inject()
+     * @var AdminRoleModel
+     */
+    private $adminRoleModel;
 
     /**
      * 管理员登录
@@ -42,7 +49,7 @@ class AdminService extends BaseService
             return $this->fail(AdminCode::USER_DISABLE);
         }
         // 通过id查询角色id
-        $roleId = container()->get(AdminRoleModel::class)->getRoleIdsByAdminId($result['id']);
+        $roleId = $this->adminRoleModel->getRoleIdsByAdminId($result['id']);
         // 通过角色id获取权限
         $permissions = container()->get(PermissionModel::class)->getPermissionByRoleId($roleId);
         $permissionUrl = array_column($permissions, 'url');
@@ -77,13 +84,36 @@ class AdminService extends BaseService
         $saveData = [
             'username' => $request['username'],
             'password' => makePasswordHash($request['password']),
-            'mobile' => $request['mobile']
+            'mobile' => $request['mobile'],
+            'status' => $request['status'],
+            'create_time' => time(),
         ];
-        $result = $this->adminModel->newQuery()->insert($saveData);
-        if (!$result) {
+        Db::beginTransaction();
+        // 添加管理员信息
+        $adminId = $this->adminModel->newQuery()->insertGetId($saveData);
+        if (!$adminId) {
+            Db::rollBack();
             return $this->fail(AdminCode::CREATE_ERROR);
         }
-        return $this->success($result);
+        // 处理角色Ids
+        if (isset($request['role_ids'])) {
+            foreach ($request['role_ids'] as $role_id) {
+                $adminRoleData['admin_id'] = $adminId;
+                $adminRoleData['role_id'] = $role_id;
+                $adminRoleResult = $this->adminRoleModel->newQuery()->where('admin_id', $adminId)->where('role_id', $role_id)->first();
+                if ($adminRoleResult) {
+                    continue;
+                }
+                // 将管理员id和角色id存入关系表
+                $rolePermission = $this->adminRoleModel->newQuery()->insert($adminRoleData);
+                if (!$rolePermission) {
+                    Db::rollBack();
+                    return $this->fail(AdminCode::CREATE_ERROR);
+                }
+            }
+        }
+        Db::commit();
+        return $this->success($saveData);
     }
 
     /**
@@ -99,12 +129,35 @@ class AdminService extends BaseService
         $saveData = [
             'username' => $request['username'],
             'password' => makePasswordHash($request['password']),
-            'mobile' => $request['mobile']
+            'mobile' => $request['mobile'],
+            'status' => $request['status'],
+            'update_time' => time(),
         ];
+        Db::beginTransaction();
+        // 更新管理员信息
         $result = $this->adminModel->newQuery()->where("id", $request['id'])->update($saveData);
         if (!$result) {
             return $this->fail(AdminCode::UPDATE_ERROR);
         }
+        // 删除用户关联角色
+        $adminRoleResult = $this->adminRoleModel->newQuery()->where('admin_id', $request['admin_id'])->delete();
+        if (!$adminRoleResult) {
+            Db::rollBack();
+            return $this->fail(AdminCode::DELETE_ERROR);
+        }
+        // 处理角色Ids
+        if (isset($request['role_ids'])) {
+            foreach ($request['role_ids'] as $role_id) {
+                $adminRoleData['admin_id'] = $request['admin_id'];
+                $adminRoleData['role_id'] = $role_id;
+                $adminRole = $this->adminRoleModel->newQuery()->insert($adminRoleData);
+                if (!$adminRole) {
+                    Db::rollBack();
+                    return $this->fail(AdminCode::CREATE_ERROR);
+                }
+            }
+        }
+        Db::commit();
         return $this->success($result);
     }
 
@@ -118,6 +171,22 @@ class AdminService extends BaseService
         if (!$adminResult) {
             return $this->fail(AdminCode::DELETE_ERROR);
         }
+        if (is_array($request['id'])) {
+            $result = $this->adminModel->newQuery()->whereIn('admin_id', $request['id'])->delete();
+        } else {
+            $result = $this->adminModel->newQuery()->where('admin_id', $request['id'])->delete();
+        }
+        if (!$result) {
+            Db::rollBack();
+            return $this->fail(AdminCode::DELETE_ERROR);
+        }
+        // 删除管理员和角色关系
+        $adminRoleResult = $this->adminRoleModel->newQuery()->whereIn('admin_id', $request['id'])->delete();
+        if (!$adminRoleResult) {
+            Db::rollBack();
+            return $this->fail(AdminCode::DELETE_ERROR);
+        }
+        Db::commit();
         return $this->success($adminResult);
     }
 }

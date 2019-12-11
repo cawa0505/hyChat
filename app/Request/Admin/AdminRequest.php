@@ -35,7 +35,8 @@ class AdminRequest extends FormRequest
                     'username' => 'required|min:5|alpha_num',
                     'password' => 'required|min:5|alpha_dash',
                     'mobile' => 'required',
-                    'role' => 'required'
+                    'status' => 'required',
+                    'role_ids' => 'required'
                 ];
                 break;
             case "update":
@@ -44,7 +45,8 @@ class AdminRequest extends FormRequest
                     'username' => 'required|min:5|alpha_num',
                     'password' => 'required|min:5|alpha_dash',
                     'mobile' => 'required',
-                    'role' => 'required',
+                    'status' => 'required',
+                    'role_ids' => 'required',
                 ];
                 break;
             case "delete":

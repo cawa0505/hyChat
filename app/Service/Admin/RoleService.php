@@ -6,7 +6,9 @@ namespace App\Service\Admin;
 
 use App\Constants\AdminCode;
 use App\Model\Admin\RoleModel;
+use App\Model\Admin\RolePermissionModel;
 use App\Service\BaseService;
+use Hyperf\DbConnection\Db;
 use Hyperf\Di\Annotation\Inject;
 
 /**
@@ -20,6 +22,12 @@ class RoleService extends BaseService
      * @var RoleModel
      */
     private $roleModel;
+
+    /**
+     * @Inject()
+     * @var RolePermissionModel
+     */
+    private $rolePermissionModel;
 
     /**
      * 角色列表
@@ -50,11 +58,30 @@ class RoleService extends BaseService
             'role_desc' => $request['role_desc'],
             'status' => $request['status']
         ];
-        $result = $this->roleModel->newQuery()->insert($saveData);
-        if (!$result) {
+        Db::beginTransaction();
+        $roleId = $this->roleModel->newQuery()->insertGetId($saveData);
+        if (!$roleId) {
+            Db::rollBack();
             return $this->fail(AdminCode::CREATE_ERROR);
         }
-        return $this->success($result);
+        if (isset($request['permission_id'])) {
+            foreach ($request['permission_id'] as $item) {
+                $rolePermissionData['role_id'] = $roleId;
+                $rolePermissionData['permission_id'] = $item;
+                $rolePermissionResult = $this->rolePermissionModel->newQuery()->where('role_id', $roleId)->where('permission_id', $item)->first();
+                if ($rolePermissionResult) {
+                    continue;
+                }
+                $rolePermission = $this->rolePermissionModel->newQuery()->insert($rolePermissionData);
+                if (!$rolePermission) {
+                    Db::rollBack();
+                    return $this->fail(AdminCode::CREATE_ERROR);
+                }
+            }
+        }
+        //提交事务
+        Db::commit();
+        return $this->success($saveData);
     }
 
     /**
@@ -73,10 +100,30 @@ class RoleService extends BaseService
             'role_desc' => $request['role_desc'],
             'status' => $request['status']
         ];
+        Db::beginTransaction();
         $result = $this->roleModel->newQuery()->where("id", $request['id'])->update($saveData);
         if (!$result) {
+            Db::rollBack();
             return $this->fail(AdminCode::UPDATE_ERROR);
         }
+        //通过角色id删除角色权限关系表中所有数据
+        $rolePermissionResult = $this->roleModel->newQuery()->where('role_id', $request['role_id'])->delete();
+        if (!$rolePermissionResult) {
+            Db::rollBack();
+            return $this->fail(AdminCode::DELETE_ERROR);
+        }
+        if (isset($request['permission_id'])) {
+            foreach ($request['permission_id'] as $item) {
+                $rolePermissionData['role_id'] = $request['role_id'];
+                $rolePermissionData['permission_id'] = $item;
+                $rolePermission = $this->rolePermissionModel->newQuery()->insert($rolePermissionData);
+                if (!$rolePermission) {
+                    Db::rollBack();
+                    return $this->fail(AdminCode::CREATE_ERROR);
+                }
+            }
+        }
+        Db::commit();
         return $this->success($result);
     }
 
@@ -91,6 +138,22 @@ class RoleService extends BaseService
         if (!$roleResult) {
             return $this->fail(AdminCode::DELETE_ERROR);
         }
+        if (is_array($request['id'])) {
+            $result = $this->roleModel->newQuery()->whereIn('role_id', $request['id'])->delete();
+        } else {
+            $result = $this->roleModel->newQuery()->where('role_id', $request['id'])->delete();
+        }
+        if (!$result) {
+            Db::rollBack();
+            return $this->fail(AdminCode::DELETE_ERROR);
+        }
+        //通过角色id删除角色权限关系表中所有数据
+        $rolePermissionResult = $this->rolePermissionModel->newQuery()->whereIn('role_id', $request['id'])->delete();
+        if (!$rolePermissionResult) {
+            Db::rollBack();
+            return $this->fail(AdminCode::DELETE_ERROR);
+        }
+        Db::commit();
         return $this->success($roleResult);
     }
 
