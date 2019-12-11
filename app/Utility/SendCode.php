@@ -6,6 +6,8 @@
  * Time: 16:49
  */
 
+declare(strict_types=1);
+
 namespace App\Utility;
 
 use App\Traits\Request;

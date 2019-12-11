@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 namespace App\Request\Admin;
 
@@ -22,13 +23,41 @@ class AdminRequest extends FormRequest
     public function rules(): array
     {
         $action = getAction($this->path());
-        if ($action == "login") {
-            return [
-                'username' => 'required|min:8|alpha_num',
-                'password' => 'required|min:8|alpha_dash',
-            ];
+        switch ($action) {
+            case "login":
+                $role = [
+                    'username' => 'required|min:5|alpha_num',
+                    'password' => 'required|min:5|alpha_dash',
+                ];
+                break;
+            case "create":
+                $role = [
+                    'username' => 'required|min:5|alpha_num',
+                    'password' => 'required|min:5|alpha_dash',
+                    'mobile' => 'required',
+                    'role' => 'required'
+                ];
+                break;
+            case "update":
+                $role = [
+                    'id' => 'required',
+                    'username' => 'required|min:5|alpha_num',
+                    'password' => 'required|min:5|alpha_dash',
+                    'mobile' => 'required',
+                    'role' => 'required',
+                ];
+                break;
+            case "delete":
+                $role = [
+                    'id' => 'required'
+                ];
+                break;
+            default:
+                $role = [];
+                break;
         }
-        return  [];
+
+        return $role;
     }
 
 }

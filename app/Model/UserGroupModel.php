@@ -5,6 +5,7 @@
  * Date: 2019/10/9
  * Time: 13:34
  */
+declare(strict_types=1);
 
 namespace App\Model;
 
@@ -52,14 +53,12 @@ class UserGroupModel extends BaseModel
         foreach ($group as $key=> $item) {
             $group[$key] ->memberList=$item->GroupMember->pluck("user_id")->toArray();
             $count=count($item->memberList);
+            $num=[];
             if ($count > 9){
                 $num=array_slice($item->memberList,0,9);
             }elseif($count > 0 && $count <= 9){
                 $num=array_slice($item->memberList,0,$count);
-            }else{
-                $num=[];
             }
-            var_dump($num);
             $item->avatarArr=$this->user->newQuery()->whereIn("id",$num)->pluck("image_url");
         };
         if ($group) {

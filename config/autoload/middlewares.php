@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 
 use App\Middleware\Api\DecryptMiddleware;
-use App\Middleware\Api\TokenMiddleware;
+use App\Middleware\Api\JWtMiddleware;
 use App\Middleware\CorsMiddleware;
 use Hyperf\Validation\Middleware\ValidationMiddleware;
 

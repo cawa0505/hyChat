@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Middleware\Api\TokenMiddleware;
+use App\Middleware\Api\JWtMiddleware;
 use Hyperf\HttpServer\Router\Router;
 
 // TODO Web相关路由分组
@@ -13,7 +13,12 @@ Router::addGroup('/', function () {
 // TODO Api相关路由分组
 Router::addGroup('/api/', function () {
     require_once BASE_PATH . "/routers/api.php";
-}, ['middleware' => [TokenMiddleware::class]]);
+}, ['middleware' => [JWtMiddleware::class]]);
+
+// TODO Api相关路由分组
+Router::addGroup('/admin/', function () {
+    require_once BASE_PATH . "/routers/admin.php";
+});
 
 // TODO Ws服务
 Router::addServer('socket', function () {

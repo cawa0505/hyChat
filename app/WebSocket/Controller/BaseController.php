@@ -6,6 +6,8 @@
  * Time: 9:50
  */
 
+declare(strict_types=1);
+
 namespace App\WebSocket\Controller;
 
 
@@ -63,7 +65,7 @@ class BaseController
     public function getUid()
     {
         $fdInfo = $this->server->getClientInfo($this->frame->fd);
-        return isset($fdInfo['uid']) ?? null;
+        return isset($fdInfo['uid']) ?? 0;
     }
 
     /**

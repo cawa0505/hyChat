@@ -6,6 +6,8 @@
  * Time: 11:01
  */
 
+declare(strict_types=1);
+
 namespace App\Request\Api;
 
 

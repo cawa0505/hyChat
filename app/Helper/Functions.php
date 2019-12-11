@@ -8,6 +8,8 @@
 
 declare(strict_types=1);
 
+use App\Model\SysConfig;
+use App\Utility\Client\MongoModel;
 use Hyperf\Framework\Logger\StdoutLogger;
 use Hyperf\Logger\LoggerFactory;
 use Hyperf\Redis\RedisFactory;
@@ -203,13 +205,13 @@ if (!function_exists("queue")) {
     }
 }
 
-if (!function_exists('mongoClient')) {
+if (!function_exists('mongoModel')) {
     /**
-     * @return \App\Utility\Client\MongoClient
+     * @return MongoModel
      */
-    function mongoClient()
+    function mongoModel()
     {
-        return container()->get(\App\Utility\Client\MongoClient::class);
+        return container()->get(MongoModel::class);
     }
 }
 
@@ -236,21 +238,22 @@ if (!function_exists('isOneArray')) {
      */
     function isOneArray($data)
     {
-        $count = count($data);
-        if ($count == count($data, 1) && $count) {
+        if (!is_array(reset($data))) {
             return true;
         }
+
         return false;
     }
 }
-if (!function_exists("sysConfig")){
+if (!function_exists("sysConfig")) {
     /**
      * 获取配置
      * @param $key
      * @param int $default
      * @return int
      */
-    function sysConfig($key,$default=0){
-       return container()->get(\App\Model\SysConfig::class)->getConfig($key)??$default;
+    function sysConfig($key, $default = 0)
+    {
+        return container()->get(SysConfig::class)->getConfig($key) ?? $default;
     }
 }

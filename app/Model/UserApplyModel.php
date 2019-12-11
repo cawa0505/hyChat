@@ -5,6 +5,7 @@
  * Date: 2019/10/9
  * Time: 13:38
  */
+declare(strict_types=1);
 
 namespace App\Model;
 
@@ -57,7 +58,6 @@ class UserApplyModel extends BaseModel
     public function createUserApply($data)
     {
         $result = $this->newQuery()->insert($data);
-        mongoClient()->insert('user.apply', $data);
         return $result;
     }
 
@@ -70,7 +70,6 @@ class UserApplyModel extends BaseModel
     public function updateUserApply($applyId, $data)
     {
         $result = $this->newQuery()->where('id', $applyId)->update($data);
-        mongoClient()->update('user.apply', ['id' => $applyId], $data);
         return $result;
     }
 
@@ -80,9 +79,9 @@ class UserApplyModel extends BaseModel
      * @param $whereTwo
      * @return int|mixed
      */
-    public function deleteFriendApply($whereOne,$whereTwo)
+    public function deleteFriendApply($whereOne, $whereTwo)
     {
-       return $this->newQuery()->where($whereOne)->orWhere($whereTwo)->delete();
+        return $this->newQuery()->where($whereOne)->orWhere($whereTwo)->delete();
     }
 
 }

@@ -5,6 +5,7 @@
  * Date: 2019/10/9
  * Time: 13:43
  */
+declare(strict_types=1);
 
 namespace App\Controller\Api;
 
@@ -139,7 +140,7 @@ class GroupController extends AbstractController
     public function appointAdmin(GroupRequest $request)
     {
         $request = $this->request->all();
-        $result=$this->groupService->appointAdmin($request,$this->getUserId());
+        $result = $this->groupService->appointAdmin($request, $this->getUserId());
         return $this->successResponse($result);
     }
 }

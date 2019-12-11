@@ -6,6 +6,8 @@
  * Time: 10:04
  */
 
+declare(strict_types=1);
+
 namespace App\WebSocket\Controller;
 
 
@@ -22,17 +24,6 @@ class GroupController extends BaseController
     public function send()
     {
         $data = $this->getData();
-        $this->sendToGroup($data['groupId'], $data['message']);
-        $senderId = $this->getUid();
-        go(function () use ($senderId, $data) {
-            mongoClient()->insert('group.message',
-                [
-                    'group' => $data['groupId'],
-                    'sender' => $senderId,
-                    'message' => $data['message'],
-                    'create_time'=>time()
-                ]
-            );
-        });
+        $this->sendToGroup($this->getUid(),$data['groupId'], $data['message']);
     }
 }

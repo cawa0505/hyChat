@@ -6,6 +6,8 @@
  * Time: 10:56
  */
 
+declare(strict_types=1);
+
 namespace App\Request\Api;
 
 
@@ -33,9 +35,9 @@ class AuthRequest extends FormRequest
         $action = getAction($this->path());
         if ($action == "login") {
             return [
-                'type' => 'required|integer',
                 'account' => 'required|min:8|alpha_num',
                 'password' => 'required|min:8|alpha_dash',
+                'type' => 'required',
             ];
         }
         if ($action == "register") {
