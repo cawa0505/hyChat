@@ -70,6 +70,9 @@ class CommonController extends AbstractController
      */
     public function upload()
     {
+        if (!$this->request->hasFile("file")){
+            $this->errorResponse($this->fail(ApiCode::PARAMS_ERROR));
+        }
         $image = $this->request->file('file');
         $name = uniqid() . '.' . $image->getExtension();
         $destinationPath = BASE_PATH . "/public/upload/file/";

@@ -57,12 +57,14 @@ class FriendCircleTimeline extends BaseModel
 
     /**
      * 获取某个用户的朋友圈
+     * @param $params
      * @param $userId
      * @param int $size
      * @return LengthAwarePaginatorInterface
      */
-    public function getArticleList($userId, $size = 2)
+    public function getArticleList($params,$userId, $size = 10)
     {
+//        if (isset($params["size"])&&$params["size"]) $size = $params["size"];
         $query = $this->newQuery()
             ->where("user_id", $userId)->paginate($size);
         $data["currentPage"]=$query->currentPage();

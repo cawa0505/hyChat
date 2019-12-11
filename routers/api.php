@@ -78,3 +78,7 @@ Router::post('group/messageRecord', [GroupController::class, 'messageRecord']);
 
 //朋友圈列表
 Router::post("article/list",[FriendArticleController::class,"articleList"]);
+//发布说说
+Router::post("article/push",[FriendArticleController::class,"pushArticle"]);
+//评论说说
+Router::post("article/comment",[FriendArticleController::class,"commentArticle"]);

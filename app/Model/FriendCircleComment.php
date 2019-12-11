@@ -3,13 +3,12 @@
 declare (strict_types=1);
 namespace App\Model;
 
-use Hyperf\DbConnection\Model\Model;
 
 /**
  * Class FriendCircleComment
  * @package App\Model
  */
-class FriendCircleComment extends Model
+class FriendCircleComment extends BaseModel
 {
     /**
      * 朋友圈评论表
@@ -18,11 +17,15 @@ class FriendCircleComment extends Model
      */
     protected $table = 'friend_circle_comment';
     /**
+     * @var bool
+     */
+    public $timestamps = false;
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = [];
+    protected $fillable = ['fcm_id',"user_id","nickname","content","is_like","create_time"];
     /**
      * The attributes that should be cast to native types.
      *

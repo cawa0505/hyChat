@@ -22,13 +22,29 @@ class FriendArticleRequest extends FormRequest
     public function rules(): array
     {
         $action = getAction($this->path());
-        if ($action == "pushArticle") {
-            return [
-                'content' => 'required|string',
-                'picture' => 'array',
-                'location_desc' => 'string',
-                'location_lat_lng' => 'string',
-            ];
+        switch ($action) {
+            case "articleList":
+                return [
+                    'page' => 'integer',
+                    'size' => 'integer',
+                ];
+                break;
+            case "pushArticle":
+                return [
+                    'content' => 'required|string',
+                    'picture' => 'array',
+                    'location_desc' => 'string',
+                    'location_lat_lng' => 'array',
+                ];
+                break;
+            case "commentArticle":
+                return [
+                    "fcm_id" => "required|integer",
+                    "content" => "required|string",
+                    "type"=>"required|int:1,2"
+                ];
+                break;
         }
+        return [];
     }
 }
