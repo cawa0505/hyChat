@@ -66,7 +66,7 @@ class DecryptMiddleware implements MiddlewareInterface
             $param = $request->getParsedBody();
             //私钥解密
             if (!isset($param['encrypt'])) {
-                return $this->response->json($this->fail("encrypt 不能为空"));
+                return $this->response->json($this->fail(SystemCode::ENCRYPT_NOT_EMPTY));
             }
 
             /** @var RsaEncryption $rsa */
@@ -75,12 +75,12 @@ class DecryptMiddleware implements MiddlewareInterface
 
             if (!is_array($rsaArray)) {
                 logger("rsa")->error(json_encode($rsaArray));
-                return $this->response->json($this->fail("解析失败"));
+                return $this->response->json($this->fail(SystemCode::ENCRYPT_DECODE_ERROR));
             }
 
             //参数验签
             if (!isset($rsaArray["sign"])) {
-                return $this->response->json($this->fail("sign 不能为空"));
+                return $this->response->json($this->fail(SystemCode::ENCRYPT_SIGN_EMPTY));
             }
 
             $request = $request->withParsedBody($rsaArray);
@@ -90,7 +90,7 @@ class DecryptMiddleware implements MiddlewareInterface
             /** @var CheckSign $sign */
             $sign = container()->get(CheckSign::class);
             if (!$sign->checkSign($rsaArray)) {
-                return $this->response->json($this->fail("签名错误"))->withStatus(SystemCode::UNPROCESSABLE_ENTITY);
+                return $this->response->json($this->fail(SystemCode::ENCRYPT_SIGN_ERROR))->withStatus(SystemCode::UNPROCESSABLE_ENTITY);
             };
         }
         return $handler->handle($request);

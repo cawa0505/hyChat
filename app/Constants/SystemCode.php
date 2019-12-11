@@ -86,4 +86,28 @@ class SystemCode extends AbstractConstants
      * @Message("Request is expired")
      */
     const REQUEST_EXPIRED = 10010;
+
+    // TODO ------------------------ rsa解密---------------------------
+    /**
+     * @HttpCode("10050")
+     * @Message("encrypt不能为空")
+     */
+    const ENCRYPT_NOT_EMPTY = 10050;
+
+    /**
+     * @HttpCode("10051")
+     * @Message("解析失败")
+     */
+    const ENCRYPT_DECODE_ERROR = 10051;
+    /**
+     * @HttpCode("10052")
+     * @Message("sign不能为空")
+     */
+    const ENCRYPT_SIGN_EMPTY = 10052;
+
+    /**
+     * @HttpCode("10053")
+     * @Message("签名错误")
+     */
+    const ENCRYPT_SIGN_ERROR = 10053;
 }
