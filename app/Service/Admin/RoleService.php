@@ -64,8 +64,8 @@ class RoleService extends BaseService
             Db::rollBack();
             return $this->fail(AdminCode::CREATE_ERROR);
         }
-        if (isset($request['permission_id'])) {
-            foreach ($request['permission_id'] as $item) {
+        if (isset($request['permission_ids'])) {
+            foreach ($request['permission_ids'] as $item) {
                 $rolePermissionData['role_id'] = $roleId;
                 $rolePermissionData['permission_id'] = $item;
                 $rolePermissionResult = $this->rolePermissionModel->newQuery()->where('role_id', $roleId)->where('permission_id', $item)->first();
@@ -112,8 +112,8 @@ class RoleService extends BaseService
             Db::rollBack();
             return $this->fail(AdminCode::DELETE_ERROR);
         }
-        if (isset($request['permission_id'])) {
-            foreach ($request['permission_id'] as $item) {
+        if (isset($request['permission_ids'])) {
+            foreach ($request['permission_ids'] as $item) {
                 $rolePermissionData['role_id'] = $request['role_id'];
                 $rolePermissionData['permission_id'] = $item;
                 $rolePermission = $this->rolePermissionModel->newQuery()->insert($rolePermissionData);
