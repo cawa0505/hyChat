@@ -34,6 +34,11 @@ class MenuService extends BaseService
         return $this->success($result);
     }
 
+    public function getMenuBuUserId($userId)
+    {
+
+    }
+
     /**
      * 创建角色
      * @param $request

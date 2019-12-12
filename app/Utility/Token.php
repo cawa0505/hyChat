@@ -30,11 +30,21 @@ class Token
     private $key = 'api';
 
     /**
+     * @var
+     */
+    private $ttl = 3600;
+
+    /**
      * @param mixed $key
      */
     public function setKey($key): void
     {
         $this->key = $key;
+    }
+
+    public function setTTl($val): void
+    {
+        $this->ttl = $val;
     }
 
     /**
@@ -47,10 +57,9 @@ class Token
         if (empty($data)) {
             return false;
         }
-        $time = time();
         $token = [
-            'create_time' => $time, // 签发时间
-            'expire_time' => $time + 60 * 60 * 24 * 30, // 过期时间
+            'create_time' => time(), // 签发时间
+            'expire_time' => $this->ttl, // 过期时间
             'data' => $data
 
         ];

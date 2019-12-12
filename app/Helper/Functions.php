@@ -245,6 +245,29 @@ if (!function_exists('isOneArray')) {
         return false;
     }
 }
+
+if (!function_exists("arrayToTree")) {
+    /**
+     * @param $array
+     * @return array
+     */
+    function arrayToTree($array)
+    {
+        $items = array();
+        foreach ($array as $value) {
+            $items[$value['menu_id']] = $value;
+        }
+        $tree = array();
+        foreach ($items as $key => $item) {
+            if (isset($items[$item['parent_id']])) {
+                $items[$item['parent_id']]['son'][] = &$items[$key];
+            } else {
+                $tree[] = &$items[$key];
+            }
+        }
+        return $tree;
+    }
+}
 if (!function_exists("sysConfig")) {
     /**
      * 获取配置

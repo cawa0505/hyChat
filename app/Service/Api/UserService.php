@@ -53,15 +53,18 @@ class UserService extends BaseService
         unset($userInfo['password']);
         $userInfo['login_type'] = $type;
         // 单点登陆 给前一个设备推送消息
-        $token = container()->get(Token::class)->encode($userInfo);
-
+        /** @var Token $token */
+        $tokenModel = container()->get(Token::class);
+        $tokenModel->setKey('api');
+        $tokenModel->setTTl(60 * 60 * 24 * 30);
+        $token = $tokenModel->encode($userInfo);
         $userToken = redis()->hGet("userToken", $userInfo['id'] . "_" . $type);
         if ($userToken) {
             /** @var \App\WebSocket\Service\UserService $socketCommon */
             $socketCommon = container()->get(\App\WebSocket\Service\UserService::class);
             $userFd = $socketCommon->getUserFd($userInfo['id'], $type);
             if ($userFd) {
-                $this->sendToUser($this->sendMessage(MessageCode::LOGOUT),$userInfo['id']);
+                $this->sendToUser($this->sendMessage(MessageCode::LOGOUT), $userInfo['id']);
             }
         }
 

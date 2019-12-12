@@ -17,6 +17,7 @@ Router::post('auth/login', [AuthController::class, 'login']);
 // 退出
 Router::post('auth/logout', [AuthController::class, 'logout']);
 
+
 Router::post('admin/list', [AdminController::class, 'list']);
 Router::post('admin/create', [AdminController::class, 'create']);
 Router::post('admin/update', [AdminController::class, 'update']);

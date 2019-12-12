@@ -53,9 +53,12 @@ class AdminService extends BaseService
         // 通过角色id获取权限
         $permissions = container()->get(PermissionModel::class)->getPermissionByRoleId($roleId);
         $permissionUrl = array_column($permissions, 'url');
-        redis()->set('admin_' . $result['id'] . '_permission', json_encode($permissionUrl), 60 * 60);
-        $token = container()->get(Token::class)->encode($result);
-        redis()->set('admin_token_' . $result['id'], $token, 60 * 60);
+        redis()->hSet('admin_permission', $result['id'], json_encode($permissionUrl));
+        /** @var Token $token */
+        $tokenModel = container()->get(Token::class);
+        $tokenModel->setKey("admin");
+        $token = $tokenModel->encode($result);
+        redis()->hSet('admin_token', $result['id'], $token);
         return $this->success($token);
     }
 

@@ -28,6 +28,11 @@ class MenuController extends AbstractController
         return $this->successResponse($result);
     }
 
+    public function getUserMenu()
+    {
+
+    }
+
     /**
      * @param MenuRequest $request
      * @return ResponseInterface
