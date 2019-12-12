@@ -124,7 +124,7 @@ class RoleService extends BaseService
             }
         }
         Db::commit();
-        return $this->success($result);
+        return $this->success($roleResult);
     }
 
     /**

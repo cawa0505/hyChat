@@ -158,7 +158,7 @@ class AdminService extends BaseService
             }
         }
         Db::commit();
-        return $this->success($result);
+        return $this->success($adminResult);
     }
 
     /**

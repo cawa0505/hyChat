@@ -54,7 +54,7 @@ class PermissionService extends BaseService
         if (!$result) {
             return $this->fail(AdminCode::CREATE_ERROR);
         }
-        return $this->success($result);
+        return $this->success($saveData);
     }
 
     /**
@@ -78,7 +78,7 @@ class PermissionService extends BaseService
         if (!$result) {
             return $this->fail(AdminCode::UPDATE_ERROR);
         }
-        return $this->success($result);
+        return $this->success($permissionResult);
     }
 
     /**

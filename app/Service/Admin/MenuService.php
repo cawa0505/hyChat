@@ -98,6 +98,14 @@ class MenuService extends BaseService
         if (!$menuResult) {
             return $this->fail(AdminCode::DELETE_ERROR);
         }
+        if (is_array($request['id'])) {
+            $result = $this->menuModel->newQuery()->whereIn('id', $request['id'])->delete();
+        } else {
+            $result = $this->menuModel->newQuery()->where('id', $request['id'])->delete();
+        }
+        if (!$result) {
+            return $this->fail(AdminCode::DELETE_ERROR);
+        }
         return $this->success($menuResult);
     }
 }
