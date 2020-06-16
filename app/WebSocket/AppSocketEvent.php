@@ -57,7 +57,7 @@ class AppSocketEvent implements OnOpenInterface, OnMessageInterface, OnCloseInte
         //设置userId关联的fd
         /** @var UserService $userService */
         $userService = container()->get(UserService::class);
-        $fdInfo = ['ip' => getLocalIp(), 'fd' => $request->fd];
+        $fdInfo = ['mode' => getMode(), 'fd' => $request->fd];
         $userService->setUserFd($userInfo['id'], json_encode($fdInfo), $this->loginMethod);
         $server->push($request->fd, 'welcome to you');
     }

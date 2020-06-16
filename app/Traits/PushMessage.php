@@ -95,13 +95,13 @@ trait PushMessage
         $count = 0;
         if (isOneArray($fdInfo)) {
             $pushData['fd'] = $fdInfo['fd'];
-            redis()->publish($fdInfo['ip'], json_encode($pushData));
+            redis()->publish($fdInfo['mode'], json_encode($pushData));
             $count++;
             return $count;
         }
         foreach ($fdInfo as $info) {
             $pushData['fd'] = $info['fd'];
-            redis()->publish($info['ip'], json_encode($pushData));
+            redis()->publish($info['mode'], json_encode($pushData));
             $count++;
         }
         return $count;

@@ -21,7 +21,7 @@ class PushMessageProcess extends AbstractProcess
         /** @var Server $server */
         $server = $this->container->get(WebSocketServer::class);
         while (true) {
-            redis()->subscribe([getLocalIp()], function ($redis, $channel, $data) use ($server) {
+            redis()->subscribe([getMode()], function ($redis, $channel, $data) use ($server) {
                 $pushData = json_decode($data, true);
                 $fd = (int)$pushData['fd'];
                 $senderId = $pushData['senderId'];

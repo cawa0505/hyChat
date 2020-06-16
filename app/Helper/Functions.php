@@ -168,13 +168,13 @@ if (!function_exists('frame')) {
     }
 }
 
-if (!function_exists("getLocalIp")) {
+if (!function_exists("getMode")) {
     /**
      * @return mixed
      */
-    function getLocalIp()
+    function getMode()
     {
-        return swoole_get_local_ip()['eth0'];
+        return env("APP_NAME");
     }
 }
 
